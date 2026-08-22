@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baltymai ir aminorūgštys - VBE pasiruošimas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+        header {
+            text-align: center;
+            padding: 15px 0 25px;
+            border-bottom: 3px solid #2c3e7a;
+            margin-bottom: 25px;
+        }
+        header h1 {
+            font-size: 2.2em;
+            color: #1a2a5e;
+            letter-spacing: 1px;
+        }
+        header h1 span {
+            background: linear-gradient(45deg, #2980b9, #6dd5fa);
+            padding: 0 15px;
+            border-radius: 10px;
+            color: white;
+        }
+        header p {
+            color: #34495e;
+            margin-top: 8px;
+            font-size: 1.05em;
+        }
+        .xp-bar {
+            background: #ecf0f1;
+            border-radius: 30px;
+            padding: 3px;
+            margin: 10px auto 0;
+            max-width: 400px;
+            position: relative;
+        }
+        .xp-fill {
+            height: 20px;
+            background: linear-gradient(90deg, #f1c40f, #f39c12);
+            border-radius: 30px;
+            width: 0%;
+            transition: width 0.5s;
+            text-align: center;
+            color: white;
+            font-size: 0.75em;
+            line-height: 20px;
+            font-weight: bold;
+        }
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #dce1e8;
+            padding-bottom: 10px;
+        }
+        .nav-tab {
+            padding: 12px 24px;
+            background: #eef2f7;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #2c3e50;
+            transition: all 0.3s;
+            font-size: 0.95em;
+            flex: 1 1 auto;
+            min-width: 120px;
+        }
+        .nav-tab:hover {
+            background: #d5dce6;
+            transform: translateY(-2px);
+        }
+        .nav-tab.active {
+            background: #2c3e7a;
+            color: white;
+            box-shadow: 0 4px 15px rgba(44, 62, 122, 0.3);
+        }
+        .section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        .section.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Teorija */
+        .theory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 15px 0;
+        }
+        .theory-card {
+            background: #f8faff;
+            border-radius: 15px;
+            padding: 20px;
+            border-left: 5px solid #2980b9;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+        }
+        .theory-card:hover {
+            transform: scale(1.02);
+        }
+        .theory-card h3 {
+            color: #1a2a5e;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        .theory-card .struct {
+            font-family: 'Courier New', monospace;
+            background: #eaf2fa;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 10px 0;
+            font-size: 1.1em;
+        }
+        .theory-card ul {
+            list-style: none;
+            padding: 0;
+        }
+        .theory-card ul li {
+            padding: 5px 0;
+            border-bottom: 1px solid #ecf0f1;
+            font-size: 0.95em;
+        }
+        .theory-card ul li:last-child {
+            border: none;
+        }
+
+        /* Laboratorija */
+        .lab-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+        @media (max-width: 800px) {
+            .lab-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        .lab-panel {
+            background: #f8faff;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        .lab-panel h3 {
+            color: #1a2a5e;
+            margin-bottom: 15px;
+        }
+        .slider-group {
+            margin: 15px 0;
+        }
+        .slider-group label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        .slider-group input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #dce1e8;
+            outline: none;
+        }
+        .slider-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #2c3e7a;
+            cursor: pointer;
+        }
+        .btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95em;
+        }
+        .btn-primary {
+            background: #2c3e7a;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #1a2a5e;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(44, 62, 122, 0.3);
+        }
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #1e8449;
+        }
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+        .btn-warning:hover {
+            background: #d68910;
+        }
+        .lab-result {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+            border: 2px dashed #bdc3c7;
+            min-height: 80px;
+        }
+        .peptide-chain {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            justify-content: center;
+            padding: 15px;
+            background: #eaf2fa;
+            border-radius: 12px;
+            font-family: 'Courier New', monospace;
+        }
+        .peptide-link {
+            background: #2c3e7a;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+        }
+        .amino-block {
+            background: white;
+            border: 2px solid #2980b9;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-weight: bold;
+            color: #1a2a5e;
+        }
+
+        /* Klausimai */
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .quiz-level {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .quiz-level .btn {
+            flex: 1;
+            min-width: 80px;
+        }
+        .question-box {
+            background: #f8faff;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 15px 0;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        .question-box .q-text {
+            font-size: 1.15em;
+            font-weight: 500;
+            color: #1a2a5e;
+            margin-bottom: 15px;
+        }
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        @media (max-width: 600px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+        }
+        .option-btn {
+            padding: 12px 18px;
+            border: 2px solid #dce1e8;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            font-size: 0.95em;
+        }
+        .option-btn:hover {
+            border-color: #2c3e7a;
+            background: #eef2f7;
+        }
+        .option-btn.correct {
+            border-color: #27ae60;
+            background: #d5f5e3;
+        }
+        .option-btn.wrong {
+            border-color: #e74c3c;
+            background: #fadbd8;
+        }
+        .option-btn.disabled {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        .feedback-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 12px;
+            display: none;
+        }
+        .feedback-box.show {
+            display: block;
+        }
+        .feedback-box.success {
+            background: #d5f5e3;
+            border: 2px solid #27ae60;
+            color: #1a6e3a;
+        }
+        .feedback-box.error {
+            background: #fadbd8;
+            border: 2px solid #e74c3c;
+            color: #922b21;
+        }
+        .feedback-box.info {
+            background: #d6eaf8;
+            border: 2px solid #2980b9;
+            color: #1a5276;
+        }
+
+        /* Diagnostika */
+        .diagnostic-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 700px) {
+            .diagnostic-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .diag-card {
+            background: #f8faff;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        .diag-card h4 {
+            color: #1a2a5e;
+            margin-bottom: 12px;
+            border-bottom: 2px solid #dce1e8;
+            padding-bottom: 8px;
+        }
+        .stat-bar {
+            background: #ecf0f1;
+            border-radius: 20px;
+            height: 25px;
+            margin: 8px 0;
+            overflow: hidden;
+            position: relative;
+        }
+        .stat-fill {
+            height: 100%;
+            border-radius: 20px;
+            transition: width 0.8s;
+            text-align: center;
+            color: white;
+            font-size: 0.75em;
+            line-height: 25px;
+            font-weight: bold;
+        }
+        .stat-fill.good {
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+        }
+        .stat-fill.medium {
+            background: linear-gradient(90deg, #f39c12, #f1c40f);
+        }
+        .stat-fill.low {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin: 3px;
+        }
+        .badge.good {
+            background: #d5f5e3;
+            color: #1a6e3a;
+        }
+        .badge.warn {
+            background: #fdebd0;
+            color: #935e38;
+        }
+        .badge.danger {
+            background: #fadbd8;
+            color: #922b21;
+        }
+
+        /* Žaidybiniai elementai */
+        .achievement {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #f1c40f, #f39c12);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform: translateX(120%);
+            transition: transform 0.5s ease;
+            z-index: 1000;
+            font-weight: 600;
+        }
+        .achievement.show {
+            transform: translateX(0);
+        }
+        .stars {
+            color: #f1c40f;
+            font-size: 1.3em;
+            letter-spacing: 2px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 1.6em;
+            }
+            .container {
+                padding: 12px;
+            }
+            .nav-tab {
+                padding: 10px 14px;
+                font-size: 0.85em;
+                min-width: 80px;
+            }
+            .theory-grid {
+                grid-template-columns: 1fr;
+            }
+            .lab-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+        .mt-10 {
+            margin-top: 10px;
+        }
+        .mt-20 {
+            margin-top: 20px;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .flex {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .flex-center {
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="app">
+        <header>
+            <h1>🧬 <span>Baltymai</span> ir aminorūgštys</h1>
+            <p>Pasiruošk VBE chemijos egzaminui • Interaktyvi mokomoji programėlė</p>
+            <div class="xp-bar">
+                <div class="xp-fill" id="xpFill" style="width: 0%;">0 XP</div>
+            </div>
+            <div style="margin-top:8px; font-size:0.9em; color:#2c3e50;">
+                <span id="streakDisplay">🔥 0</span> iš eilės teisingi atsakymai
+                &nbsp;•&nbsp; ⭐ <span id="starsDisplay">0</span> žvaigždutės
+            </div>
+        </header>
+
+        <!-- Navigacija -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-section="theory">📖 Teorija</button>
+            <button class="nav-tab" data-section="lab">🧪 Laboratorija</button>
+            <button class="nav-tab" data-section="quiz">📝 Žinių patikrinimas</button>
+            <button class="nav-tab" data-section="diagnostic">📊 Diagnostika</button>
+        </div>
+
+        <!-- SEKCJA: Teorija -->
+        <div id="section-theory" class="section active">
+            <h2 style="color:#1a2a5e; margin-bottom:15px;">📖 Trumpai apie baltymus ir aminorūgštis</h2>
+            <div class="theory-grid">
+                <div class="theory-card">
+                    <h3>🧪 Aminorūgštys</h3>
+                    <div class="struct">H₂N—CH(R)—COOH</div>
+                    <ul>
+                        <li><strong>Amino grupė:</strong> –NH₂</li>
+                        <li><strong>Karboksilo grupė:</strong> –COOH</li>
+                        <li><strong>R grupė:</strong> skiria aminorūgštis</li>
+                        <li>Yra 20 standartinių aminorūgščių</li>
+                    </ul>
+                </div>
+                <div class="theory-card">
+                    <h3>🔗 Peptidinė jungtis</h3>
+                    <div class="struct">–CO–NH–</div>
+                    <ul>
+                        <li>Susidaro tarp amino ir karboksilo grupių</li>
+                        <li>Kondensacijos reakcija (išsiskiria H₂O)</li>
+                        <li>Polipeptidai – baltymų pagrindas</li>
+                    </ul>
+                </div>
+                <div class="theory-card">
+                    <h3>🏗️ Baltymų struktūros</h3>
+                    <ul>
+                        <li><strong>Pirminė:</strong> aminorūgščių seka</li>
+                        <li><strong>Antrinė:</strong> α-spiralė, β-lakštas</li>
+                        <li><strong>Tretinė:</strong> 3D struktūra</li>
+                        <li><strong>Ketvirtinė:</strong> keli polipeptidai</li>
+                    </ul>
+                </div>
+                <div class="theory-card">
+                    <h3>⚡ Funkcijos organizme</h3>
+                    <ul>
+                        <li>Fermentai (katalizatoriai)</li>
+                        <li>Hormonai (signaliniai baltymai)</li>
+                        <li>Struktūriniai baltymai (kolagenas, keratinas)</li>
+                        <li>Imuniniai baltymai (antikūnai)</li>
+                        <li>Transportiniai baltymai (hemoglobinas)</li>
+                    </ul>
+                </div>
+                <div class="theory-card">
+                    <h3>💧 Hidrolizė</h3>
+                    <ul>
+                        <li>Baltymų skaidymas į aminorūgštis</li>
+                        <li>Reaguoja su vandeniu</li>
+                        <li>Katalizuoja fermentai (proteazės)</li>
+                        <li>Virškinimo procese</li>
+                    </ul>
+                </div>
+                <div class="theory-card">
+                    <h3>🧬 Svarbios aminorūgštys</h3>
+                    <ul>
+                        <li><strong>Glicinas</strong> (Gly) – paprasčiausia</li>
+                        <li><strong>Alaninas</strong> (Ala) – nepoliarinė</li>
+                        <li><strong>Glutamo rūgštis</strong> (Glu) – rūgštinė</li>
+                        <li><strong>Lizinas</strong> (Lys) – bazinė</li>
+                        <li><strong>Cisteinas</strong> (Cys) – turi SH grupę</li>
+                    </ul>
+                </div>
+            </div>
+            <div style="background:#eaf2fa; border-radius:15px; padding:15px; margin-top:15px; text-align:center;">
+                <p style="color:#1a2a5e; font-weight:500;">💡 Atmink: baltymai sudaryti iš aminorūgščių, sujungtų peptidinėmis jungtimis.</p>
+            </div>
+        </div>
+
+        <!-- SEKCJA: Laboratorija -->
+        <div id="section-lab" class="section">
+            <h2 style="color:#1a2a5e; margin-bottom:15px;">🧪 Virtuali laboratorija</h2>
+            <div class="lab-container">
+                <div class="lab-panel">
+                    <h3>🔬 Baltymų hidrolizės simuliacija</h3>
+                    <div class="slider-group">
+                        <label>⏳ Laikas (min): <span id="timeLabel">5</span></label>
+                        <input type="range" id="timeSlider" min="0" max="30" value="5">
+                    </div>
+                    <div class="slider-group">
+                        <label>🌡️ Temperatūra (°C): <span id="tempLabel">37</span></label>
+                        <input type="range" id="tempSlider" min="20" max="70" value="37">
+                    </div>
+                    <div class="slider-group">
+                        <label>🧪 Fermentų kiekis: <span id="enzymeLabel">3</span></label>
+                        <input type="range" id="enzymeSlider" min="0" max="10" value="3">
+                    </div>
+                    <button class="btn btn-primary" id="runHydrolysis">▶️ Paleisti hidrolizę</button>
+                    <button class="btn btn-warning" id="resetLab">🔄 Iš naujo</button>
+                    <div class="lab-result" id="labResult">
+                        <p style="color:#7f8c8d;">Paspausk "Paleisti hidrolizę", kad pamatytum rezultatą...</p>
+                    </div>
+                </div>
+                <div class="lab-panel">
+                    <h3>🧬 Peptidinės grandinės konstravimas</h3>
+                    <p style="font-size:0.9em; color:#34495e;">Pridėk aminorūgštį prie grandinės:</p>
+                    <div class="flex" style="margin:10px 0;">
+                        <button class="btn btn-success" data-aa="Gly">Glicinas (Gly)</button>
+                        <button class="btn btn-success" data-aa="Ala">Alaninas (Ala)</button>
+                        <button class="btn btn-success" data-aa="Val">Valinas (Val)</button>
+                        <button class="btn btn-success" data-aa="Glu">Glutamo r.</button>
+                        <button class="btn btn-success" data-aa="Lys">Lizinas (Lys)</button>
+                    </div>
+                    <button class="btn btn-danger" id="clearChain">🗑️ Išvalyti grandinę</button>
+                    <div class="peptide-chain" id="peptideChain">
+                        <span style="color:#7f8c8d;">Grandinė tuščia</span>
+                    </div>
+                    <div style="margin-top:10px; font-size:0.9em;">
+                        <span id="chainLength">Ilgis: 0</span> &nbsp;|&nbsp;
+                        <span id="chainMw">Molekulinė masė: 0 g/mol</span>
+                    </div>
+                    <button class="btn btn-primary mt-10" id="predictHydrolysis">🔮 Prognozuok hidrolizės produktus</button>
+                    <div id="hydrolysisPrediction" class="lab-result" style="margin-top:10px; min-height:50px;">
+                        <p style="color:#7f8c8d;">Prognozė pasirodys čia...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEKCJA: Žinių patikrinimas -->
+        <div id="section-quiz" class="section">
+            <h2 style="color:#1a2a5e; margin-bottom:15px;">📝 Žinių patikrinimas</h2>
+            <div class="quiz-container">
+                <div class="quiz-level">
+                    <button class="btn btn-primary" data-level="1">⭐ 1 lygis</button>
+                    <button class="btn btn-primary" data-level="2">⭐⭐ 2 lygis</button>
+                    <button class="btn btn-primary" data-level="3">⭐⭐⭐ 3 lygis</button>
+                    <button class="btn btn-primary" data-level="4">⭐⭐⭐⭐ 4 lygis</button>
+                </div>
+                <div id="quizInfo" style="text-align:center; color:#34495e; margin-bottom:10px;">
+                    Pasirink sudėtingumo lygį, kad pradėtum.
+                </div>
+                <div class="question-box" id="questionBox">
+                    <div class="q-text" id="qText">Klausimas atsiras čia...</div>
+                    <div class="options" id="qOptions"></div>
+                    <div class="feedback-box" id="feedbackBox"></div>
+                    <button class="btn btn-primary mt-10" id="nextQuestion" style="display:none;">Kitas klausimas →</button>
+                </div>
+                <div style="margin-top:15px; text-align:center; color:#2c3e50;">
+                    <span id="quizScore">Teisingi: 0</span> &nbsp;|&nbsp;
+                    <span id="quizTotal">Iš viso: 0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEKCJA: Diagnostika -->
+        <div id="section-diagnostic" class="section">
+            <h2 style="color:#1a2a5e; margin-bottom:15px;">📊 Tavo diagnostika</h2>
+            <div class="diagnostic-grid">
+                <div class="diag-card">
+                    <h4>✅ Ką moki gerai</h4>
+                    <div id="strengthsArea">
+                        <p style="color:#7f8c8d;">Atsakyk į klausimus, kad pamatytum savo stiprybes...</p>
+                    </div>
+                </div>
+                <div class="diag-card">
+                    <h4>⚠️ Kur dažniausiai klysti</h4>
+                    <div id="weaknessesArea">
+                        <p style="color:#7f8c8d;">Diagnostika atnaujinsis po atsakymų...</p>
+                    </div>
+                </div>
+                <div class="diag-card">
+                    <h4>📚 Rekomenduojama pakartoti</h4>
+                    <div id="recommendArea">
+                        <p style="color:#7f8c8d;">Čia bus rekomendacijos...</p>
+                    </div>
+                </div>
+                <div class="diag-card">
+                    <h4>🏆 Pasiekimai</h4>
+                    <div id="achievementsArea">
+                        <p style="color:#7f8c8d;">Dar nėra pasiekimų. Sprendi užduotis?</p>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top:20px; background:#eaf2fa; border-radius:15px; padding:15px;">
+                <h4 style="color:#1a2a5e;">📈 Statistika</h4>
+                <div id="statsDetailed">
+                    <p style="color:#7f8c8d;">Statistika bus čia po kelių atsakymų...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Achievement notification -->
+    <div class="achievement" id="achievementPopup">🏅 Pasiekimas!</div>
+
+    <script>
+        // ========================================
+        // DUOMENYS
+        // ========================================
+        const AMINO_ACIDS = {
+            Gly: { name: 'Glicinas', mw: 75, type: 'nepoliarinė', code: 'Gly' },
+            Ala: { name: 'Alaninas', mw: 89, type: 'nepoliarinė', code: 'Ala' },
+            Val: { name: 'Valinas', mw: 117, type: 'nepoliarinė', code: 'Val' },
+            Glu: { name: 'Glutamo rūgštis', mw: 147, type: 'rūgštinė', code: 'Glu' },
+            Lys: { name: 'Lizinas', mw: 146, type: 'bazinė', code: 'Lys' },
+            Cys: { name: 'Cisteinas', mw: 121, type: 'poliarinė', code: 'Cys' },
+            Phe: { name: 'Fenilalaninas', mw: 165, type: 'nepoliarinė', code: 'Phe' },
+        };
+
+        const QUESTIONS = {
+            1: [
+                { q: 'Kokia funkcinė grupė būdinga aminorūgštims?', opts: ['–OH', '–NH₂', '–CHO', '–SH'], ans: 1,
+                topic: 'struktūra' },
+                { q: 'Kokia jungtis sieja aminorūgštis baltymuose?', opts: ['Joninė', 'Vandenilinė', 'Peptidinė',
+                        'Disulfidinė'
+                    ], ans: 2, topic: 'jungtys' },
+                { q: 'Kuri aminorūgštis yra paprasčiausia?', opts: ['Alaninas', 'Glicinas', 'Valinas', 'Prolinas'],
+                    ans: 1, topic: 'aminorūgštys' },
+                { q: 'Baltymų pirminė struktūra – tai:', opts: ['3D forma', 'Aminorūgščių seka', 'α-spiralė',
+                        'Subvienetų išsidėstymas'
+                    ], ans: 1, topic: 'struktūra' },
+            ],
+            2: [
+                { q: 'Kuri aminorūgštis turi bazinę šoninę grandinę?', opts: ['Glutamo rūgštis', 'Lizinas', 'Valinas',
+                        'Alaninas'
+                    ], ans: 1, topic: 'aminorūgštys' },
+                { q: 'Hidrolizės metu baltymai skyla į:', opts: ['Nukleotidus', 'Monosacharidus', 'Aminorūgštis',
+                        'Glicerolį'
+                    ], ans: 2, topic: 'hidrolizė' },
+                { q: 'Kuris teiginys apie peptidinę jungtį yra teisingas?', opts: ['Tai esterinė jungtis',
+                        'Susidaro tarp amino ir karboksilo grupių', 'Yra tik baltymuose', 'Nereikalauja vandens'
+                    ], ans: 1, topic: 'jungtys' },
+                { q: 'Kuri struktūra būdinga antriniam baltymų lygmeniui?', opts: ['α-spiralė', 'Aminorūgščių seka',
+                        'Globulinė forma', 'Keli polipeptidai'
+                    ], ans: 0, topic: 'struktūra' },
+            ],
+            3: [
+                { q: 'Kokia yra glicino molekulinė masė (apytiksliai)?', opts: ['75 g/mol', '89 g/mol', '117 g/mol',
+                        '147 g/mol'
+                    ], ans: 0, topic: 'skaičiavimai' },
+                { q: 'Kuri aminorūgštis gali sudaryti disulfidinius tiltelius?', opts: ['Metioninas', 'Cisteinas',
+                        'Tirozinas', 'Triptofanas'
+                    ], ans: 1, topic: 'aminorūgštys' },
+                { q: 'Baltymo tretinę struktūrą stabilizuoja:', opts: ['Tik peptidinės jungtys', 'Vandenilinės ir joninės sąveikos',
+                        'Tik disulfidiniai tilteliai', 'Visi išvardinti'
+                    ], ans: 3, topic: 'struktūra' },
+                { q: 'Kuri aminorūgštis yra rūgštinė?', opts: ['Lizinas', 'Alaninas', 'Glutamo rūgštis', 'Valinas'],
+                    ans: 2, topic: 'aminorūgštys' },
+            ],
+            4: [
+                { q: 'Apskaičiuok dipeptido Gly-Ala molekulinę masę (H₂O atimama).', opts: ['164 g/mol', '146 g/mol',
+                        '132 g/mol', '178 g/mol'
+                    ], ans: 1, topic: 'skaičiavimai' },
+                { q: 'Kuri struktūra apibūdina baltymų ketvirtinį lygmenį?', opts: ['Aminorūgščių seka',
+                        'Kelių polipeptidinių grandinių susijungimas', 'α-spiralė', '3D forma'
+                    ], ans: 1, topic: 'struktūra' },
+                { q: 'Kuris fermentas katalizuoja baltymų hidrolizę?', opts: ['Amilazė', 'Lipazė', 'Proteazė',
+                        'Nukleazė'
+                    ], ans: 2, topic: 'hidrolizė' },
+                { q: 'Kuri aminorūgštis turi šoninę grandinę su -SH grupe?', opts: ['Metioninas', 'Cisteinas',
+                        'Serinas', 'Treoninas'
+                    ], ans: 1, topic: 'aminorūgštys' },
+            ]
+        };
+
+        // ========================================
+        // BŪSENA
+        // ========================================
+        const state = {
+            xp: 0,
+            streak: 0,
+            maxStreak: 0,
+            stars: 0,
+            quizCorrect: 0,
+            quizTotal: 0,
+            levelScores: { 1: 0, 2: 0, 3: 0, 4: 0 },
+            topicStats: { struktūra: { correct: 0, total: 0 }, jungtys: { correct: 0, total: 0 },
+                aminorūgštys: { correct: 0, total: 0 }, hidrolizė: { correct: 0, total: 0 },
+                skaičiavimai: { correct: 0, total: 0 } },
+            currentLevel: 1,
+            currentQuestionIndex: 0,
+            answered: false,
+            chain: [],
+            achievements: [],
+            labUsed: false,
+        };
+
+        // ========================================
+        // PAGRINDINĖS FUNKCIJOS
+        // ========================================
+        function updateXP(amount) {
+            state.xp = Math.min(100, state.xp + amount);
+            document.getElementById('xpFill').style.width = state.xp + '%';
+            document.getElementById('xpFill').textContent = state.xp + ' XP';
+            if (state.xp >= 100) {
+                showAchievement('🏆 Meistras! Surinkai 100 XP!');
+                state.xp = 0;
+            }
+        }
+
+        function updateStreak(correct) {
+            if (correct) {
+                state.streak++;
+                if (state.streak > state.maxStreak) state.maxStreak = state.streak;
+                if (state.streak === 3) showAchievement('🔥 3 iš eilės!');
+                if (state.streak === 5) showAchievement('⚡ 5 iš eilės! Nuostabu!');
+                if (state.streak === 10) showAchievement('🌟 10 iš eilės! Tikras chemikas!');
+            } else {
+                state.streak = 0;
+            }
+            document.getElementById('streakDisplay').textContent = '🔥 ' + state.streak;
+        }
+
+        function addStar() {
+            state.stars++;
+            document.getElementById('starsDisplay').textContent = state.stars;
+            if (state.stars === 5) showAchievement('⭐ 5 žvaigždutės!');
+            if (state.stars === 15) showAchievement('⭐ 15 žvaigždučių!');
+        }
+
+        function showAchievement(text) {
+            const popup = document.getElementById('achievementPopup');
+            popup.textContent = text;
+            popup.classList.add('show');
+            setTimeout(() => popup.classList.remove('show'), 3000);
+            if (!state.achievements.includes(text)) {
+                state.achievements.push(text);
+                updateDiagnostics();
+            }
+        }
+
+        function showFeedback(message, type) {
+            const box = document.getElementById('feedbackBox');
+            box.textContent = message;
+            box.className = 'feedback-box show ' + type;
+        }
+
+        // ========================================
+        // NAVIGACIJA
+        // ========================================
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                const section = this.dataset.section;
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                document.getElementById('section-' + section).classList.add('active');
+            });
+        });
+
+        // ========================================
+        // LABORATORIJA
+        // ========================================
+        document.getElementById('timeSlider').addEventListener('input', function() {
+            document.getElementById('timeLabel').textContent = this.value;
+        });
+        document.getElementById('tempSlider').addEventListener('input', function() {
+            document.getElementById('tempLabel').textContent = this.value;
+        });
+        document.getElementById('enzymeSlider').addEventListener('input', function() {
+            document.getElementById('enzymeLabel').textContent = this.value;
+        });
+
+        document.getElementById('runHydrolysis').addEventListener('click', function() {
+            const time = parseInt(document.getElementById('timeSlider').value);
+            const temp = parseInt(document.getElementById('tempSlider').value);
+            const enzyme = parseInt(document.getElementById('enzymeSlider').value);
+            const resultDiv = document.getElementById('labResult');
+
+            let efficiency = 0;
+            if (temp >= 35 && temp <= 42) efficiency += 30;
+            else if (temp >= 25 && temp <= 55) efficiency += 15;
+            else efficiency -= 20;
+
+            efficiency += enzyme * 6;
+            if (time > 20) efficiency += 15;
+            else if (time > 10) efficiency += 8;
+
+            efficiency = Math.max(0, Math.min(100, efficiency));
+
+            let message = '';
+            let emoji = '';
+            if (efficiency >= 80) { message = 'Hidrolizė vyksta efektyviai! Baltymai skyla į aminorūgštis.';
+                emoji = '✅'; } else if (efficiency >= 50) { message =
+                    'Hidrolizė vyksta vidutiniškai. Dalinis baltymų skaidymasis.';
+                emoji = '⚡'; } else if (efficiency >= 20) { message =
+                    'Hidrolizė vyksta lėtai. Pabandyk padidinti temperatūrą arba fermentų kiekį.';
+                emoji = '⏳'; } else { message =
+                    'Hidrolizė beveik nevyksta. Patikrink sąlygas: temperatūra per aukšta/žema, per mažai fermentų.';
+                emoji = '❌'; }
+
+            resultDiv.innerHTML = `
+                <strong>${emoji} Rezultatas:</strong><br>
+                <span style="font-size:1.1em;">${message}</span><br>
+                <div style="margin-top:8px; background:#ecf0f1; border-radius:10px; height:20px; width:100%;">
+                    <div style="background: ${efficiency >= 60 ? '#27ae60' : efficiency >= 30 ? '#f39c12' : '#e74c3c'}; height:100%; border-radius:10px; width:${efficiency}%; transition:width 0.5s;"></div>
+                </div>
+                <span style="font-size:0.85em; color:#34495e;">Hidrolizės efektyvumas: ${efficiency}%</span>
+                <p style="margin-top:8px; font-size:0.9em; color:#2c3e50;"><strong>Paaiškinimas:</strong> ${efficiency >= 80 ? 'Optimalios sąlygos užtikrina greitą baltymų skaidymą.' : efficiency >= 50 ? 'Sąlygos nėra optimalios – pagerink temperatūrą arba fermentų kiekį.' : 'Per žema temperatūra arba nepakankamas fermentų kiekis stabdo hidrolizę.'}</p>
+            `;
+            state.labUsed = true;
+            updateXP(5);
+            if (efficiency >= 80) {
+                showAchievement('🧪 Hidrolizės meistras!');
+            }
+        });
+
+        document.getElementById('resetLab').addEventListener('click', function() {
+            document.getElementById('labResult').innerHTML =
+                '<p style="color:#7f8c8d;">Paspausk "Paleisti hidrolizę", kad pamatytum rezultatą...</p>';
+            document.getElementById('timeSlider').value = 5;
+            document.getElementById('tempSlider').value = 37;
+            document.getElementById('enzymeSlider').value = 3;
+            document.getElementById('timeLabel').textContent = '5';
+            document.getElementById('tempLabel').textContent = '37';
+            document.getElementById('enzymeLabel').textContent = '3';
+        });
+
+        // Peptidinė grandinė
+        document.querySelectorAll('[data-aa]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const aa = this.dataset.aa;
+                state.chain.push(aa);
+                renderChain();
+                updateXP(2);
+            });
+        });
+
+        document.getElementById('clearChain').addEventListener('click', function() {
+            state.chain = [];
+            renderChain();
+        });
+
+        function renderChain() {
+            const container = document.getElementById('peptideChain');
+            if (state.chain.length === 0) {
+                container.innerHTML = '<span style="color:#7f8c8d;">Grandinė tuščia</span>';
+                document.getElementById('chainLength').textContent = 'Ilgis: 0';
+                document.getElementById('chainMw').textContent = 'Molekulinė masė: 0 g/mol';
+                return;
+            }
+            let html = '';
+            let totalMw = 0;
+            state.chain.forEach((aa, i) => {
+                const info = AMINO_ACIDS[aa];
+                totalMw += info.mw;
+                if (i > 0) totalMw -= 18; // atimame H2O
+                html += `<span class="amino-block">${aa}</span>`;
+                if (i < state.chain.length - 1) {
+                    html += `<span class="peptide-link">—CO—NH—</span>`;
+                }
+            });
+            container.innerHTML = html;
+            document.getElementById('chainLength').textContent = 'Ilgis: ' + state.chain.length;
+            document.getElementById('chainMw').textContent = 'Molekulinė masė: ' + totalMw + ' g/mol';
+            if (state.chain.length >= 3) {
+                showAchievement('🧬 Grandinės kūrėjas!');
+            }
+        }
+
+        document.getElementById('predictHydrolysis').addEventListener('click', function() {
+            const div = document.getElementById('hydrolysisPrediction');
+            if (state.chain.length === 0) {
+                div.innerHTML = '<p style="color:#e74c3c;">❌ Pirmiausia sukurk peptidinę grandinę!</p>';
+                return;
+            }
+            let products = state.chain.map(aa => AMINO_ACIDS[aa].name);
+            div.innerHTML = `
+                <strong>🔮 Prognozė:</strong><br>
+                <p>Hidrolizės metu ši grandinė skiltų į šias aminorūgštis:</p>
+                <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;">
+                    ${products.map(p => `<span style="background:#d6eaf8; padding:5px 12px; border-radius:20px;">${p}</span>`).join('')}
+                </div>
+                <p style="margin-top:8px; font-size:0.9em; color:#2c3e50;"><strong>Paaiškinimas:</strong> Hidrolizė skaido peptidines jungtis, išskirdama laisvas aminorūgštis.</p>
+            `;
+            updateXP(5);
+            if (state.chain.length >= 4) {
+                showAchievement('🔮 Prognozių meistras!');
+            }
+        });
+
+        // ========================================
+        // QUIZ
+        // ========================================
+        let currentQuestions = [];
+
+        function loadQuestions(level) {
+            state.currentLevel = level;
+            state.currentQuestionIndex = 0;
+            state.answered = false;
+            currentQuestions = QUESTIONS[level] || QUESTIONS[1];
+            // atsitiktinė tvarka
+            currentQuestions = currentQuestions.sort(() => Math.random() - 0.5);
+            showQuestion();
+            document.getElementById('quizInfo').textContent = '🎯 Lygis ' + level +
+                ' • Atsakyk į klausimus ir gauk taškų!';
+            document.getElementById('nextQuestion').style.display = 'none';
+        }
+
+        function showQuestion() {
+            const idx = state.currentQuestionIndex;
+            if (idx >= currentQuestions.length) {
+                document.getElementById('qText').textContent = '🏁 Puiku! Baigei šio lygio klausimus!';
+                document.getElementById('qOptions').innerHTML = '';
+                document.getElementById('feedbackBox').className = 'feedback-box';
+                document.getElementById('nextQuestion').style.display = 'none';
+                document.getElementById('quizInfo').textContent = '✅ Lygis ' + state.currentLevel +
+                ' baigtas! Perk į kitą?';
+                return;
+            }
+            const q = currentQuestions[idx];
+            document.getElementById('qText').textContent = (idx + 1) + '. ' + q.q;
+            const optDiv = document.getElementById('qOptions');
+            optDiv.innerHTML = '';
+            q.opts.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = String.fromCharCode(65 + i) + '. ' + opt;
+                btn.dataset.index = i;
+                btn.addEventListener('click', () => handleAnswer(i));
+                optDiv.appendChild(btn);
+            });
+            document.getElementById('feedbackBox').className = 'feedback-box';
+            document.getElementById('nextQuestion').style.display = 'none';
+            state.answered = false;
+        }
+
+        function handleAnswer(selected) {
+            if (state.answered) return;
+            state.answered = true;
+            const idx = state.currentQuestionIndex;
+            if (idx >= currentQuestions.length) return;
+            const q = currentQuestions[idx];
+            const correct = q.ans;
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach((btn, i) => {
+                btn.classList.add('disabled');
+                if (i === correct) btn.classList.add('correct');
+                if (i === selected && i !== correct) btn.classList.add('wrong');
+            });
+
+            const isCorrect = selected === correct;
+            const topic = q.topic || 'bendra';
+            if (!state.topicStats[topic]) state.topicStats[topic] = { correct: 0, total: 0 };
+            state.topicStats[topic].total++;
+            if (isCorrect) {
+                state.topicStats[topic].correct++;
+                state.quizCorrect++;
+                updateXP(10 + state.currentLevel * 5);
+                updateStreak(true);
+                if (state.currentLevel >= 3) addStar();
+                showFeedback('✅ Teisingai! ' + getExplanation(q), 'success');
+            } else {
+                updateStreak(false);
+                showFeedback('❌ Neteisingai. ' + getExplanation(q) + ' Tavo atsakymas: ' + q.opts[selected],
+                'error');
+                // papildomas paaiškinimas apie dažniausias klaidas
+                if (q.topic === 'aminorūgštys' && selected === 0 && correct !== 0) {
+                    showFeedback('❌ Neteisingai. ' + getExplanation(q) +
+                        ' Dažna klaida: painiojamos aminorūgščių rūšys. Atmink, kad rūgštinės turi daugiau -COOH grupių.',
+                        'error');
+                }
+                if (q.topic === 'skaičiavimai') {
+                    showFeedback('❌ Neteisingai. ' + getExplanation(q) +
+                        ' Skaičiuodamas molekulinę masę nepamiršk atimti vandens (18 g/mol) kiekvienai jungčiai.',
+                        'error');
+                }
+            }
+            state.quizTotal++;
+            document.getElementById('quizScore').textContent = 'Teisingi: ' + state.quizCorrect;
+            document.getElementById('quizTotal').textContent = 'Iš viso: ' + state.quizTotal;
+            document.getElementById('nextQuestion').style.display = 'inline-block';
+            updateDiagnostics();
+        }
+
+        function getExplanation(q) {
+            const explanations = {
+                'struktūra': 'Aminorūgštys turi amino (-NH₂) ir karboksilo (-COOH) grupes.',
+                'jungtys': 'Peptidinė jungtis susidaro tarp amino ir karboksilo grupių.',
+                'aminorūgštys': 'Glicinas yra paprasčiausia aminorūgštis, turinti vandenilį kaip R grupę.',
+                'hidrolizė': 'Hidrolizės metu baltymai skyla į aminorūgštis.',
+                'skaičiavimai': 'Skaičiuodamas molekulinę masę nepamiršk atimti vandens molekulių.',
+            };
+            return explanations[q.topic] || 'Peržiūrėk teoriją, kad suprastum geriau.';
+        }
+
+        document.getElementById('nextQuestion').addEventListener('click', function() {
+            state.currentQuestionIndex++;
+            if (state.currentQuestionIndex < currentQuestions.length) {
+                showQuestion();
+            } else {
+                // lygio pabaiga
+                const level = state.currentLevel;
+                state.levelScores[level] = (state.levelScores[level] || 0) + 1;
+                document.getElementById('qText').textContent = '🏁 Lygis ' + level +
+                ' baigtas! Spausk "Kitas lygis" arba pasirink naują lygį.';
+                document.getElementById('qOptions').innerHTML = '';
+                document.getElementById('feedbackBox').className = 'feedback-box';
+                this.style.display = 'none';
+                document.getElementById('quizInfo').textContent = '✅ Lygis ' + level +
+                    ' baigtas! Sprendi toliau?';
+                if (level < 4) {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn btn-success';
+                    btn.textContent = '⬆️ Kitas lygis (' + (level + 1) + ')';
+                    btn.addEventListener('click', function() {
+                        loadQuestions(level + 1);
+                        this.remove();
+                    });
+                    document.getElementById('qOptions').appendChild(btn);
+                } else {
+                    const msg = document.createElement('p');
+                    msg.textContent = '🎉 Sveikiname! Įveikei visus lygius! Tu - baltymų ekspertas!';
+                    msg.style.fontWeight = 'bold';
+                    msg.style.color = '#1a2a5e';
+                    document.getElementById('qOptions').appendChild(msg);
+                    showAchievement('🏅 Baltymų ekspertas!');
+                }
+                updateDiagnostics();
+            }
+        });
+
+        // Lygių pasirinkimas
+        document.querySelectorAll('.quiz-level .btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const level = parseInt(this.dataset.level);
+                loadQuestions(level);
+                document.querySelectorAll('.quiz-level .btn').forEach(b => b.style.opacity = '0.6');
+                this.style.opacity = '1';
+            });
+        });
+
+        // Inicijuoti pirmą lygį
+        loadQuestions(1);
+
+        // ========================================
+        // DIAGNOSTIKA
+        // ========================================
+        function updateDiagnostics() {
+            // Stiprybės
+            const strengths = document.getElementById('strengthsArea');
+            const weaknesses = document.getElementById('weaknessesArea');
+            const recommend = document.getElementById('recommendArea');
+            const achievements = document.getElementById('achievementsArea');
+            const stats = document.getElementById('statsDetailed');
+
+            // Analizuoti temas
+            let topicPerformance = [];
+            for (const [topic, data] of Object.entries(state.topicStats)) {
+                if (data.total > 0) {
+                    const pct = (data.correct / data.total) * 100;
+                    topicPerformance.push({ topic, pct, total: data.total, correct: data.correct });
+                }
+            }
+
+            if (topicPerformance.length === 0) {
+                strengths.innerHTML = '<p style="color:#7f8c8d;">Atsakyk į kelis klausimus, kad pamatytum rezultatus...</p>';
+                weaknesses.innerHTML = '<p style="color:#7f8c8d;">Duomenų kol kas nepakanka...</p>';
+                recommend.innerHTML = '<p style="color:#7f8c8d;">Atsakyk į daugiau klausimų, kad gautum rekomendacijas.</p>';
+                achievements.innerHTML = '<p style="color:#7f8c8d;">Pasiekimai: ' + (state.achievements.length > 0 ? state
+                    .achievements.join(', ') : 'Dar nėra') + '</p>';
+                stats.innerHTML = '<p style="color:#7f8c8d;">Iš viso atsakyta: ' + state.quizTotal +
+                    ' klausimų. Teisingi: ' + state.quizCorrect + ' (' + (state.quizTotal > 0 ? Math.round(state
+                        .quizCorrect / state.quizTotal * 100) : 0) + '%)</p>';
+                return;
+            }
+
+            // Stiprybės (>=70%)
+            const strong = topicPerformance.filter(t => t.pct >= 70);
+            const medium = topicPerformance.filter(t => t.pct >= 40 && t.pct < 70);
+            const weak = topicPerformance.filter(t => t.pct < 40);
+
+            strengths.innerHTML = strong.length > 0 ?
+                strong.map(t =>
+                    `<span class="badge good">✅ ${t.topic}: ${Math.round(t.pct)}% (${t.correct}/${t.total})</span>`
+                    ).join(' ') :
+                '<span style="color:#7f8c8d;">Kol kas nėra aiškių stiprybių. Sprendi toliau!</span>';
+
+            weaknesses.innerHTML = weak.length > 0 ?
+                weak.map(t =>
+                    `<span class="badge danger">⚠️ ${t.topic}: ${Math.round(t.pct)}% (${t.correct}/${t.total})</span>`
+                    ).join(' ') :
+                '<span style="color:#27ae60;">✅ Puiku! Neturi akivaizdžių silpnybių šiose temose.</span>';
+
+            // Rekomendacijos
+            let recs = [];
+            if (weak.length > 0) {
+                recs.push('📚 ' + weak.map(t => t.topic).join(', ') +
+                ' - peržiūrėk šių temų teoriją ir atlik daugiau užduočių.');
+            }
+            if (medium.length > 0) {
+                recs.push('📖 ' + medium.map(t => t.topic).join(', ') +
+                    ' - šias temas vertėtų pasitobulinti atliekant papildomas užduotis.');
+            }
+            if (strong.length === topicPerformance.length && strong.length > 0) {
+                recs.push('🌟 Puikiai išmanai visas temas! Gali spręsti sudėtingesnius VBE tipo uždavinius.');
+            }
+            if (recs.length === 0) {
+                recs.push('💡 Sprendi daugiau užduočių, kad gautum tikslesnes rekomendacijas.');
+            }
+            recommend.innerHTML = recs.map(r => '<p style="margin:5px 0;">' + r + '</p>').join('');
+
+            // Pasiekimai
+            achievements.innerHTML = state.achievements.length > 0 ?
+                state.achievements.map(a => `<span class="badge good">🏅 ${a}</span>`).join(' ') :
+                '<p style="color:#7f8c8d;">Dar nėra pasiekimų. Siek naujų aukštumų!</p>';
+
+            // Statistika
+            const total = state.quizTotal;
+            const correct = state.quizCorrect;
+            const pct = total > 0 ? Math.round(correct / total * 100) : 0;
+            stats.innerHTML = `
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <div><strong>📊 Iš viso klausimų:</strong> ${total}</div>
+                    <div><strong>✅ Teisingai:</strong> ${correct}</div>
+                    <div><strong>📈 Bendras tikslumas:</strong> ${pct}%</div>
+                    <div><strong>🔥 Geriausia serija:</strong> ${state.maxStreak}</div>
+                    <div><strong>⭐ Žvaigždutės:</strong> ${state.stars}</div>
+                    <div><strong>🏅 Pasiekimai:</strong> ${state.achievements.length}</div>
+                </div>
+                <div style="margin-top:10px;">
+                    <strong>Lygių įvertinimas:</strong><br>
+                    ${Object.entries(state.levelScores).map(([lvl, score]) => 
+                        `<span class="badge ${score > 0 ? 'good' : 'warn'}">Lygis ${lvl}: ${score > 0 ? '✅' : '⬜'}</span>`
+                    ).join(' ')}
+                </div>
+            `;
+        }
+
+        // ========================================
+        // INICIJAVIMAS
+        // ========================================
+        // Patikrinti pradinę būseną
+        updateDiagnostics();
+        console.log('🧬 Baltymų ir aminorūgščių mokomoji programėlė paleista!');
+        console.log('📚 Sukurta pagal Lietuvos VBE chemijos programą (2026).');
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VBE Chemija ir Aplinka - Edukacinė Programėlė</title>
+    <style>
+        :root {
+            --primary: #2b5876;
+            --secondary: #4e4376;
+            --accent: #00d2ff;
+            --bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --correct: #2ecc71;
+            --wrong: #e74c3c;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: var(--bg); color: var(--text); padding-bottom: 30px; }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white; padding: 20px; text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        nav {
+            display: flex; justify-content: center; background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100;
+        }
+
+        nav button {
+            background: none; border: none; padding: 15px 25px; font-size: 16px;
+            font-weight: bold; color: var(--text); cursor: pointer; transition: 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        nav button:hover, nav button.active {
+            color: var(--primary); border-bottom: 3px solid var(--accent); background: #f0f4f8;
+        }
+
+        .container { max-width: 1000px; margin: 20px auto; padding: 0 15px; }
+
+        .section { display: none; background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .section.active { display: block; animation: fadeIn 0.4s ease-in-out; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Theory Styles */
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 15px; }
+        .card { background: #f8fafc; border-left: 5px solid var(--primary); padding: 15px; border-radius: 6px; }
+        .card h3 { color: var(--primary); margin-bottom: 8px; }
+        .chem-eq { background: #eef2f5; padding: 6px 10px; border-radius: 4px; font-family: monospace; font-size: 1.05em; margin: 5px 0; display: inline-block; }
+
+        /* Lab Styles */
+        .sim-controls { background: #f0f4f8; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        .sim-controls label { font-weight: bold; display: block; margin-top: 10px; }
+        .sim-controls input[type="range"] { width: 100%; margin-top: 5px; }
+        .visualizer {
+            height: 200px; border-radius: 8px; border: 2px dashed #ccc;
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column; transition: background 0.5s; text-align: center; padding: 10px;
+        }
+        .btn {
+            background: var(--primary); color: white; border: none; padding: 10px 20px;
+            border-radius: 6px; cursor: pointer; font-size: 15px; margin-top: 10px; transition: 0.2s;
+        }
+        .btn:hover { background: var(--secondary); }
+
+        /* Test Styles */
+        .q-box { background: #f9f9f9; border: 1px solid #ddd; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .q-title { font-weight: bold; margin-bottom: 12px; font-size: 1.1em; }
+        .options { display: flex; flex-direction: column; gap: 8px; }
+        .option-btn {
+            background: white; border: 1px solid #ccc; padding: 10px; border-radius: 5px;
+            text-align: left; cursor: pointer; transition: 0.2s;
+        }
+        .option-btn:hover { background: #eef6ff; }
+        .feedback { margin-top: 10px; padding: 10px; border-radius: 5px; font-weight: bold; display: none; }
+        .feedback.correct { background: #d4edda; color: #155724; display: block; }
+        .feedback.wrong { background: #f8d7da; color: #721c24; display: block; }
+
+        /* Dashboard */
+        .stat-box { text-align: center; padding: 15px; background: #eef2f5; border-radius: 8px; font-size: 1.2em; font-weight: bold; }
+        
+        input[type="number"], select {
+            padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>VBE Chemija ir Aplinka</h1>
+    <p>Interaktyvus pasiruošimo valstybiniam egzaminui modulis</p>
+</header>
+
+<nav>
+    <button class="nav-btn active" onclick="switchTab('theory')">1. Teorija</button>
+    <button class="nav-btn" onclick="switchTab('lab')">2. Simuliacija (Rūgštusis lietus)</button>
+    <button class="nav-btn" onclick="switchTab('quiz')">3. Žinių patikrinimas</button>
+    <button class="nav-btn" onclick="switchTab('diag')">4. Diagnostika</button>
+</nav>
+
+<div class="container">
+
+    <div id="theory" class="section active">
+        <h2>Svarbiausios VBE „Chemija ir Aplinka“ sąvokos</h2>
+        <div class="grid-2">
+            <div class="card">
+                <h3>Rūgštusis lietus</h3>
+                <p>Susidaro atmosferoje reaguojant sieros ir azoto oksidams su vandeniu:</p>
+                <div class="chem-eq">SO₂ + H₂O → H₂SO₃</div><br>
+                <div class="chem-eq">2SO₂ + O₂ + 2H₂O → 2H₂SO₄</div><br>
+                <div class="chem-eq">4NO₂ + O₂ + 2H₂O → 4HNO₃</div>
+                <p><strong>Poveikis:</strong> dirvožemio rūgštėjimas, augalų pažeidimai, metalinių konstrukcijų ir kalkakmenio skulptūrų korozija (CaCO₃ + H₂SO₄ → CaSO₄ + H₂O + CO₂).</p>
+            </div>
+            <div class="card">
+                <h3>Šiltnamio efektas</h3>
+                <p><strong>Šiltnamio dujos:</strong> CO₂, CH₄, H₂O(g), N₂O, CFC (freonai).</p>
+                <p>Absorbuoja Žemės atspindėtą infraraudonąją (šiluminę) spinduliuotę. Pagrindinė problemos priežastis – iškastinio kuro deginimas ir miškų kirtimas.</p>
+            </div>
+            <div class="card">
+                <h3>Vandens kietumas</h3>
+                <p>Atsiranda dėl tirpių kalcio ir magnio druskų vandenyje:</p>
+                <ul>
+                    <li><strong>Laikinasis (karbonatinis):</strong> Ca(HCO₃)₂, Mg(HCO₃)₂. Pašalinamas virinant: <span class="chem-eq">Ca(HCO₃)₂ → CaCO₃↓ + H₂O + CO₂</span></li>
+                    <li><strong>Nuolatinis:</strong> CaSO₄, CaCl₂, MgSO₄, MgCl₂. Pašalinamas naudojant sodą (Na₂CO₃) arba jonų mainus.</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>Ozono sluoksnis</h3>
+                <p>Ozonas (O₃) stratosferoje saugo Žemę nuo kenksmingų UV spindulių.</p>
+                <p>Ardo CFC (freonai), išskiriantys chloro radikalus kataliziniame procese:</p>
+                <div class="chem-eq">Cl• + O₃ → ClO• + O₂</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="lab" class="section">
+        <h2>Interaktyvi laboratorija: Rūgštaus lietaus ir jo neutralizacijos modelis</h2>
+        <p>Pasirinkite pramoninės taršos parametrus ir stebėkite lietaus pH bei poveikį aplinkai. Po to neutralizuokite poveikį kalkėmis (CaCO₃).</p>
+        
+        <div class="sim-controls">
+            <label>SO₂ emisija (Gamyklų tarša): <span id="so2-val">50</span>%</label>
+            <input type="range" id="so2-slider" min="0" max="100" value="50" oninput="updateSim()">
+
+            <label>NOx emisija (Automobilių transportas): <span id="nox-val">50</span>%</label>
+            <input type="range" id="nox-slider" min="0" max="100" value="50" oninput="updateSim()">
+
+            <label>Pilti dirvožemio neutralizatorių (Kalkes - CaCO₃):</label>
+            <button class="btn" onclick="addLime()">Įpilti 1 toną CaCO₃</button>
+            <button class="btn" style="background:#8e44ad" onclick="resetSim()">Atstatyti rodiklius</button>
+        </div>
+
+        <div id="visualizer" class="visualizer">
+            <h3 id="sim-ph">Lietaus pH: 4.5</h3>
+            <p id="sim-status">Atmosphere status: Normal</p>
+            <p id="sim-effect" style="margin-top:10px; font-weight:bold;"></p>
+        </div>
+    </div>
+
+    <div id="quiz" class="section">
+        <h2>VBE Lygio užduotys</h2>
+        <p>Išspręskite pateiktas užduotis. Atsakymai tikrinami dinamiškai.</p>
+        <hr style="margin: 15px 0;">
+
+        <div class="q-box" id="q1">
+            <p class="q-title">1 Uždavinys (Konstrukcinis / Dėsningumai): Kuri iš šių reakcijų paaiškina, kodėl virinant vandenį virdulyje susidaro kalkių nuosėdos?</p>
+            <div class="options">
+                <button class="option-btn" onclick="checkQ1(this, false)">A) CaCO₃ + CO₂ + H₂O → Ca(HCO₃)₂</button>
+                <button class="option-btn" onclick="checkQ1(this, true)">B) Ca(HCO₃)₂ → CaCO₃↓ + CO₂↑ + H₂O</button>
+                <button class="option-btn" onclick="checkQ1(this, false)">C) CaSO₄ + Na₂CO₃ → CaCO₃↓ + Na₂SO₄</button>
+                <button class="option-btn" onclick="checkQ1(this, false)">D) CaO + H₂O → Ca(OH)₂</button>
+            </div>
+            <div class="feedback" id="q1-fb"></div>
+        </div>
+
+        <div class="q-box" id="q2">
+            <p class="q-title">2 Uždavinys (Skaičiavimas): Į ežerą, kurio tūris 100 000 m³, pateko H₂SO₄, ir jos koncentracija siekia 0.0005 mol/L. Kiek tonų CaCO₃ reiktų suberti pilnam šios rūgšties neutralizavimui? M(CaCO₃) = 100 g/mol, M(H₂SO₄) = 98 g/mol.</p>
+            <p style="margin-bottom:10px; font-size:0.9em;"><i>Reakcija: CaCO₃ + H₂SO₄ → CaSO₄ + H₂O + CO₂</i></p>
+            <input type="number" id="q2-input" placeholder="Įveskite atsakymą (tonomis)">
+            <button class="btn" onclick="checkQ2()">Tikrinti</button>
+            <div class="feedback" id="q2-fb"></div>
+        </div>
+
+        <div class="q-box" id="q3">
+            <p class="q-title">3 Uždavinys (Klaidos ieškojimas): Mokinys teigia, kad visi šie junginiai didina šiltnamio efektą: CO₂, CH₄, N₂, H₂O(g). Kuris junginys įvardintas NETEISINGAI?</p>
+            <div class="options">
+                <button class="option-btn" onclick="checkQ3(this, false)">A) CH₄ (Metanas)</button>
+                <button class="option-btn" onclick="checkQ3(this, true)">B) N₂ (Azotas)</button>
+                <button class="option-btn" onclick="checkQ3(this, false)">C) H₂O(g) (Vandens garai)</button>
+                <button class="option-btn" onclick="checkQ3(this, false)">D) CO₂ (Anglies dioksidas)</button>
+            </div>
+            <div class="feedback" id="q3-fb"></div>
+        </div>
+    </div>
+
+    <div id="diag" class="section">
+        <h2>Mokymosi diagnostika ir VBE atitiktis</h2>
+        <div class="grid-2" style="margin-top:20px;">
+            <div class="stat-box">
+                <p>Atlikta užduočių</p>
+                <span id="stat-completed" style="font-size:2em; color:var(--primary);">0 / 3</span>
+            </div>
+            <div class="stat-box">
+                <p>Tikslumas</p>
+                <span id="stat-accuracy" style="font-size:2em; color:var(--correct);">0%</span>
+            </div>
+        </div>
+
+        <h3 style="margin-top:20px;">Išsami analizė:</h3>
+        <div id="diag-analysis" style="margin-top:10px; line-height:1.6;">
+            <p>Atlikite testus ir simuliacijas, kad pamatytumėte savo rezultatų analizę.</p>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // Būsenos sekimas
+    let userStats = {
+        q1: null,
+        q2: null,
+        q3: null,
+        addedLime: 0
+    };
+
+    function switchTab(tabId) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        
+        document.getElementById(tabId).classList.add('active');
+        event.target.classList.add('active');
+
+        if(tabId === 'diag') updateDiagnostics();
+    }
+
+    // SIMULIACIJA
+    let limeAdded = 0;
+
+    function updateSim() {
+        let so2 = parseInt(document.getElementById('so2-slider').value);
+        let nox = parseInt(document.getElementById('nox-slider').value);
+        document.getElementById('so2-val').innerText = so2;
+        document.getElementById('nox-val').innerText = nox;
+
+        // Ph skaičiavimas: bazinis tyrame vandenyje ~5.6 (dėl atmosferos CO2)
+        let totalPollution = so2 + nox;
+        let basepH = 5.6 - (totalPollution / 40); 
+        
+        // Kalkių poveikis
+        basepH += (limeAdded * 0.4);
+        if (basepH > 8.5) basepH = 8.5; // Maksimalus šarminis ribojimas
+
+        let visualizer = document.getElementById('visualizer');
+        let phText = document.getElementById('sim-ph');
+        let statusText = document.getElementById('sim-status');
+        let effectText = document.getElementById('sim-effect');
+
+        phText.innerText = "Lietaus / Vandens pH: " + basepH.toFixed(1);
+
+        if (basepH < 4.5) {
+            visualizer.style.background = "#ffcccc";
+            statusText.innerText = "Būsena: Stiprus rūgštusis lietus!";
+            effectText.innerText = "Poveikis: Dykėja miškai, žūsta žuvys, vyksta pastatų iš kalcito (CaCO₃) erozija.";
+        } else if (basepH >= 4.5 && basepH < 5.6) {
+            visualizer.style.background = "#fff0bb";
+            statusText.innerText = "Būsena: Lengvai parūgštėjęs kritulys";
+            effectText.innerText = "Poveikis: Padidėjusi metalų korozijos rizika, ilguoju laikotarpiu alina dirvožemį.";
+        } else if (basepH >= 5.6 && basepH <= 7.5) {
+            visualizer.style.background = "#d4edda";
+            statusText.innerText = "Būsena: Normali / Ekologinė pusiausvyra";
+            effectText.innerText = "Poveikis: Saugus vandens telkiniams ir augalijai.";
+        } else {
+            visualizer.style.background = "#d0e1fd";
+            statusText.innerText = "Būsena: Šarminė terpė (Perdaug kalkių)";
+            effectText.innerText = "Poveikis: Gali sutrikti tam tikrų augalų maistinių medžiagų įsisavinimas.";
+        }
+    }
+
+    function addLime() {
+        limeAdded++;
+        userStats.addedLime++;
+        updateSim();
+    }
+
+    function resetSim() {
+        limeAdded = 0;
+        document.getElementById('so2-slider').value = 50;
+        document.getElementById('nox-slider').value = 50;
+        updateSim();
+    }
+
+    // UŽDUOČIŲ TIKRINIMAS
+    function checkQ1(btn, isCorrect) {
+        let fb = document.getElementById('q1-fb');
+        if (isCorrect) {
+            fb.className = "feedback correct";
+            fb.innerText = "Teisingai! Šildant vandenį tirpus kalcio hidrokarbonatas skyla į netirpų kalcio karbonatą (kalkes).";
+            userStats.q1 = true;
+        } else {
+            fb.className = "feedback wrong";
+            fb.innerText = "Neteisingai. Ši reakcija neatspindi vandens virimo metu vykstančio laikinojo kietumo pašalinimo (skilimo procesas).";
+            userStats.q1 = false;
+        }
+    }
+
+    function checkQ2() {
+        let val = parseFloat(document.getElementById('q2-input').value);
+        let fb = document.getElementById('q2-fb');
+        
+        // Skaičiavimas: 
+        // V = 100 000 m³ = 100 000 000 L = 10^8 L
+        // n(H2SO4) = C * V = 0.0005 mol/L * 10^8 L = 50 000 mol
+        // n(CaCO3) = n(H2SO4) = 50 000 mol
+        // m(CaCO3) = 50 000 mol * 100 g/mol = 5 000 000 g = 5 tonos.
+        
+        if (val === 5) {
+            fb.className = "feedback correct";
+            fb.innerText = "Puiku! Teisingas atsakymas: 5 tonos. (n(H₂SO₄) = 0.0005 mol/L × 10⁸ L = 50 000 mol. Pagal lygti m(CaCO₃) = 50 000 mol × 100 g/mol = 5 t).";
+            userStats.q2 = true;
+        } else {
+            fb.className = "feedback wrong";
+            fb.innerText = "Neteisingai. Užuomina: Pasiverskite m³ į liters (1 m³ = 1000 L). Tada apskaičiuokite rūgšties molio kiekį n=C*V. Pagal reakcijos santykį 1:1 raskite CaCO₃ masę.";
+            userStats.q2 = false;
+        }
+    }
+
+    function checkQ3(btn, isCorrect) {
+        let fb = document.getElementById('q3-fb');
+        if (isCorrect) {
+            fb.className = "feedback correct";
+            fb.innerText = "Teisingai! N₂ (Azoto dujos) sudaro 78% atmosferos ir nėra šiltnamio efektą sukeliančios dujos. Tuo tarpu N₂O (azoto suboksidas) yra šiltnamio dujos.";
+            userStats.q3 = true;
+        } else {
+            fb.className = "feedback wrong";
+            fb.innerText = "Neteisingai. Pasirinktos dujos yra šiltnamio dujos. Išanalizuokite N₂ vaidmenį atmosferoje.";
+            userStats.q3 = false;
+        }
+    }
+
+    // DIAGNOSTIKA
+    function updateDiagnostics() {
+        let completed = 0;
+        let correct = 0;
+
+        ['q1', 'q2', 'q3'].forEach(q => {
+            if (userStats[q] !== null) {
+                completed++;
+                if (userStats[q] === true) correct++;
+            }
+        });
+
+        document.getElementById('stat-completed').innerText = completed + " / 3";
+        let acc = completed > 0 ? Math.round((correct / completed) * 100) : 0;
+        document.getElementById('stat-accuracy').innerText = acc + "%";
+
+        let diagHtml = "<ul>";
+        
+        if(userStats.q1 === true) {
+            diagHtml += "<li style='color:green;'><b>Vandens kietumas:</b> Puikiai suprantate laikinojo kietumo šalinimo chemines reakcijas.</li>";
+        } else if(userStats.q1 === false) {
+            diagHtml += "<li style='color:red;'><b>Vandens kietumas:</b> Verta pakartoti karbonatinio kietumo skilimo reakcijas šildant.</li>";
+        }
+
+        if(userStats.q2 === true) {
+            diagHtml += "<li style='color:green;'><b>Stechiometrija ir ekologija:</b> Gebate atlikti VBE lygio skaičiavimo uždavinius pagal reakcijų lygtis su tūrių konvertavimu.</li>";
+        } else if(userStats.q2 === false) {
+            diagHtml += "<li style='color:red;'><b>Stechiometrija:</b> Pasikartokite matavimo vienetų (m³ -> L) vertimą ir molinės masės formulę m = n × M.</li>";
+        }
+
+        if(userStats.q3 === true) {
+            diagHtml += "<li style='color:green;'><b>Atmosferos chemija:</b> Tiksliai atskiriate šiltnamio efektą sukeliančias dujas nuo pagrindinių oro komponentų.</li>";
+        } else if(userStats.q3 === false) {
+            diagHtml += "<li style='color:red;'><b>Atmosferos chemija:</b> Prisiminkite: N₂ ir O₂ nėra šiltnamio dujos!</li>";
+        }
+
+        if(userStats.addedLime > 0) {
+            diagHtml += "<li style='color:blue;'><b>Eksperimentavimas:</b> Išbandėte rūgštaus dirvožemio/vandens neutralizavimą CaCO₃ kalkėmis simuliacijoje.</li>";
+        }
+
+        diagHtml += "</ul>";
+
+        if(completed === 0) {
+            diagHtml = "<p>Atlikite užduotis žinių patikrinimo skiltyje, kad gautumėte individualias rekomendacijas.</p>";
+        }
+
+        document.getElementById('diag-analysis').innerHTML = diagHtml;
+    }
+
+    // Inicializavimas
+    updateSim();
+</script>
+</body>
+</html>

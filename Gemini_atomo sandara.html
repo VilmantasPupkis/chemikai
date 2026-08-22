@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VBE Chemija: Atomo Sandara</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #0e7490;
+            --accent: #f59e0b;
+            --bg-main: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text);
+            line-height: 1.5;
+            padding-bottom: 40px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e3a8a, #0284c7);
+            color: white;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.3rem;
+        }
+
+        header p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            background: #ffffff;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            overflow-x: auto;
+        }
+
+        .nav-btn {
+            padding: 1rem 1.2rem;
+            border: none;
+            background: none;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-btn:hover {
+            color: var(--primary);
+        }
+
+        .nav-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 1.5rem auto;
+            padding: 0 1rem;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .card h2 {
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            border-bottom: 2px solid #eff6ff;
+            padding-bottom: 0.5rem;
+        }
+
+        /* Theory Styles */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .rule-box {
+            background: #f0f9ff;
+            border-left: 4px solid var(--primary);
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+
+        .rule-box h3 {
+            color: var(--primary-dark);
+            margin-bottom: 0.3rem;
+            font-size: 1.05rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .badge-danger { background: #fee2e2; color: #991b1b; }
+        .badge-success { background: #dcfce7; color: #166534; }
+        .badge-warning { background: #fef3c7; color: #92400e; }
+
+        /* Lab Styles */
+        .controls-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .control-group button {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            color: var(--primary);
+            transition: 0.2s;
+        }
+
+        .control-group button:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .control-value {
+            font-weight: bold;
+            min-width: 25px;
+            text-align: center;
+        }
+
+        .atom-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        svg#atom-canvas {
+            max-width: 320px;
+            width: 100%;
+            height: auto;
+            background: #ffffff;
+            border-radius: 50%;
+        }
+
+        .info-board {
+            width: 100%;
+            background: #f1f5f9;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .orbital-boxes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .subshell {
+            border: 1px solid #cbd5e1;
+            padding: 0.4rem;
+            border-radius: 4px;
+            background: white;
+        }
+
+        .subshell-title {
+            font-size: 0.75rem;
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 0.2rem;
+            font-weight: bold;
+        }
+
+        .boxes-container {
+            display: flex;
+            gap: 2px;
+        }
+
+        .box {
+            width: 26px;
+            height: 26px;
+            border: 1px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        /* Quiz Styles */
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: #64748b;
+        }
+
+        .btn-secondary:hover {
+            background: #475569;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .option-btn {
+            padding: 0.8rem;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 6px;
+            text-align: left;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .option-btn:hover {
+            background: #f0f9ff;
+            border-color: var(--primary);
+        }
+
+        .option-btn.correct {
+            background: #dcfce7 !important;
+            border-color: var(--success) !important;
+            color: #166534;
+        }
+
+        .option-btn.wrong {
+            background: #fee2e2 !important;
+            border-color: var(--danger) !important;
+            color: #991b1b;
+        }
+
+        .feedback-box {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .feedback-box.show {
+            display: block;
+        }
+
+        .feedback-box.correct {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac;
+        }
+
+        .feedback-box.wrong {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 0.6rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            margin: 0.5rem 0;
+            font-size: 1rem;
+        }
+
+        /* Diagnostic */
+        .stat-card {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-num {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            background: #e2e8f0;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 0.3rem;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>VBE Chemija: Atomo Sandara</h1>
+        <p>Interaktyvus pasiruošimo ir savipatikros gidas (1-30 elementai)</p>
+    </header>
+
+    <nav>
+        <button class="nav-btn active" onclick="switchTab('theory')">1. Teorija</button>
+        <button class="nav-btn" onclick="switchTab('lab')">2. Konstruktorius</button>
+        <button class="nav-btn" onclick="switchTab('quiz')">3. VBE Uždaviniai</button>
+        <button class="nav-btn" onclick="switchTab('diagnostics')">4. Diagnostika</button>
+    </nav>
+
+    <main>
+        <!-- 1. TEORIJA -->
+        <section id="theory" class="section active">
+            <div class="card">
+                <h2>Subatominės dalelės ir Žymėjimas</h2>
+                <div class="grid-2">
+                    <div>
+                        <p>Atomą sudaro <strong>branduolys</strong> (protonai ir neutronai) bei <strong>elektronų apvalkalas</strong>.</p>
+                        <ul style="margin-left: 1.2rem; margin-top: 0.5rem;">
+                            <li><strong>Protonas ($p^+$):</strong> krūvis +1, santykinė masė ≈ 1</li>
+                            <li><strong>Neutronas ($n^0$):</strong> krūvis 0, santykinė masė ≈ 1</li>
+                            <li><strong>Elektronas ($e^-$):</strong> krūvis -1, masė nykstamai maža</li>
+                        </ul>
+                    </div>
+                    <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 1.4rem; font-weight: bold;"><sub>Z</sub><sup>A</sup>X<sup>q</sup></div>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">
+                            <strong>A</strong> = Masės skaičius ($p^+ + n^0$)<br>
+                            <strong>Z</strong> = Eilės nr. / Protonų skaičius ($p^+$)<br>
+                            <strong>q</strong> = Jono krūvis ($p^+ - e^-$)
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Elektronų Konfigūracijos ir Taisyklės</h2>
+                <div class="rule-box">
+                    <h3>1. Mažiausios energijos principas</h3>
+                    <p>Elektronai pirmiausia užpildo mažiausios energijos sublygmenius: <br>
+                    <code>1s → 2s → 2p → 3s → 3p → 4s → 3d</code></p>
+                </div>
+                <div class="rule-box">
+                    <h3>2. Pauli draudimo principas</h3>
+                    <p>Vienoje orbitalėje gali būti ne daugiau kaip du elektronai ir jų sukiniai (spinai) turi būti priešingi (↑↓).</p>
+                </div>
+                <div class="rule-box">
+                    <h3>3. Hundo taisyklė</h3>
+                    <p>Tos pačios energijos sublygmenio orbitalės iš pradžių užpildomos po vieną elektroną su vienodais sukiniais (↑ ↑ ↑), ir tik po to poruojamasi.</p>
+                </div>
+                <div class="rule-box" style="border-left-color: var(--accent); background: #fffbeb;">
+                    <h3>Svarbios VBE Išimtys! (Užpildymo nukrypimai)</h3>
+                    <p>Dėl ypatingo pusiau užpildyto arba pilnai užpildyto <em>d</em> sublygmens stabilumo:</p>
+                    <p><strong>Chromas (<sub>24</sub>Cr):</strong> <code>[Ar] 4s¹ 3d⁵</code> (ne 4s² 3d⁴)</p>
+                    <p><strong>Varis (<sub>29</sub>Cu):</strong> <code>[Ar] 4s¹ 3d¹⁰</code> (ne 4s² 3d⁹)</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Periodiniai Dėsningumai</h2>
+                <div class="grid-2">
+                    <div>
+                        <h3>Perioduose (iš kairės į dešinę →):</h3>
+                        <ul style="margin-left: 1.2rem; font-size: 0.9rem;">
+                            <li>Branduolio krūvis <strong>didėja</strong></li>
+                            <li>Atomo spindulys <strong>mažėja</strong> (stipresnė trauka)</li>
+                            <li>Elektrinis neigiamumas (EN) <strong>didėja</strong></li>
+                            <li>Jonizacijos energija <strong>didėja</strong></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Grupėse (iš viršaus į apačią ↓):</h3>
+                        <ul style="margin-left: 1.2rem; font-size: 0.9rem;">
+                            <li>Elektronų sluoksnių skaičius <strong>didėja</strong></li>
+                            <li>Atomo spindulys <strong>didėja</strong></li>
+                            <li>Elektrinis neigiamumas (EN) <strong>mažėja</strong></li>
+                            <li>Metalų reakingumas <strong>didėja</strong></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. KONSTRUKTORIUS -->
+        <section id="lab" class="section">
+            <div class="card">
+                <h2>Interaktyvus Atomo ir Jonų Konstruktorius</h2>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">
+                    Keiskite protonų, neutronų ir elektronų skaičių. Stebėkite elemento kitimą, konfigūraciją ir orbitalių užpildymą.
+                </p>
+
+                <div class="controls-panel">
+                    <div class="control-group">
+                        <span>Protonai (p⁺):</span>
+                        <button onclick="changeParticle('p', -1)">-</button>
+                        <span id="p-count" class="control-value">1</span>
+                        <button onclick="changeParticle('p', 1)">+</button>
+                    </div>
+                    <div class="control-group">
+                        <span>Neutronai (n⁰):</span>
+                        <button onclick="changeParticle('n', -1)">-</button>
+                        <span id="n-count" class="control-value">0</span>
+                        <button onclick="changeParticle('n', 1)">+</button>
+                    </div>
+                    <div class="control-group">
+                        <span>Elektronai (e⁻):</span>
+                        <button onclick="changeParticle('e', -1)">-</button>
+                        <span id="e-count" class="control-value">1</span>
+                        <button onclick="changeParticle('e', 1)">+</button>
+                    </div>
+                </div>
+
+                <div class="grid-2" style="align-items: center;">
+                    <div class="atom-display">
+                        <svg id="atom-canvas" viewBox="0 0 300 300">
+                            <!-- SVG elements rendered by JS -->
+                        </svg>
+                    </div>
+                    <div class="info-board">
+                        <h3 id="elem-name" style="color: var(--primary-dark); font-size: 1.4rem;">Vandenilis (H)</h3>
+                        <div style="margin: 0.5rem 0;">
+                            <span id="elem-type" class="badge">Neutralus atomas</span>
+                            <span id="elem-mass" class="badge" style="background:#e0f2fe;">A = 1</span>
+                            <span id="elem-charge" class="badge" style="background:#fef3c7;">Krūvis: 0</span>
+                        </div>
+                        <p style="font-size: 0.9rem; margin-top: 0.5rem;"><strong>Elektronų formula:</strong></p>
+                        <p id="elem-config" style="font-family: monospace; font-weight: bold; background: white; padding: 0.4rem; border-radius: 4px; border: 1px solid #cbd5e1; font-size: 0.95rem;">
+                            1s¹
+                        </p>
+                        
+                        <div id="exception-warning" class="badge badge-warning" style="display:none; margin-top:0.5rem; width:100%;">
+                            ⚠️ Dėmesio: Tai konfigūracijos išimtis! (4s¹ vietoje 4s²)
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem;">
+                    <h3>Orbitalių užpildymas (Grafinės formulės)</h3>
+                    <div id="orbital-diagram" class="orbital-boxes">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. VBE UŽDAVINIAI -->
+        <section id="quiz" class="section">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h2>VBE Užduotys ir Treniruoklis</h2>
+                    <div>
+                        <span class="badge" id="difficulty-badge">Lygis: Bazinis</span>
+                    </div>
+                </div>
+
+                <div id="quiz-container">
+                    <p id="quiz-question" style="font-size: 1.1rem; font-weight: 500; margin-bottom: 1rem;"></p>
+                    <div id="quiz-interactive-area"></div>
+                    <div id="quiz-options" class="options-grid"></div>
+                    <div id="quiz-feedback" class="feedback-box"></div>
+                    
+                    <div style="margin-top: 1.2rem; display: flex; gap: 0.5rem; justify-content: flex-end;">
+                        <button id="check-btn" class="btn" onclick="checkAnswer()">Patikrinti</button>
+                        <button id="next-btn" class="btn btn-secondary" onclick="generateTask()" style="display: none;">Kitas uždavinys</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. DIAGNOSTIKA -->
+        <section id="diagnostics" class="section">
+            <div class="card">
+                <h2>Jūsų Pasiruošimo Diagnostika</h2>
+                <div class="grid-2" style="margin-bottom: 1.5rem;">
+                    <div class="stat-card">
+                        <div>Atlikta užduočių</div>
+                        <div id="stat-total" class="stat-num">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div>Tikslumas</div>
+                        <div id="stat-accuracy" class="stat-num">0%</div>
+                    </div>
+                </div>
+
+                <h3>Mokėjimo Lygis pagal Temas</h3>
+                <div style="margin-top: 1rem;">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                            <span>Subatominės dalelės ir Izotopai</span>
+                            <span id="topic-1-pct">0%</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div id="topic-1-bar" class="progress-bar"></div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 1rem;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                            <span>Elektronų konfigūracijos ir Išimtys</span>
+                            <span id="topic-2-pct">0%</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div id="topic-2-bar" class="progress-bar"></div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 1rem;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                            <span>Periodiniai dėsningumai</span>
+                            <span id="topic-3-pct">0%</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div id="topic-3-bar" class="progress-bar"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="recommendation-box" style="margin-top: 1.5rem; padding: 1rem; background: #f0fdf4; border-left: 4px solid var(--success); border-radius: 4px;">
+                    <h4 style="color: #166534; margin-bottom: 0.3rem;">Rekomendacija:</h4>
+                    <p id="recommendation-text" style="font-size: 0.9rem; color: #14532d;">Spręskite daugiau užduočių, kad gautumėte personalizuotą įvertinimą.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Data for elements 1-30
+        const ELEMENTS = [
+            { z: 1, symbol: 'H', name: 'Vandenilis', mass: 1 },
+            { z: 2, symbol: 'He', name: 'Helis', mass: 4 },
+            { z: 3, symbol: 'Li', name: 'Litis', mass: 7 },
+            { z: 4, symbol: 'Be', name: 'Berilis', mass: 9 },
+            { z: 5, symbol: 'B', name: 'Boras', mass: 11 },
+            { z: 6, symbol: 'C', name: 'Anglis', mass: 12 },
+            { z: 7, symbol: 'N', name: 'Azotas', mass: 14 },
+            { z: 8, symbol: 'O', name: 'Deguonis', mass: 16 },
+            { z: 9, symbol: 'F', name: 'Fluoras', mass: 19 },
+            { z: 10, symbol: 'Ne', name: 'Neonas', mass: 20 },
+            { z: 11, symbol: 'Na', name: 'Natris', mass: 23 },
+            { z: 12, symbol: 'Mg', name: 'Magnis', mass: 24 },
+            { z: 13, symbol: 'Al', name: 'Aliuminis', mass: 27 },
+            { z: 14, symbol: 'Si', name: 'Silicis', mass: 28 },
+            { z: 15, symbol: 'P', name: 'Fosforas', mass: 31 },
+            { z: 16, symbol: 'S', name: 'Siera', mass: 32 },
+            { z: 17, symbol: 'Cl', name: 'Chloras', mass: 35 },
+            { z: 18, symbol: 'Ar', name: 'Argonas', mass: 40 },
+            { z: 19, symbol: 'K', name: 'Kalis', mass: 39 },
+            { z: 20, symbol: 'Ca', name: 'Kalcis', mass: 40 },
+            { z: 21, symbol: 'Sc', name: 'Skandis', mass: 45 },
+            { z: 22, symbol: 'Ti', name: 'Titanas', mass: 48 },
+            { z: 23, symbol: 'V', name: 'Vanadis', mass: 51 },
+            { z: 24, symbol: 'Cr', name: 'Chromas', mass: 52 },
+            { z: 25, symbol: 'Mn', name: 'Manganas', mass: 55 },
+            { z: 26, symbol: 'Fe', name: 'Geležis', mass: 56 },
+            { z: 27, symbol: 'Co', name: 'Kobaltas', mass: 59 },
+            { z: 28, symbol: 'Ni', name: 'Nikelis', mass: 59 },
+            { z: 29, symbol: 'Cu', name: 'Varis', mass: 64 },
+            { z: 30, symbol: 'Zn', name: 'Cinkas', mass: 65 }
+        ];
+
+        const SUBSHELLS = [
+            { name: '1s', cap: 2 },
+            { name: '2s', cap: 2 },
+            { name: '2p', cap: 6 },
+            { name: '3s', cap: 2 },
+            { name: '3p', cap: 6 },
+            { name: '4s', cap: 2 },
+            { name: '3d', cap: 10 }
+        ];
+
+        // State variables
+        let labState = { p: 1, n: 0, e: 1 };
+        let quizState = {
+            currentTask: null,
+            userAnswer: null,
+            stats: {
+                total: 0,
+                correct: 0,
+                topics: { 1: { t: 0, c: 0 }, 2: { t: 0, c: 0 }, 3: { t: 0, c: 0 } }
+            }
+        };
+
+        // Tab Switching
+        function switchTab(tabId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+
+            if (tabId === 'lab') updateLabUI();
+            if (tabId === 'quiz' && !quizState.currentTask) generateTask();
+        }
+
+        // --- LAB LOGIC ---
+        function changeParticle(type, delta) {
+            if (type === 'p') {
+                labState.p = Math.max(1, Math.min(30, labState.p + delta));
+            } else if (type === 'n') {
+                labState.n = Math.max(0, Math.min(40, labState.n + delta));
+            } else if (type === 'e') {
+                labState.e = Math.max(0, Math.min(36, labState.e + delta));
+            }
+            updateLabUI();
+        }
+
+        function getElectronConfiguration(numE, numP) {
+            // Check neutral/ion exceptions for Cr (24) and Cu (29)
+            let config = [];
+            let remaining = numE;
+
+            // Handle Cr and Cu special ground state if neutral or specific ions
+            if (numP === 24 && numE === 24) { // Cr atom
+                return [
+                    { name: '1s', count: 2 }, { name: '2s', count: 2 }, { name: '2p', count: 6 },
+                    { name: '3s', count: 2 }, { name: '3p', count: 6 }, { name: '4s', count: 1 }, { name: '3d', count: 5 }
+                ];
+            }
+            if (numP === 29 && numE === 29) { // Cu atom
+                return [
+                    { name: '1s', count: 2 }, { name: '2s', count: 2 }, { name: '2p', count: 6 },
+                    { name: '3s', count: 2 }, { name: '3p', count: 6 }, { name: '4s', count: 1 }, { name: '3d', count: 10 }
+                ];
+            }
+
+            // Standard filling order
+            for (let sub of SUBSHELLS) {
+                if (remaining <= 0) break;
+                let add = Math.min(sub.cap, remaining);
+                config.push({ name: sub.name, count: add });
+                remaining -= add;
+            }
+            return config;
+        }
+
+        function updateLabUI() {
+            document.getElementById('p-count').innerText = labState.p;
+            document.getElementById('n-count').innerText = labState.n;
+            document.getElementById('e-count').innerText = labState.e;
+
+            const elem = ELEMENTS.find(e => e.z === labState.p);
+            const mass = labState.p + labState.n;
+            const charge = labState.p - labState.e;
+
+            document.getElementById('elem-name').innerText = `${elem.name} (${elem.symbol})`;
+            document.getElementById('elem-mass').innerText = `A = ${mass}`;
+            
+            let chargeStr = charge === 0 ? '0' : (charge > 0 ? `+${charge}` : `${charge}`);
+            document.getElementById('elem-charge').innerText = `Krūvis: ${chargeStr}`;
+
+            let typeBadge = document.getElementById('elem-type');
+            if (charge === 0) {
+                typeBadge.innerText = 'Neutralus atomas';
+                typeBadge.className = 'badge badge-success';
+            } else if (charge > 0) {
+                typeBadge.innerText = 'Kationas (+)';
+                typeBadge.className = 'badge badge-warning';
+            } else {
+                typeBadge.innerText = 'Anijonas (-)';
+                typeBadge.className = 'badge badge-danger';
+            }
+
+            // Config & Exception
+            const configArr = getElectronConfiguration(labState.e, labState.p);
+            let configStr = configArr.map(s => `${s.name}<sup>${s.count}</sup>`).join(' ');
+            document.getElementById('elem-config').innerHTML = configStr || 'Nėra elektronų';
+
+            const isException = (labState.p === 24 && labState.e === 24) || (labState.p === 29 && labState.e === 29);
+            document.getElementById('exception-warning').style.display = isException ? 'block' : 'none';
+
+            renderAtomSVG();
+            renderOrbitalDiagram(configArr);
+        }
+
+        function renderAtomSVG() {
+            const svg = document.getElementById('atom-canvas');
+            svg.innerHTML = '';
+
+            // Nucleus
+            let nucleus = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            nucleus.setAttribute('cx', 150);
+            nucleus.setAttribute('cy', 150);
+            nucleus.setAttribute('r', 25);
+            nucleus.setAttribute('fill', '#ef4444');
+            svg.appendChild(nucleus);
+
+            let nText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            nText.setAttribute('x', 150);
+            nText.setAttribute('y', 154);
+            nText.setAttribute('text-anchor', 'middle');
+            nText.setAttribute('fill', 'white');
+            nText.setAttribute('font-size', '12px');
+            nText.setAttribute('font-weight', 'bold');
+            nText.textContent = `${labState.p}p, ${labState.n}n`;
+            svg.appendChild(nText);
+
+            // Electron Shells (Simple visual grouping)
+            let shellCounts = [0, 0, 0, 0]; // n=1, 2, 3, 4
+            let eRem = labState.e;
+            let caps = [2, 8, 18, 8];
+            for (let i = 0; i < 4; i++) {
+                if (eRem <= 0) break;
+                shellCounts[i] = Math.min(caps[i], eRem);
+                eRem -= shellCounts[i];
+            }
+
+            let radii = [50, 80, 110, 135];
+            for (let i = 0; i < 4; i++) {
+                if (shellCounts[i] === 0) continue;
+
+                // Orbit line
+                let orbit = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                orbit.setAttribute('cx', 150);
+                orbit.setAttribute('cy', 150);
+                orbit.setAttribute('r', radii[i]);
+                orbit.setAttribute('fill', 'none');
+                orbit.setAttribute('stroke', '#cbd5e1');
+                orbit.setAttribute('stroke-dasharray', '4 4');
+                svg.appendChild(orbit);
+
+                // Electrons
+                let count = shellCounts[i];
+                for (let j = 0; j < count; j++) {
+                    let angle = (j * 2 * Math.PI) / count;
+                    let ex = 150 + radii[i] * Math.cos(angle);
+                    let ey = 150 + radii[i] * Math.sin(angle);
+
+                    let eCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    eCircle.setAttribute('cx', ex);
+                    eCircle.setAttribute('cy', ey);
+                    eCircle.setAttribute('r', 5);
+                    eCircle.setAttribute('fill', '#2563eb');
+                    svg.appendChild(eCircle);
+                }
+            }
+        }
+
+        function renderOrbitalDiagram(configArr) {
+            const container = document.getElementById('orbital-diagram');
+            container.innerHTML = '';
+
+            configArr.forEach(sub => {
+                let boxCount = sub.name.includes('s') ? 1 : (sub.name.includes('p') ? 3 : 5);
+                let subDiv = document.createElement('div');
+                subDiv.className = 'subshell';
+
+                let title = document.createElement('div');
+                title.className = 'subshell-title';
+                title.innerText = `${sub.name} (${sub.count})`;
+                subDiv.appendChild(title);
+
+                let boxesDiv = document.createElement('div');
+                boxesDiv.className = 'boxes-container';
+
+                // Distribute electrons into boxes (Hund's rule logic for visualization)
+                let boxElectrons = new Array(boxCount).fill(0);
+                let rem = sub.count;
+                // First pass: 1 e- per box
+                for (let i = 0; i < boxCount && rem > 0; i++) {
+                    boxElectrons[i]++;
+                    rem--;
+                }
+                // Second pass: pair up
+                for (let i = 0; i < boxCount && rem > 0; i++) {
+                    boxElectrons[i]++;
+                    rem--;
+                }
+
+                for (let i = 0; i < boxCount; i++) {
+                    let b = document.createElement('div');
+                    b.className = 'box';
+                    if (boxElectrons[i] === 1) b.innerText = '↑';
+                    if (boxElectrons[i] === 2) b.innerText = '↑↓';
+                    boxesDiv.appendChild(b);
+                }
+
+                subDiv.appendChild(boxesDiv);
+                container.appendChild(subDiv);
+            });
+        }
+
+        // --- QUIZ LOGIC ---
+        const TASK_POOL = [
+            {
+                topic: 1,
+                level: 'Bazinis',
+                generate: () => {
+                    let elem = ELEMENTS[Math.floor(Math.random() * 15)];
+                    let neutrons = elem.mass - elem.z;
+                    return {
+                        q: `Kiek neutronų turi elemento <strong>${elem.name} (${elem.symbol})</strong> atomas, kurio masės skaičius A = ${elem.mass}?`,
+                        type: 'mcq',
+                        options: [neutrons, neutrons + 1, elem.z, elem.mass].sort(() => Math.random() - 0.5),
+                        correct: neutrons,
+                        explain: `Neutronų skaičius N = A - Z. Šiuo atveju: ${elem.mass} - ${elem.z} = ${neutrons}.`
+                    };
+                }
+            },
+            {
+                topic: 2,
+                level: 'Pagrindinis',
+                generate: () => {
+                    return {
+                        q: `Kuri iš pateiktų elektronų konfigūracijų yra <strong>išimtis</strong> ir priklauso neutraliam chromo (<sub>24</sub>Cr) atomui?`,
+                        type: 'mcq',
+                        options: [
+                            '1s² 2s² 2p⁶ 3s² 3p⁶ 4s¹ 3d⁵',
+                            '1s² 2s² 2p⁶ 3s² 3p⁶ 4s² 3d⁴',
+                            '1s² 2s² 2p⁶ 3s² 3p⁶ 4s⁰ 3d⁶',
+                            '1s² 2s² 2p⁶ 3s² 3p⁶ 4s² 3d⁵'
+                        ],
+                        correct: '1s² 2s² 2p⁶ 3s² 3p⁶ 4s¹ 3d⁵',
+                        explain: 'Chromui būdingas vieno 4s elektrono "peršokimas" į 3d sublygmenį, kad susidarytų energetiškai palanki pusiau užpildyta 3d⁵ būsena.'
+                    };
+                }
+            },
+            {
+                topic: 3,
+                level: 'Aukštesnysis',
+                generate: () => {
+                    return {
+                        q: `Kaip kinta atomo spindulys ir elektrinis neigiamumas periodinėje elementų lentelėje judant <strong>periodu iš kairės į dešinę</strong>?`,
+                        type: 'mcq',
+                        options: [
+                            'Spindulys mažėja, elektrinis neigiamumas didėja',
+                            'Spindulys didėja, elektrinis neigiamumas didėja',
+                            'Spindulys mažėja, elektrinis neigiamumas mažėja',
+                            'Spindulys didėja, elektrinis neigiamumas mažėja'
+                        ],
+                        correct: 'Spindulys mažėja, elektrinis neigiamumas didėja',
+                        explain: 'Periodu iš kairės į dešinę didėja branduolio krūvis (daugėja p⁺), todėl stipriau traukiami elektronai (spindulys mažėja) ir atomas stipriau traukia svetimus elektronus (EN didėja).'
+                    };
+                }
+            },
+            {
+                topic: 1,
+                level: 'Pagrindinis',
+                generate: () => {
+                    let elem = ELEMENTS[10 + Math.floor(Math.random() * 10)]; // Na to Ca
+                    let charge = Math.random() > 0.5 ? 1 : 2;
+                    let eCount = elem.z - charge;
+                    return {
+                        q: `Kiek elektronų turi kationas <strong><sup>${elem.mass}</sup><sub>${elem.z}</sub>${elem.symbol}<sup>${charge}+</sup></strong>?`,
+                        type: 'mcq',
+                        options: [eCount, elem.z, elem.z + charge, elem.mass - charge].sort(() => Math.random() - 0.5),
+                        correct: eCount,
+                        explain: `Teigiamas krūvis (+${charge}) reiškia, kad atomas neteko ${charge} elektronų. Elektronų skaičius = ${elem.z} - ${charge} = ${eCount}.`
+                    };
+                }
+            }
+        ];
+
+        function generateTask() {
+            const template = TASK_POOL[Math.floor(Math.random() * TASK_POOL.length)];
+            quizState.currentTask = template.generate();
+            quizState.currentTask.topicId = template.topic;
+            quizState.userAnswer = null;
+
+            document.getElementById('difficulty-badge').innerText = `Lygis: ${template.level}`;
+            document.getElementById('quiz-question').innerHTML = quizState.currentTask.q;
+            
+            const optionsDiv = document.getElementById('quiz-options');
+            optionsDiv.innerHTML = '';
+            
+            quizState.currentTask.options.forEach((opt) => {
+                let btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerHTML = opt;
+                btn.onclick = () => selectOption(opt, btn);
+                optionsDiv.appendChild(btn);
+            });
+
+            document.getElementById('quiz-feedback').className = 'feedback-box';
+            document.getElementById('quiz-feedback').style.display = 'none';
+            document.getElementById('check-btn').style.display = 'inline-block';
+            document.getElementById('next-btn').style.display = 'none';
+        }
+
+        function selectOption(val, btnEl) {
+            quizState.userAnswer = val;
+            document.querySelectorAll('.option-btn').forEach(b => b.style.borderColor = 'var(--border)');
+            btnEl.style.borderColor = 'var(--primary)';
+        }
+
+        function checkAnswer() {
+            if (quizState.userAnswer === null) {
+                alert('Prašome pasirinkti atsakymą!');
+                return;
+            }
+
+            const task = quizState.currentTask;
+            const isCorrect = quizState.userAnswer === task.correct;
+            const feedbackEl = document.getElementById('quiz-feedback');
+
+            // Update stats
+            quizState.stats.total++;
+            if (isCorrect) quizState.stats.correct++;
+            
+            let tStat = quizState.stats.topics[task.topicId];
+            tStat.t++;
+            if (isCorrect) tStat.c++;
+
+            // Highlight options
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                if (btn.innerText == task.correct) {
+                    btn.classList.add('correct');
+                } else if (btn.innerText == quizState.userAnswer && !isCorrect) {
+                    btn.classList.add('wrong');
+                }
+            });
+
+            feedbackEl.className = `feedback-box ${isCorrect ? 'correct' : 'wrong'} show`;
+            feedbackEl.innerHTML = `
+                <strong>${isCorrect ? 'Teisingai! 🎉' : 'Neteisingai ❌'}</strong><br>
+                ${task.explain}
+            `;
+
+            document.getElementById('check-btn').style.display = 'none';
+            document.getElementById('next-btn').style.display = 'inline-block';
+
+            updateDiagnosticsUI();
+        }
+
+        function updateDiagnosticsUI() {
+            document.getElementById('stat-total').innerText = quizState.stats.total;
+            let acc = quizState.stats.total > 0 ? Math.round((quizState.stats.correct / quizState.stats.total) * 100) : 0;
+            document.getElementById('stat-accuracy').innerText = `${acc}%`;
+
+            for (let i = 1; i <= 3; i++) {
+                let st = quizState.stats.topics[i];
+                let pct = st.t > 0 ? Math.round((st.c / st.t) * 100) : 0;
+                document.getElementById(`topic-${i}-pct`).innerText = `${pct}%`;
+                document.getElementById(`topic-${i}-bar`).style.width = `${pct}%`;
+            }
+
+            // Recommendation
+            let rec = document.getElementById('recommendation-text');
+            if (quizState.stats.total < 3) {
+                rec.innerText = 'Spręskite daugiau užduočių, kad gautumėte personalizuotą įvertinimą.';
+            } else if (acc >= 80) {
+                rec.innerText = 'Puikus pasiruošimas! Jūs puikiai suprantate atomo sandarą ir elektronų konfigūracijas VBE lygiu.';
+            } else if (acc >= 50) {
+                rec.innerText = 'Geras rezultatas, tačiau atkreipkite dėmesį į konfigūracijų išimtis ir periodinius dėsningumus.';
+            } else {
+                rec.innerText = 'Rekomenduojama dar kartą peržiūrėti teorijos skiltį ir pasitreniruoti su atomo konstruktoriumi.';
+            }
+        }
+
+        // Initialize Lab on load
+        updateLabUI();
+    </script>
+</body>
+</html>
