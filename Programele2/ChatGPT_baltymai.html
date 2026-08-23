@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="lt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1220">
+<title>Baltymai · Chemijos VBE treniruoklis</title>
+<style>
+:root{
+  --bg:#08111f;--panel:#101c2f;--panel2:#14243a;--ink:#edf5ff;--muted:#9fb1c7;
+  --accent:#7dd3fc;--accent2:#a7f3d0;--warn:#fcd34d;--bad:#fda4af;--good:#86efac;
+  --line:#27405d;--shadow:0 18px 50px rgba(0,0,0,.26);--radius:20px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:radial-gradient(circle at 20% -10%,#15345a 0,transparent 34%),linear-gradient(180deg,#07111f,#0b1525 40%,#07101b);color:var(--ink);min-height:100vh}
+button,input,select{font:inherit}
+button{touch-action:manipulation}
+a{color:var(--accent)}
+.shell{max-width:1200px;margin:auto;padding:18px 16px 64px}
+.topbar{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:start;background:rgba(16,28,47,.86);backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:24px;padding:18px;position:sticky;top:8px;z-index:30;box-shadow:var(--shadow)}
+.brand h1{font-size:clamp(1.35rem,3vw,2rem);margin:0 0 6px}.brand p{margin:0;color:var(--muted);max-width:760px;line-height:1.45}
+.status{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.pill{background:#0a1626;border:1px solid var(--line);padding:8px 11px;border-radius:999px;color:#dbeafe;font-size:.9rem;white-space:nowrap}.pill strong{color:var(--accent2)}
+.progress-wrap{grid-column:1/-1}.progress-label{display:flex;justify-content:space-between;color:var(--muted);font-size:.85rem;margin:1px 2px 6px}.progress{height:10px;background:#07101c;border-radius:999px;overflow:hidden;border:1px solid #1c3450}.progress>span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s ease}
+nav{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0 18px}.tab{border:1px solid var(--line);background:#0e1a2b;color:#c8d6e8;padding:12px 10px;border-radius:14px;cursor:pointer;font-weight:700}.tab.active{background:linear-gradient(135deg,#163a60,#13506a);color:white;border-color:#4b86ad}.tab small{display:block;font-weight:500;color:#9fb7cf;margin-top:3px}
+.page{display:none}.page.active{display:block;animation:fade .22s ease}@keyframes fade{from{opacity:.3;transform:translateY(4px)}to{opacity:1;transform:none}}
+.hero{display:grid;grid-template-columns:1.3fr .7fr;gap:16px;margin-bottom:16px}.card{background:linear-gradient(180deg,rgba(20,36,58,.96),rgba(13,26,44,.98));border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}.card h2,.card h3{margin-top:0}.eyebrow{color:var(--accent2);font-weight:800;text-transform:uppercase;letter-spacing:.09em;font-size:.75rem}.muted{color:var(--muted)}.scope{border-left:4px solid var(--accent);padding-left:14px}.scope ul{margin:.5rem 0 0;padding-left:1.2rem;line-height:1.55}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.concept{min-height:210px;position:relative;overflow:hidden}.concept .bigformula{font-size:clamp(1.15rem,2.2vw,1.55rem);font-weight:800;margin:14px 0;color:#f7fbff;overflow-wrap:anywhere}.formula{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#071321;border:1px solid #29425d;border-radius:12px;padding:10px 12px;line-height:1.55;overflow-x:auto}.tag{display:inline-block;background:#0a2330;border:1px solid #245b68;color:#a7f3d0;border-radius:999px;padding:4px 8px;font-size:.78rem;margin:2px}.hint{background:#0b1a2b;border:1px dashed #41607c;border-radius:14px;padding:12px;color:#c7d7e8;line-height:1.45}.note{font-size:.9rem;color:#b7c5d5}.chem-chip{display:inline-flex;align-items:center;gap:5px;padding:8px 10px;border-radius:12px;background:#0b1929;border:1px solid #37506c;margin:4px;cursor:pointer;color:var(--ink)}.chem-chip:hover,.chem-chip:focus{border-color:var(--accent);outline:none}.chem-chip.selected{background:#123853;border-color:#7dd3fc}.bond{color:var(--warn);font-weight:900}.water{color:var(--accent)}
+.btn{border:1px solid #3f6281;background:#16304a;color:white;border-radius:12px;padding:10px 14px;cursor:pointer;font-weight:800}.btn:hover{filter:brightness(1.08)}.btn.primary{background:linear-gradient(135deg,#0e7490,#0f766e);border-color:#3cc4b8}.btn.secondary{background:#101f33}.btn.warn{background:#4a2e10;border-color:#8f651f}.btn:disabled{opacity:.45;cursor:not-allowed}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.lab-layout{display:grid;grid-template-columns:260px 1fr;gap:16px}.lab-menu{position:sticky;top:152px;align-self:start}.lab-menu button{width:100%;text-align:left;margin:5px 0}.lab-menu button.active{border-color:#72d7fa;background:#153654}.labstage{min-height:530px}.stage{display:none}.stage.active{display:block}.step{display:flex;gap:10px;align-items:flex-start;margin:10px 0}.stepno{min-width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#0b5870;color:white;font-weight:900}.feedback{display:none;margin-top:12px;border-radius:14px;padding:12px 14px;line-height:1.45}.feedback.show{display:block}.feedback.good{background:#0b2b24;border:1px solid #2d7d63;color:#c7f9e8}.feedback.bad{background:#321722;border:1px solid #8c4256;color:#ffdbe4}.feedback.info{background:#132337;border:1px solid #365776;color:#dcecff}
+.levels{display:flex;gap:8px;flex-wrap:wrap}.level-btn{padding:7px 10px;border-radius:999px;background:#0b1828;border:1px solid #304c69;color:#bed0e2;cursor:pointer}.level-btn.active{background:#194a60;border-color:#7dd3fc;color:white}
+.chain{display:flex;align-items:center;gap:4px;flex-wrap:wrap;min-height:64px;padding:12px;background:#081522;border:1px solid #2a4664;border-radius:14px;margin-top:10px}.aa{padding:9px 10px;border-radius:12px;background:#172b43;border:1px solid #355679;font-weight:800}.connector{color:var(--warn);font-family:ui-monospace,monospace;font-weight:900}.target{font-size:1.05rem;font-weight:800;color:#dff7ff}.counter{display:inline-grid;place-items:center;min-width:40px;height:40px;border-radius:10px;background:#091725;border:1px solid #35506a;font-weight:900}.numrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.numrow input{width:100px;background:#081522;color:white;border:1px solid #3a5875;padding:10px;border-radius:10px}.input{width:100%;background:#081522;color:white;border:1px solid #3a5875;padding:11px;border-radius:10px}.input:focus{outline:2px solid #39799c;border-color:#7dd3fc}
+.svgbox{background:#071522;border:1px solid #2b4966;border-radius:16px;padding:8px;min-height:240px}.svgbox svg{width:100%;height:230px}.range-row{display:grid;grid-template-columns:160px 1fr 60px;gap:10px;align-items:center;margin:10px 0}.range-row input{width:100%}.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.87rem}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:currentColor;margin-right:5px}
+.tube{width:116px;height:180px;border:4px solid #8fb0cc;border-top:0;border-radius:0 0 34px 34px;margin:14px auto;position:relative;overflow:hidden;background:rgba(255,255,255,.035)}.liquid{position:absolute;left:4px;right:4px;bottom:4px;height:62%;background:#8fd3ff;opacity:.78;border-radius:0 0 27px 27px;transition:background .55s, height .35s}.drop{position:absolute;width:12px;height:18px;border-radius:70% 50% 70% 50%;transform:rotate(45deg);background:#73c8ff;top:8px;left:50%;opacity:0}.tube.animate .drop{animation:drop .6s ease 2}@keyframes drop{0%{opacity:1;transform:translate(-50%,0) rotate(45deg)}100%{opacity:0;transform:translate(-50%,85px) rotate(45deg)}}
+.quiz-head{display:flex;justify-content:space-between;gap:12px;align-items:center}.qcard{margin-top:14px}.qtype{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--accent2);font-weight:900}.qtext{font-size:1.12rem;line-height:1.5;font-weight:750;margin:8px 0 14px}.options{display:grid;gap:8px}.option{border:1px solid #35516e;background:#0b1828;color:#e8f2ff;text-align:left;padding:11px 12px;border-radius:12px;cursor:pointer}.option:hover{border-color:#7dd3fc}.option.correct{border-color:#65d6a2;background:#0e3027}.option.wrong{border-color:#e8788a;background:#331824}.mini-table{width:100%;border-collapse:collapse;margin:10px 0}.mini-table th,.mini-table td{padding:9px;border-bottom:1px solid #28415c;text-align:left}.mini-table th{color:#b9ccde}.points{color:var(--warn);font-weight:900}.lock{opacity:.6}.answerline{display:flex;gap:8px;flex-wrap:wrap}.answerline input{flex:1;min-width:180px}
+.diaggrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.mastery-row{display:grid;grid-template-columns:160px 1fr 55px;gap:10px;align-items:center;margin:12px 0}.mbar{height:12px;background:#07111d;border:1px solid #27425e;border-radius:999px;overflow:hidden}.mbar span{height:100%;display:block;background:linear-gradient(90deg,#7dd3fc,#a7f3d0);width:0;transition:width .5s}.badgebox{display:flex;flex-wrap:wrap;gap:8px}.badge{padding:9px 10px;border-radius:12px;border:1px solid #31506e;background:#0a1726;color:#90a4b9}.badge.earned{background:#193b35;border-color:#4fae91;color:#d8fff1}.diag-list{padding-left:1.2rem;line-height:1.55}.callout{background:linear-gradient(135deg,#102d44,#12372f);border:1px solid #3e7c70;border-radius:16px;padding:14px}.sourcebox{font-size:.86rem;color:#9fb1c7}.sourcebox summary{cursor:pointer;color:#dcecff;font-weight:800}.sourcebox li{margin:8px 0}.footer{margin-top:22px;color:#8da0b5;text-align:center;font-size:.84rem}
+.toast{position:fixed;right:18px;bottom:18px;max-width:360px;background:#0b1827;color:white;border:1px solid #43617e;border-radius:14px;padding:12px 14px;box-shadow:var(--shadow);transform:translateY(120%);opacity:0;transition:.25s;z-index:80}.toast.show{transform:none;opacity:1}.toast.good{border-color:#47a783}.toast.bad{border-color:#b2596e}
+.kbd{font-family:ui-monospace,monospace;border:1px solid #45627d;border-bottom-width:3px;padding:1px 5px;border-radius:6px;background:#102238}.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:850px){.topbar{position:relative;top:0;grid-template-columns:1fr}.status{justify-content:flex-start}.hero,.grid,.grid3,.diaggrid,.lab-layout{grid-template-columns:1fr}.lab-menu{position:relative;top:0;display:grid;grid-template-columns:repeat(2,1fr);gap:6px}.lab-menu h3{grid-column:1/-1}.lab-menu button{margin:0}.range-row{grid-template-columns:1fr}.range-row output{justify-self:start}.mastery-row{grid-template-columns:120px 1fr 50px}.tab small{display:none}}
+@media(max-width:560px){.shell{padding:10px 10px 48px}.topbar{border-radius:18px;padding:14px}nav{grid-template-columns:1fr 1fr}.card{padding:14px;border-radius:16px}.lab-menu{grid-template-columns:1fr}.answerline{display:grid}.answerline input{min-width:0}.mastery-row{grid-template-columns:1fr 48px}.mastery-row .mbar{grid-column:1/-1;grid-row:2}.brand p{font-size:.92rem}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="topbar">
+    <div class="brand">
+      <div class="eyebrow">Chemijos VBE · Gyvybės chemija</div>
+      <h1>Baltymai: nuo aminorūgšties iki VBE sprendimo</h1>
+      <p>Mokykis per konstravimą, prognozę ir bandymą. Turinys sąmoningai apribotas dabartinės Lietuvos vidurinio ugdymo chemijos programos baltymų tema.</p>
+    </div>
+    <div class="status" aria-label="Mokymosi būsena">
+      <div class="pill">XP <strong id="xp">0</strong></div>
+      <div class="pill">Tikslumas <strong id="accuracy">–</strong></div>
+      <div class="pill">Serija <strong id="streak">0</strong></div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-label"><span>Bendra pažanga</span><span id="progressText">0 %</span></div>
+      <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+    </div>
+  </header>
+
+  <nav aria-label="Pagrindinės skiltys">
+    <button class="tab active" data-page="theory">1. Teorija<small>5–7 min. priminimas</small></button>
+    <button class="tab" data-page="lab">2. Laboratorija<small>konstruok ir tikrink</small></button>
+    <button class="tab" data-page="quiz">3. Patikrinimas<small>dinaminės VBE užduotys</small></button>
+    <button class="tab" data-page="diagnostics">4. Diagnostika<small>stiprybės ir spragos</small></button>
+  </nav>
+
+  <main>
+    <section id="theory" class="page active" aria-labelledby="theoryTitle">
+      <div class="hero">
+        <article class="card">
+          <div class="eyebrow">Egzamino ribos</div>
+          <h2 id="theoryTitle">Ką šia tema reikia mokėti?</h2>
+          <div class="scope">
+            <ul>
+              <li>suprasti, kaip iš aminorūgščių susidaro dipeptidas, ir užrašyti lygtį;</li>
+              <li>atpažinti <strong>peptidinį ryšį –CO–NH–</strong>;</li>
+              <li>užrašyti pateikto polipeptido hidrolizę ir nustatyti vandens / aminorūgščių santykius;</li>
+              <li>skirti <strong>pirminę</strong> ir <strong>antrinę</strong> baltymo struktūrą bei paaiškinti vandenilinių ryšių vaidmenį;</li>
+              <li>žinoti Biureto reakcijos paskirtį ir teigiamo bandymo požymį;</li>
+              <li>apibūdinti baltymų hidrolizę ir apykaitą organizme.</li>
+            </ul>
+          </div>
+          <p class="note">Šioje programėlėje sąmoningai nevertinamos tretinė / ketvirtinė struktūros ir denatūracija, nes jos nėra dabartinio šios temos aprašo branduolys.</p>
+        </article>
+        <aside class="card">
+          <div class="eyebrow">VBE mąstymo balansas</div>
+          <h3>Ne vien „atsimink“</h3>
+          <p><span class="tag">30 % žinios</span><span class="tag">50 % taikymas</span><span class="tag">20 % aukštesnis mąstymas</span></p>
+          <p class="muted">Todėl toliau dažnai pirmiausia turėsi prognozuoti, skaičiuoti arba paaiškinti, o tik tada pamatysi rezultatą.</p>
+        </aside>
+      </div>
+
+      <div class="grid3">
+        <article class="card concept">
+          <div class="eyebrow">1 · Statybinis vienetas</div>
+          <h3>Aminorūgštis</h3>
+          <div class="bigformula">H₂N–CH(R)–COOH</div>
+          <p><span class="tag">–NH₂ aminogrupė</span><span class="tag">–COOH karboksigrupė</span><span class="tag">R šoninė grupė</span></p>
+          <p class="muted">Baltymų grandinėje keičiasi R grupės, o pasikartojantis karkasas sudaro polipeptido „stuburą“.</p>
+        </article>
+        <article class="card concept">
+          <div class="eyebrow">2 · Kondensacija</div>
+          <h3>Peptidinis ryšys</h3>
+          <div class="formula">–CO<span class="bond">–NH–</span></div>
+          <p>Vienos aminorūgšties <strong>–COOH</strong> ir kitos <strong>–NH₂</strong> grupėms susijungiant, susidaro peptidinis ryšys ir išsiskiria H₂O.</p>
+          <div class="hint"><strong>Greita taisyklė:</strong> jei grandinėje yra <em>n</em> aminorūgščių liekanų, tiesinėje grandinėje yra <strong>n − 1</strong> peptidinių ryšių.</div>
+        </article>
+        <article class="card concept">
+          <div class="eyebrow">3 · Atvirkštinis procesas</div>
+          <h3>Hidrolizė</h3>
+          <div class="formula">peptidas + H₂O → trumpesni fragmentai → aminorūgštys</div>
+          <p class="muted">Visiškai hidrolizuojant tiesinį peptidą, kiekvienam nutraukiamam peptidiniam ryšiui sunaudojama po 1 H₂O molekulę.</p>
+          <p><span class="tag">n liekanų</span><span class="tag">n−1 ryšių</span><span class="tag">n−1 H₂O</span></p>
+        </article>
+        <article class="card concept">
+          <div class="eyebrow">4 · Struktūra</div>
+          <h3>Pirminė ≠ antrinė</h3>
+          <p><strong>Pirminė struktūra</strong> – aminorūgščių liekanų seka polipeptido grandinėje.</p>
+          <p><strong>Antrinė struktūra</strong> – vietinis grandinės susitvarkymas (pvz., spiralė ar klostė), kurį stabilizuoja vandeniliniai ryšiai tarp polipeptido karkaso grupių.</p>
+          <div class="hint">Dažna klaida: vandeniliniai ryšiai <strong>nesudaro</strong> pirminės sekos. Pirminę grandinę laiko kovalentiniai peptidiniai ryšiai.</div>
+        </article>
+        <article class="card concept">
+          <div class="eyebrow">5 · Kokybinė reakcija</div>
+          <h3>Biureto reakcija</h3>
+          <p>Šarminėje terpėje Cu²⁺ jonai su daug peptidinių ryšių turinčiais junginiais sudaro <strong>violetinės spalvos</strong> kompleksą.</p>
+          <div class="formula">baltymo tirpalas + Biureto reagentas → <strong style="color:#d8b4fe">violetinė spalva</strong></div>
+          <p class="note">VBE lygmeniu svarbiausia: ką reakcija aptinka ir koks yra teigiamo bandymo požymis.</p>
+        </article>
+        <article class="card concept">
+          <div class="eyebrow">6 · Organizme</div>
+          <h3>Baltymų apykaita</h3>
+          <p>Virškinant baltymus peptidiniai ryšiai hidrolizuojami, gaunami mažesni peptidai ir aminorūgštys. Aminorūgštys naudojamos organizmo baltymų ir kitų azoto turinčių junginių sintezei.</p>
+          <div class="hint">Egzamine siek procesą su chemija: <strong>hidrolizė = ryšio skaidymas, dalyvaujant vandeniui.</strong></div>
+        </article>
+      </div>
+
+      <details class="card sourcebox" style="margin-top:16px">
+        <summary>Programos ir VBE šaltiniai, kuriais grįstas turinys</summary>
+        <ul>
+          <li>Švietimo portalas „Emokykla“ – Chemijos bendroji programa, III gimnazijos klasė, tema „Baltymai. Nukleorūgštys“.</li>
+          <li>Švietimo portalas „Emokykla“ – 2026 m. matematikos, gamtos mokslų, informatikos ir inžinerinių technologijų VBE užduočių aprašas.</li>
+          <li>Nacionalinė švietimo agentūra – VBE užduočių aprašų puslapis (atnaujintas 2026-01-07).</li>
+        </ul>
+        <p>Nuorodos įrašytos informaciniais tikslais; pati programėlė veikia ir be interneto.</p>
+      </details>
+    </section>
+
+    <section id="lab" class="page" aria-labelledby="labTitle">
+      <div class="lab-layout">
+        <aside class="card lab-menu">
+          <h3 id="labTitle">Interaktyvi laboratorija</h3>
+          <button class="btn secondary active" data-stage="builder">A. Peptidų konstruktorius</button>
+          <button class="btn secondary" data-stage="secondary">B. Antrinės struktūros modelis</button>
+          <button class="btn secondary" data-stage="biuret">C. Biureto mėginys</button>
+          <button class="btn secondary" data-stage="hydrolysis">D. Hidrolizės skaičiuoklė</button>
+          <hr style="border:0;border-top:1px solid var(--line);width:100%">
+          <div class="eyebrow">Sudėtingumas</div>
+          <div class="levels" id="levels">
+            <button class="level-btn active" data-level="1">1</button>
+            <button class="level-btn" data-level="2">2</button>
+            <button class="level-btn" data-level="3">3</button>
+          </div>
+          <p class="note" id="levelDesc">1 lygis: tiesioginis atpažinimas ir maži skaičiai.</p>
+        </aside>
+
+        <section class="card labstage">
+          <div id="stage-builder" class="stage active">
+            <div class="eyebrow">A · Kurk grandinę</div>
+            <h2>Peptidų konstruktorius</h2>
+            <p class="muted">Pirmiausia prognozuok, tada sukonstruok nurodyto ilgio grandinę. Tikslas – ne „atspėti formulę“, o pamatyti ryšių ir vandens dėsningumą.</p>
+            <div class="step"><div class="stepno">1</div><div><strong id="builderPrompt">Prognozuok.</strong><div class="numrow" style="margin-top:8px"><label>Peptidinių ryšių: <input id="predBonds" type="number" min="0" max="10" inputmode="numeric"></label><label>Susidaro H₂O: <input id="predWater" type="number" min="0" max="10" inputmode="numeric"></label><button class="btn" id="checkPrediction">Tikrinti prognozę</button></div></div></div>
+            <div id="builderPredFeedback" class="feedback"></div>
+            <div class="step"><div class="stepno">2</div><div style="width:100%"><strong>Pasirink aminorūgštis.</strong><p class="note">Spustelėk korteles, kol surinksi tikslinį liekanų skaičių.</p><div id="aaPalette"></div><div class="chain" id="buildChain" aria-live="polite"><span class="muted">Grandinė tuščia.</span></div><div class="actions"><button class="btn secondary" id="undoAA">Atšaukti paskutinę</button><button class="btn primary" id="joinAA" disabled>Sujungti grandinę</button><button class="btn secondary" id="newBuilder">Nauja užduotis</button></div></div></div>
+            <div id="builderResult" class="feedback"></div>
+          </div>
+
+          <div id="stage-secondary" class="stage">
+            <div class="eyebrow">B · Koncepcinis modelis</div>
+            <h2>Antrinė struktūra ir vandeniliniai ryšiai</h2>
+            <p class="muted">Šis modelis nėra molekulinės dinamikos skaičiavimas. Jis padeda pamatyti programoje akcentuojamą priežastinį ryšį: daugiau reguliariai susidarančių vandenilinių ryšių → stabilesnė vietinė antrinė struktūra.</p>
+            <div class="step"><div class="stepno">1</div><div><strong>Prognozė:</strong> jei polipeptido karkase gali susidaryti daugiau tinkamai išsidėsčiusių vandenilinių ryšių, antrinė struktūra…<div class="actions"><button class="btn secondary pred-secondary" data-pred="stable">stabilizuosis</button><button class="btn secondary pred-secondary" data-pred="none">nepasikeis</button><button class="btn secondary pred-secondary" data-pred="break">būtinai suirs</button></div></div></div>
+            <div id="secondaryPredFeedback" class="feedback"></div>
+            <div class="grid">
+              <div>
+                <div class="range-row"><label for="hbSlider">Vandenilinių ryšių susidarymas</label><input id="hbSlider" type="range" min="0" max="100" value="35"><output id="hbOut">35 %</output></div>
+                <div class="range-row"><label for="shapeSelect">Modelio tipas</label><select id="shapeSelect" class="input"><option value="helix">α spiralės analogija</option><option value="sheet">β klostės analogija</option></select><span></span></div>
+                <div class="hint" id="secondaryExplanation">Padidink slankiklį ir stebėk, kaip didėja pažymėtų vandenilinių ryšių skaičius bei struktūros reguliarumas.</div>
+              </div>
+              <div class="svgbox"><svg id="proteinSvg" viewBox="0 0 520 230" role="img" aria-label="Polipeptido antrinės struktūros modelis"></svg></div>
+            </div>
+          </div>
+
+          <div id="stage-biuret" class="stage">
+            <div class="eyebrow">C · Virtualus bandymas</div>
+            <h2>Biureto mėginys: prognozuok spalvą</h2>
+            <p class="muted">Pasirink mėginį, iš anksto nuspręsk, ar bandymas bus teigiamas, ir tik tada „įlašink reagentą“.</p>
+            <div class="grid">
+              <div>
+                <label for="sampleSelect"><strong>Mėginys</strong></label>
+                <select id="sampleSelect" class="input" style="margin-top:7px">
+                  <option value="protein">Baltymo tirpalas</option>
+                  <option value="amino">Laisvos aminorūgšties tirpalas</option>
+                  <option value="glucose">Gliukozės tirpalas</option>
+                  <option value="water">Distiliuotas vanduo</option>
+                </select>
+                <p><strong>Prognozė</strong></p>
+                <div class="actions"><button class="btn secondary biuret-pred" data-value="positive">Violetinė – teigiamas</button><button class="btn secondary biuret-pred" data-value="negative">Nevioletinė – neigiamas</button></div>
+                <div class="actions"><button class="btn primary" id="runBiuret" disabled>Įlašinti Biureto reagento</button><button class="btn secondary" id="resetBiuret">Atstatyti</button></div>
+                <div id="biuretFeedback" class="feedback"></div>
+              </div>
+              <div>
+                <div class="tube" id="tube"><span class="drop"></span><div class="liquid" id="liquid"></div></div>
+                <p id="tubeLabel" style="text-align:center" class="muted">Pradinis mėginys</p>
+              </div>
+            </div>
+          </div>
+
+          <div id="stage-hydrolysis" class="stage">
+            <div class="eyebrow">D · Skaičiavimas</div>
+            <h2>Hidrolizės stoichiometrijos treniruoklis</h2>
+            <p class="muted">Skaidome tiesinį peptidą iki atskirų aminorūgščių. Kiekvienam peptidiniam ryšiui nutraukti reikia vienos H₂O molekulės.</p>
+            <div class="grid">
+              <div>
+                <div class="range-row"><label for="residueSlider">Aminorūgščių liekanų n</label><input id="residueSlider" type="range" min="2" max="10" value="4"><output id="residueOut">4</output></div>
+                <div class="range-row"><label for="amountInput">Peptido kiekis, mol</label><input id="amountInput" class="input" type="number" min="0.001" max="10" step="0.001" value="0.020"><span></span></div>
+                <div class="actions"><button class="btn secondary" id="makeHydroQ">Generuoti klausimą</button></div>
+              </div>
+              <div class="hint" id="hydroQuestion">Jei 0,020 mol tetrapeptido visiškai hidrolizuojama, kiek mol H₂O sunaudojama?</div>
+            </div>
+            <div class="answerline" style="margin-top:14px"><input id="hydroAnswer" class="input" type="text" inputmode="decimal" placeholder="Įrašyk skaičių, pvz., 0,060"><button class="btn primary" id="checkHydro">Tikrinti</button></div>
+            <div id="hydroFeedback" class="feedback"></div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="quiz" class="page" aria-labelledby="quizTitle">
+      <article class="card">
+        <div class="quiz-head"><div><div class="eyebrow">Dinaminė sesija</div><h2 id="quizTitle">VBE pobūdžio žinių patikrinimas</h2></div><div class="pill">Užduotis <strong id="qNo">1/8</strong></div></div>
+        <p class="muted">Klausimai generuojami iš kelių tipų: trumpojo atsakymo, skaičiavimo, prognozavimo, klaidos radimo, konstravimo ir struktūrinio kelių žingsnių uždavinio.</p>
+        <div class="qcard" id="qCard"></div>
+        <div class="actions"><button class="btn secondary" id="quizHint">Užuomina</button><button class="btn primary" id="nextQ" disabled>Kitas klausimas</button><button class="btn warn" id="restartQuiz">Nauja sesija</button></div>
+        <div id="quizFeedback" class="feedback"></div>
+      </article>
+    </section>
+
+    <section id="diagnostics" class="page" aria-labelledby="diagTitle">
+      <div class="diaggrid">
+        <article class="card">
+          <div class="eyebrow">Gebėjimų profilis</div>
+          <h2 id="diagTitle">Ką jau moki?</h2>
+          <div id="masteryBars"></div>
+          <p class="note">Procentai skaičiuojami tik iš šioje programėlėje atliktų veiklų ir nėra oficialus VBE įvertinimas.</p>
+        </article>
+        <article class="card">
+          <div class="eyebrow">Diagnozė</div>
+          <h2>Kur kartojasi klaidos?</h2>
+          <div id="diagnosisText" class="callout">Atlik laboratorijos ir testo užduočių – čia atsiras individuali analizė.</div>
+          <ul id="mistakeList" class="diag-list"></ul>
+        </article>
+        <article class="card">
+          <div class="eyebrow">Pasiektas užduočių lygis</div>
+          <h2 id="readinessTitle">Dar nepakanka duomenų</h2>
+          <p id="readinessText" class="muted">Atsakyk bent į 5 vertinamas užduotis.</p>
+          <div class="actions"><button class="btn primary" data-jump="lab">Tęsti laboratorijoje</button><button class="btn secondary" data-jump="quiz">Spręsti testą</button></div>
+        </article>
+        <article class="card">
+          <div class="eyebrow">Mokymosi ženkleliai</div>
+          <h2>Už ką gauni XP?</h2>
+          <div id="badges" class="badgebox"></div>
+          <p class="note">XP skiriami už prasmingą veiksmą: teisingą prognozę prieš eksperimentą, pagrįstą skaičiavimą ir klaidos ištaisymą.</p>
+        </article>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="eyebrow">Kitas žingsnis</div>
+        <h2 id="nextStepTitle">Pradėk nuo peptidinio ryšio</h2>
+        <p id="nextStepText" class="muted">Sukurk bent vieną grandinę konstruktoriuje ir atlik Biureto mėginį.</p>
+        <div class="actions"><button class="btn warn" id="resetProgress">Išvalyti mano pažangą</button></div>
+      </div>
+    </section>
+  </main>
+
+  <div class="footer">Veikia lokaliai naršyklėje. Pažanga saugoma tik šiame įrenginyje per <span class="kbd">localStorage</span>.</div>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+const $ = (s, root=document) => root.querySelector(s);
+const $$ = (s, root=document) => [...root.querySelectorAll(s)];
+const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+const fmt=(n,d=3)=>Number(n.toFixed(d)).toLocaleString('lt-LT',{maximumFractionDigits:d});
+const norm=s=>String(s??'').toLowerCase().trim().replace(/\s+/g,' ').replace(',', '.').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+const rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+
+const TOPICS={
+  peptide:'Peptidinis ryšys ir kondensacija', hydro:'Hidrolizė ir skaičiavimai',
+  structure:'Pirminė / antrinė struktūra', biuret:'Biureto reakcija', metabolism:'Baltymų apykaita'
+};
+const freshState=()=>({xp:0,streak:0,bestStreak:0,attempts:0,correct:0,labActions:0,quizDone:0,
+  mastery:Object.fromEntries(Object.keys(TOPICS).map(k=>[k,{right:0,total:0}])),
+  errors:Object.fromEntries(Object.keys(TOPICS).map(k=>[k,0])),
+  badges:{architect:false,biuret:false,hydro:false,solver:false,predictor:false},predictions:0,correctPredictions:0});
+let state=loadState();
+function loadState(){try{return Object.assign(freshState(),JSON.parse(localStorage.getItem('baltymaiVBEstate')||'{}'));}catch(e){return freshState();}}
+function save(){try{localStorage.setItem('baltymaiVBEstate',JSON.stringify(state));}catch(e){} updateUI();}
+function record(topic,ok,xp=8,{prediction=false}={}){
+  state.attempts++; state.mastery[topic].total++; if(ok){state.correct++;state.mastery[topic].right++;state.streak++;state.bestStreak=Math.max(state.bestStreak,state.streak);state.xp+=xp;}else{state.streak=0;state.errors[topic]++;}
+  if(prediction){state.predictions++;if(ok)state.correctPredictions++;}
+  save();
+}
+function toast(msg,type=''){const t=$('#toast');t.textContent=msg;t.className='toast show '+type;clearTimeout(toast._tm);toast._tm=setTimeout(()=>t.className='toast',2400);}
+function updateUI(){
+  $('#xp').textContent=state.xp; $('#streak').textContent=state.streak; $('#accuracy').textContent=state.attempts?Math.round(100*state.correct/state.attempts)+' %':'–';
+  const completedTopics=Object.values(state.mastery).filter(v=>v.total>=2).length;
+  const progress=clamp(Math.round((completedTopics/5)*55 + Math.min(state.labActions,5)*5 + Math.min(state.quizDone,8)*2.5),0,100);
+  $('#progressBar').style.width=progress+'%'; $('#progressText').textContent=progress+' %';
+  updateDiagnostics();
+}
+
+// Navigation
+$$('.tab').forEach(btn=>btn.addEventListener('click',()=>showPage(btn.dataset.page)));
+$$('[data-jump]').forEach(btn=>btn.addEventListener('click',()=>showPage(btn.dataset.jump)));
+function showPage(id){$$('.tab').forEach(b=>b.classList.toggle('active',b.dataset.page===id));$$('.page').forEach(p=>p.classList.toggle('active',p.id===id));window.scrollTo({top:0,behavior:'smooth'});if(id==='diagnostics')updateDiagnostics();}
+
+// Lab navigation + level
+let level=1;
+const levelText={1:'1 lygis: tiesioginis atpažinimas ir maži skaičiai.',2:'2 lygis: keli ryšiai, formulės ir paaiškinimas.',3:'3 lygis: kelių žingsnių stoichiometrija ir klaidų analizė.'};
+$$('.lab-menu [data-stage]').forEach(b=>b.addEventListener('click',()=>{$$('.lab-menu [data-stage]').forEach(x=>x.classList.toggle('active',x===b));$$('.stage').forEach(s=>s.classList.toggle('active',s.id==='stage-'+b.dataset.stage));}));
+$$('.level-btn').forEach(b=>b.addEventListener('click',()=>{level=+b.dataset.level;$$('.level-btn').forEach(x=>x.classList.toggle('active',x===b));$('#levelDesc').textContent=levelText[level];newBuilderTask();makeHydroQuestion();}));
+
+// Builder
+const AA=[{n:'Gly',r:'H'},{n:'Ala',r:'CH₃'},{n:'Ser',r:'CH₂OH'},{n:'Val',r:'CH(CH₃)₂'}];
+let builderTarget=2,builderChain=[],predictionLocked=false;
+function initAAPalette(){const p=$('#aaPalette');p.innerHTML='';AA.forEach(a=>{const b=document.createElement('button');b.className='chem-chip';b.innerHTML=`<strong>${a.n}</strong><span class="muted">R=${a.r}</span>`;b.addEventListener('click',()=>addAA(a));p.appendChild(b);});}
+function newBuilderTask(){builderTarget=level===1?2:level===2?rand(3,4):rand(4,6);builderChain=[];predictionLocked=false;$('#predBonds').value='';$('#predWater').value='';$('#builderPrompt').textContent=`Prognozuok ${builderTarget} aminorūgščių liekanų tiesinei grandinei.`;$('#builderPredFeedback').className='feedback';$('#builderResult').className='feedback';renderChain();}
+function addAA(a){if(builderChain.length>=builderTarget){toast('Tikslinis grandinės ilgis jau pasiektas.','bad');return;}builderChain.push(a);renderChain();}
+function renderChain(){const el=$('#buildChain');if(!builderChain.length)el.innerHTML='<span class="muted">Grandinė tuščia.</span>';else el.innerHTML=builderChain.map((a,i)=>`${i?'<span class="connector">–CO–NH–</span>':''}<span class="aa">${a.n}</span>`).join('');$('#joinAA').disabled=builderChain.length!==builderTarget;}
+$('#undoAA').addEventListener('click',()=>{builderChain.pop();renderChain();});
+$('#newBuilder').addEventListener('click',newBuilderTask);
+$('#checkPrediction').addEventListener('click',()=>{if(predictionLocked)return;const b=Number($('#predBonds').value),w=Number($('#predWater').value),ans=builderTarget-1;const fb=$('#builderPredFeedback');if(!Number.isInteger(b)||!Number.isInteger(w)){fb.className='feedback show bad';fb.textContent='Įrašyk du sveikuosius skaičius.';return;}const ok=b===ans&&w===ans;record('peptide',ok,ok?10:0,{prediction:true});predictionLocked=true;fb.className='feedback show '+(ok?'good':'bad');fb.innerHTML=ok?`Teisinga: ${builderTarget} liekanoms reikia ${ans} peptidinių ryšių ir kondensacijos metu susidaro ${ans} H₂O.`:`Čia veikia taisyklė n−1: ${builderTarget} liekanos → <strong>${ans} peptidiniai ryšiai</strong> ir <strong>${ans} H₂O</strong>. Dažna klaida – skaičiuoti ryšių tiek pat, kiek liekanų.`;});
+$('#joinAA').addEventListener('click',()=>{const seq=builderChain.map(a=>a.n).join('–');const bonds=builderTarget-1;const reactants=builderChain.map(a=>`H₂N–CH(${a.r})–COOH`).join(' + ');let product=`H₂N–CH(${builderChain[0].r})`;for(let i=1;i<builderChain.length;i++)product+=`–CO–NH–CH(${builderChain[i].r})`;product+='–COOH';const fb=$('#builderResult');fb.className='feedback show info';fb.innerHTML=`Sukūrei <strong>${seq}</strong>. Grandinėje pažymimi ${bonds} pasikartojantys <span class="bond">–CO–NH–</span> ryšiai.<div class="formula" style="margin-top:10px">${reactants} → ${product} + ${bonds===1?'H₂O':bonds+' H₂O'}</div><span class="note">Tai bendra subalansuota tiesinės grandinės kondensacijos schema: ${builderTarget} aminorūgščių molekulės sudaro ${bonds} naujus peptidinius ryšius ir ${bonds} vandens molekules.</span>`;
+  state.labActions++; if(state.labActions>=3)state.badges.architect=true;save();toast('Grandinė sujungta. Dėsningumas n−1 pritaikytas.','good');
+});
+
+// Secondary structure model
+let secondaryPrediction=null;
+$$('.pred-secondary').forEach(b=>b.addEventListener('click',()=>{secondaryPrediction=b.dataset.pred;const ok=secondaryPrediction==='stable';record('structure',ok,8,{prediction:true});const f=$('#secondaryPredFeedback');f.className='feedback show '+(ok?'good':'bad');f.innerHTML=ok?'Taip. Vandeniliniai ryšiai tarp polipeptido karkaso grupių stabilizuoja antrinę struktūrą.':'Ne. Programos lygmeniu svarbus ryšys yra toks: vandeniliniai ryšiai stabilizuoja antrinę struktūrą. Jie nekeičia aminorūgščių sekos.';$$('.pred-secondary').forEach(x=>x.disabled=true);}));
+$('#hbSlider').addEventListener('input',renderSecondary);$('#shapeSelect').addEventListener('change',renderSecondary);
+function renderSecondary(){const pct=+$('#hbSlider').value;$('#hbOut').textContent=pct+' %';const svg=$('#proteinSvg');const type=$('#shapeSelect').value;svg.innerHTML='';const ns='http://www.w3.org/2000/svg';
+  const add=(name,attrs)=>{const e=document.createElementNS(ns,name);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));svg.appendChild(e);return e;};
+  if(type==='helix'){
+    let d='';const amp=18+28*(pct/100),turns=2+3*(pct/100);for(let x=30;x<=490;x+=8){const y=115+Math.sin((x/460)*Math.PI*2*turns)*amp;d+=(x===30?'M':'L')+x+' '+y+' ';}add('path',{d,fill:'none',stroke:'#7dd3fc','stroke-width':'8','stroke-linecap':'round'});
+    const n=Math.round(1+pct/13);for(let i=0;i<n;i++){const x=70+i*(380/Math.max(1,n-1));add('line',{x1:x,y1:77,x2:x+18,y2:150,stroke:'#fcd34d','stroke-width':'2','stroke-dasharray':'5 5',opacity:.85});}
+  }else{
+    const gap=78-30*(pct/100);for(let row=0;row<3;row++){let pts=[];for(let i=0;i<8;i++)pts.push(`${50+i*58},${55+row*gap+(i%2?16:-16)}`);add('polyline',{points:pts.join(' '),fill:'none',stroke:'#7dd3fc','stroke-width':'7','stroke-linejoin':'round'});}const n=Math.round(1+pct/16);for(let i=0;i<n;i++){const x=80+i*(350/Math.max(1,n-1));add('line',{x1:x,y1:73,x2:x,y2:118,stroke:'#fcd34d','stroke-width':'2','stroke-dasharray':'5 5'});}
+  }
+  $('#secondaryExplanation').innerHTML=pct<30?'Mažai pažymėtų vandenilinių ryšių → modelis rodo mažiau reguliarią vietinę struktūrą.':pct<70?'Daugėjant reguliarių vandenilinių ryšių, antrinė struktūra tampa stabilesnė.':'Daug tinkamai išsidėsčiusių vandenilinių ryšių stipriai stabilizuoja vaizduojamą antrinės struktūros motyvą.';
+}
+
+// Biuret lab
+let biuretPrediction=null;
+const samples={protein:{positive:true,label:'Baltymo tirpalas'},amino:{positive:false,label:'Laisvos aminorūgšties tirpalas'},glucose:{positive:false,label:'Gliukozės tirpalas'},water:{positive:false,label:'Distiliuotas vanduo'}};
+$$('.biuret-pred').forEach(b=>b.addEventListener('click',()=>{biuretPrediction=b.dataset.value;$$('.biuret-pred').forEach(x=>x.classList.toggle('selected',x===b));$('#runBiuret').disabled=false;}));
+$('#sampleSelect').addEventListener('change',resetBiuret);
+$('#resetBiuret').addEventListener('click',resetBiuret);
+function resetBiuret(){biuretPrediction=null;$('#runBiuret').disabled=true;$$('.biuret-pred').forEach(x=>x.classList.remove('selected'));$('#liquid').style.background='#8fd3ff';$('#tube').classList.remove('animate');$('#tubeLabel').textContent='Pradinis mėginys';$('#biuretFeedback').className='feedback';}
+$('#runBiuret').addEventListener('click',()=>{const s=samples[$('#sampleSelect').value];const predPositive=biuretPrediction==='positive';const ok=predPositive===s.positive;record('biuret',ok,10,{prediction:true});state.labActions++;if(s.positive&&ok)state.badges.biuret=true;save();const tube=$('#tube');tube.classList.remove('animate');void tube.offsetWidth;tube.classList.add('animate');$('#liquid').style.background=s.positive?'#b48be8':'#77bfe9';$('#tubeLabel').textContent=s.positive?'Violetinė spalva – teigiamas bandymas':'Violetinė spalva nesusidaro – neigiamas bandymas';const f=$('#biuretFeedback');f.className='feedback show '+(ok?'good':'bad');f.innerHTML=ok?`${s.label}: prognozė teisinga. ${s.positive?'Baltyme yra daug peptidinių ryšių, todėl gaunama violetinė spalva.':'Mėginys nėra baltymas, todėl teigiamo Biureto požymio nėra.'}`:`Prognozė netiksli. ${s.positive?'Baltymo tirpalas turi daug peptidinių ryšių, todėl Biureto reakcija teigiama ir matoma violetinė spalva.':'Šis mėginys neturi baltymui būdingo daugelio peptidinių ryšių karkaso, todėl violetinė spalva neatsiranda.'}`;});
+
+// Hydrolysis lab
+let hydroExpected=.06,hydroN=4,hydroMol=.02;
+$('#residueSlider').addEventListener('input',()=>{$('#residueOut').textContent=$('#residueSlider').value;makeHydroQuestion();});$('#amountInput').addEventListener('change',makeHydroQuestion);$('#makeHydroQ').addEventListener('click',makeHydroQuestion);
+function makeHydroQuestion(){hydroN=+$('#residueSlider').value;hydroMol=Number($('#amountInput').value);if(!Number.isFinite(hydroMol)||hydroMol<=0){hydroMol=.02;$('#amountInput').value='0.020';}hydroExpected=hydroMol*(hydroN-1);const names={2:'dipeptido',3:'tripeptido',4:'tetrapeptido',5:'pentapeptido'};const label=names[hydroN]||`${hydroN} liekanų peptido`;$('#hydroQuestion').innerHTML=`Jei <strong>${fmt(hydroMol,3)} mol ${label}</strong> visiškai hidrolizuojama iki aminorūgščių, kiek mol H₂O sunaudojama?`;
+  $('#hydroAnswer').value='';$('#hydroFeedback').className='feedback';}
+$('#checkHydro').addEventListener('click',()=>{const raw=norm($('#hydroAnswer').value);const val=Number(raw);const f=$('#hydroFeedback');if(!Number.isFinite(val)){f.className='feedback show bad';f.textContent='Įrašyk skaitinę reikšmę. Galima naudoti kablelį arba tašką.';return;}const ok=Math.abs(val-hydroExpected)<=Math.max(1e-6,hydroExpected*0.005);record('hydro',ok,12);state.labActions++;if(ok&&hydroN>=4)state.badges.hydro=true;save();const waterPer=hydroN-1;f.className='feedback show '+(ok?'good':'bad');f.innerHTML=ok?`Teisinga. Vienai ${hydroN} liekanų molekulei reikia ${waterPer} H₂O, todėl n(H₂O) = ${fmt(hydroMol,3)} × ${waterPer} = <strong>${fmt(hydroExpected,4)} mol</strong>.`:`Patikrink pirmą žingsnį: ${hydroN} liekanų grandinėje yra <strong>${waterPer}</strong> peptidiniai ryšiai. Vadinasi n(H₂O) = n(peptido) × ${waterPer} = <strong>${fmt(hydroExpected,4)} mol</strong>.`;});
+
+// Quiz engine
+let quiz=[],qIndex=0,qAnswered=false;
+function makeQuiz(){quiz=[qPeptideBond(),qCount(),qStructureError(),qBiuret(),qHydroCalc(),qMetabolism(),qData(),qStructured()].sort(()=>Math.random()-.5);qIndex=0;state.quizDone=0;renderQuestion();}
+function qPeptideBond(){const choices=['–CO–NH–','–CH₂–CH₂–','–O–O–','–CO–O–'];return{topic:'peptide',type:'Atpažinimas',points:1,text:'Kuri atomų grupė baltymo grandinėje yra peptidinis ryšys?',kind:'mc',choices,answer:0,hint:'Ieškok jungties tarp karbonilo C=O ir azoto N.',why:'Peptidinis ryšys yra –CO–NH– fragmentas, susidaręs aminorūgštims kondensuojantis.'};}
+function qCount(){const n=rand(3,level===3?9:6);return{topic:'peptide',type:'Skaičiavimas',points:1,text:`Tiesinį peptidą sudaro ${n} aminorūgščių liekanos. Kiek jame peptidinių ryšių?`,kind:'num',answer:n-1,hint:'Tiesinei grandinei taikyk n−1.',why:`${n} liekanos → ${n-1} peptidiniai ryšiai.`};}
+function qStructureError(){const statements=[
+  {s:'Pirminę baltymo struktūrą sudaro aminorūgščių liekanų seka.',ok:true},
+  {s:'Antrinę struktūrą stabilizuoja vandeniliniai ryšiai.',ok:true},
+  {s:'Pirminę aminorūgščių seką sudaro vandeniliniai ryšiai.',ok:false},
+  {s:'Peptidiniai ryšiai yra kovalentiniai ryšiai polipeptido grandinėje.',ok:true}
+];return{topic:'structure',type:'Klaidos radimas',points:2,text:'Rask klaidingą teiginį.',kind:'mc',choices:statements.map(x=>x.s),answer:2,hint:'Atskirk ryšius, kurie sudaro grandinę, nuo ryšių, kurie stabilizuoja jos vietinę erdvinę formą.',why:'Pirminę seką jungia kovalentiniai peptidiniai ryšiai; vandeniliniai ryšiai svarbūs antrinei struktūrai.'};}
+function qBiuret(){const sample=pick([{n:'baltymo tirpalas',pos:true},{n:'aminorūgšties tirpalas',pos:false},{n:'distiliuotas vanduo',pos:false}]);return{topic:'biuret',type:'Prognozavimas',points:1,text:`Atliekama Biureto reakcija su mėginiu „${sample.n}“. Koks tikėtinas požymis?`,kind:'mc',choices:['Atsiranda violetinė spalva','Violetinė spalva neatsiranda','Susidaro sidabro veidrodis','Išsiskiria dujos'],answer:sample.pos?0:1,explanation:sample.pos?'Baltymas duoda teigiamą Biureto reakciją – violetinę spalvą.':'Šis mėginys nėra baltymas, todėl violetinė spalva neatsiranda.',hint:'Biureto bandymas siejamas su peptidiniais ryšiais ir violetine spalva.',why:sample.pos?'Baltyme yra daug peptidinių ryšių, todėl bandymas teigiamas.':'Laisva aminorūgštis ar vanduo neturi baltymo polipeptidinio karkaso.'};}
+function qHydroCalc(){const n=rand(3,6),mol=pick([0.010,0.020,0.025,0.050]),ans=mol*(n-1);return{topic:'hydro',type:'Stoichiometrija',points:2,text:`Visiškai hidrolizuojama ${fmt(mol,3)} mol ${n} liekanų peptido. Kiek mol H₂O sunaudojama?`,kind:'num',answer:ans,tol:0.0001,hint:`Pirmiausia rask ryšių skaičių vienoje molekulėje: ${n}−1.`,why:`Vienai molekulei reikia ${n-1} H₂O, todėl ${fmt(mol,3)} × ${n-1} = ${fmt(ans,4)} mol.`};}
+function qMetabolism(){return{topic:'metabolism',type:'Trumpas atsakymas',points:1,text:'Koks reakcijos tipas organizme skaido peptidinius ryšius, dalyvaujant vandeniui?',kind:'text',answers:['hidrolize','hidrolizė'],hint:'Reakcijos pavadinimas tiesiogiai siejamas su ryšio skaidymu vandeniu.',why:'Peptidinių ryšių skaidymas, dalyvaujant vandeniui, yra hidrolizė.'};}
+function qData(){return{topic:'biuret',type:'Duomenų interpretavimas',points:2,text:'Keturi mėginiai ištirti Biureto reakcija. Kuris mėginys tikrai rodo teigiamą baltymo požymį?',kind:'tablemc',table:[['Mėginys','Stebėjimas'],['A','Violetinė spalva'],['B','Bespalvis'],['C','Mėlynas tirpalas, be violetinio atspalvio'],['D','Rudos nuosėdos']],choices:['A','B','C','D'],answer:0,hint:'Ieškok būtent violetinės spalvos.',why:'Teigiamas Biureto reakcijos požymis yra violetinė spalva.'};}
+function qStructured(){const n=rand(4,7),mol=pick([0.010,0.015,0.020]),bonds=n-1,water=mol*bonds;return{topic:'hydro',type:'Kelių žingsnių VBE',points:3,text:`Mokinys turi ${fmt(mol,3)} mol tiesinio peptido, kurio molekulėje yra ${n} aminorūgščių liekanos. Jis teigia: „visiškai hidrolizei reikės ${fmt(mol*n,3)} mol H₂O, nes vandens molekulių reikia tiek, kiek yra aminorūgščių liekanų“. Įrašyk teisingą H₂O kiekį (mol).`,kind:'num',answer:water,tol:0.0001,hint:'Surask mokinio loginę klaidą: H₂O reikia ne kiekvienai liekanai, o kiekvienam nutraukiamam peptidiniam ryšiui.',why:`Grandinėje yra ${bonds} peptidiniai ryšiai, todėl n(H₂O)=${fmt(mol,3)}×${bonds}=${fmt(water,4)} mol. Klaida – naudota n, o ne n−1.`};}
+function renderQuestion(){qAnswered=false;$('#nextQ').disabled=true;$('#quizFeedback').className='feedback';const q=quiz[qIndex];$('#qNo').textContent=`${qIndex+1}/${quiz.length}`;let html=`<div class="qtype">${q.type} · <span class="points">${q.points} t.</span></div><div class="qtext">${q.text}</div>`;
+  if(q.kind==='mc'){html+='<div class="options">'+q.choices.map((c,i)=>`<button class="option" data-opt="${i}">${c}</button>`).join('')+'</div>'}
+  else if(q.kind==='tablemc'){html+='<table class="mini-table">'+q.table.map((r,i)=>`<tr>${r.map(c=>i?`<td>${c}</td>`:`<th>${c}</th>`).join('')}</tr>`).join('')+'</table><div class="options">'+q.choices.map((c,i)=>`<button class="option" data-opt="${i}">${c}</button>`).join('')+'</div>'}
+  else html+=`<div class="answerline"><input id="qInput" class="input" ${q.kind==='num'?'inputmode="decimal"':''} placeholder="Tavo atsakymas"><button class="btn primary" id="submitQ">Atsakyti</button></div>`;
+  $('#qCard').innerHTML=html;$$('[data-opt]',$('#qCard')).forEach(b=>b.addEventListener('click',()=>answerMC(+b.dataset.opt)));const sub=$('#submitQ');if(sub)sub.addEventListener('click',answerInput);const inp=$('#qInput');if(inp)inp.addEventListener('keydown',e=>{if(e.key==='Enter')answerInput();});}
+function answerMC(i){if(qAnswered)return;const q=quiz[qIndex];const ok=q.customCheck?q.customCheck(i):i===q.answer;qAnswered=true;$$('[data-opt]',$('#qCard')).forEach(b=>{b.disabled=true;const idx=+b.dataset.opt;if(idx===q.answer)b.classList.add('correct');if(idx===i&&!ok)b.classList.add('wrong');});finishQ(ok,q);}
+function answerInput(){if(qAnswered)return;const q=quiz[qIndex],raw=$('#qInput').value;let ok=false;if(q.kind==='num'){const v=Number(norm(raw));ok=Number.isFinite(v)&&Math.abs(v-q.answer)<= (q.tol??Math.max(1e-6,Math.abs(q.answer)*.005));}else{const v=norm(raw).replace(/[^a-z0-9]/g,'');ok=q.answers.some(a=>norm(a).replace(/[^a-z0-9]/g,'')===v);}if(!String(raw).trim()){toast('Pirmiausia įrašyk atsakymą.','bad');return;}qAnswered=true;$('#submitQ').disabled=true;$('#qInput').disabled=true;finishQ(ok,q);}
+function finishQ(ok,q){record(q.topic,ok,ok?6+q.points*3:0);state.quizDone++;if(state.quizDone>=6&&state.correct/state.attempts>=.65)state.badges.solver=true;save();const f=$('#quizFeedback');f.className='feedback show '+(ok?'good':'bad');f.innerHTML=(ok?'<strong>Teisinga.</strong> ':'<strong>Netikslu.</strong> ')+(q.explanation||q.why)+'<br><span class="note">'+q.why+'</span>';$('#nextQ').disabled=false;}
+$('#nextQ').addEventListener('click',()=>{if(!qAnswered)return;if(qIndex<quiz.length-1){qIndex++;renderQuestion();}else{showPage('diagnostics');toast('Sesija baigta – peržiūrėk diagnostiką.','good');}});
+$('#quizHint').addEventListener('click',()=>{const q=quiz[qIndex];const f=$('#quizFeedback');f.className='feedback show info';f.innerHTML='<strong>Užuomina:</strong> '+q.hint;});
+$('#restartQuiz').addEventListener('click',()=>{makeQuiz();toast('Sugeneruota nauja 8 užduočių sesija.');});
+
+// Diagnostics
+const topicTips={
+ peptide:'Pakartok taisyklę n−1 ir sąmoningai ieškok –CO–NH– fragmento.',
+ hydro:'Pirmas žingsnis visada: kiek peptidinių ryšių turi viena grandinė? Tik tada daugink iš medžiagos kiekio.',
+ structure:'Atskirk ryšių paskirtį: peptidiniai ryšiai sudaro pirminę grandinę, vandeniliniai stabilizuoja antrinę struktūrą.',
+ biuret:'Susiek vieną konkretų požymį: baltymas + Biureto reagentas → violetinė spalva.',
+ metabolism:'Hidrolizę siek su vandens dalyvavimu ir peptidinių ryšių skaidymu.'
+};
+function updateDiagnostics(){
+  if(!$('#masteryBars'))return;const mb=$('#masteryBars');mb.innerHTML='';Object.entries(TOPICS).forEach(([k,name])=>{const m=state.mastery[k],pct=m.total?Math.round(100*m.right/m.total):0;const row=document.createElement('div');row.className='mastery-row';row.innerHTML=`<span>${name}</span><div class="mbar"><span style="width:${pct}%"></span></div><strong>${m.total?pct+'%':'–'}</strong>`;mb.appendChild(row);});
+  const ranked=Object.entries(state.errors).sort((a,b)=>b[1]-a[1]);const mistake=$('#mistakeList');mistake.innerHTML='';ranked.filter(x=>x[1]>0).slice(0,3).forEach(([k,n])=>{const li=document.createElement('li');li.innerHTML=`<strong>${TOPICS[k]}:</strong> ${n} klaid. ${topicTips[k]}`;mistake.appendChild(li);});
+  const assessed=state.attempts;const acc=assessed?state.correct/assessed:0;const diag=$('#diagnosisText');if(assessed<3)diag.textContent='Dar mažai duomenų. Atlik kelias laboratorijos prognozes ir testo užduotis.';else{const strong=Object.entries(state.mastery).filter(([,m])=>m.total>=2&&m.right/m.total>=.75).map(([k])=>TOPICS[k]);const weak=ranked.filter(([k,n])=>n>0&&state.mastery[k].total>=1).slice(0,2).map(([k])=>TOPICS[k]);diag.innerHTML=`<strong>Stipriausia:</strong> ${strong.length?strong.join(', '):'dar renkame duomenis'}.<br><strong>Daugiausia dėmesio:</strong> ${weak.length?weak.join(', '):'ryškių pasikartojančių klaidų kol kas nėra'}.`;}
+  let title='Dar nepakanka duomenų',text='Atsakyk bent į 5 vertinamas užduotis.';if(assessed>=5){if(acc>=.88&&Object.values(state.mastery).filter(m=>m.total>=1).length>=4){title='Aukšto sudėtingumo užduotys jau pasiekiamos';text='Stabiliai sprendi skirtingų tipų užduotis. Toliau rinkis 3 lygį ir kelių žingsnių stoichiometriją.';}else if(acc>=.72){title='Pagrindinio lygio užduotys sprendžiamos gana stabiliai';text='Didink sudėtingumą ten, kur klaidų mažiausia, o silpniausią temą pakartok laboratorijoje.';}else if(acc>=.5){title='Tiesioginės užduotys jau pavyksta, taikymas dar svyruoja';text='Dirbk 1–2 lygiu ir kiekvieną skaičiavimą pradėk nuo ryšių skaičiaus.';}else{title='Reikia sutvirtinti pagrindinius ryšius tarp sąvokų';text='Grįžk į teoriją ir atlik prognozavimo laboratorijas, prieš pereidamas prie skaičiavimų.';}}
+  $('#readinessTitle').textContent=title;$('#readinessText').textContent=text;
+  const badges=[['architect','Peptidų architektas'],['biuret','Biureto detektyvas'],['hydro','Hidrolizės skaičiuotojas'],['solver','VBE sprendėjas'],['predictor','Prognozės meistras']];if(state.predictions>=4&&state.correctPredictions/state.predictions>=.75)state.badges.predictor=true;$('#badges').innerHTML=badges.map(([k,n])=>`<span class="badge ${state.badges[k]?'earned':''}">${state.badges[k]?'✓ ':'○ '}${n}</span>`).join('');
+  const weakKey=ranked.find(([k])=>state.mastery[k].total>0)?.[0];if(weakKey){$('#nextStepTitle').textContent='Kitas taikinys: '+TOPICS[weakKey];$('#nextStepText').textContent=topicTips[weakKey];}else{$('#nextStepTitle').textContent='Pradėk nuo peptidinio ryšio';$('#nextStepText').textContent='Sukurk bent vieną grandinę konstruktoriuje ir atlik Biureto mėginį.';}
+}
+$('#resetProgress').addEventListener('click',()=>{if(confirm('Ar tikrai išvalyti visą šios programėlės pažangą?')){state=freshState();save();makeQuiz();newBuilderTask();resetBiuret();toast('Pažanga išvalyta.');}});
+
+// Initialize
+initAAPalette();newBuilderTask();renderSecondary();makeHydroQuestion();makeQuiz();updateUI();
+</script>
+</body>
+</html>

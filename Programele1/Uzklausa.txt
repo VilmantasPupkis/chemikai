@@ -1,0 +1,2 @@
+Sukurk interaktyvią mokomąją programėlę, kuri padėtų moksleiviui pasiruošti valstybiniam chemijos brandos egzaminui tema [ĮŠRAŠYTI TEMĄ].
+Galutiniame atsakyme pateik nuorodą atsisiųsti .html failą.

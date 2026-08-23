@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cheminė pusiausvyra - VBE Pasiruošimas</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --bg: #ecf0f1;
+            --card-bg: #ffffff;
+            --text: #2c3e50;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 3px solid var(--secondary);
+            padding-bottom: 10px;
+        }
+
+        .theory-section {
+            background: #f8f9fa;
+            border-left: 4px solid var(--secondary);
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .formula {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.2em;
+            margin: 15px 0;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .interactive-simulation {
+            background: linear-gradient(135deg, #667eea22 0%, #764ba222 100%);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .reaction-visual {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .molecule {
+            background: white;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: all 0.5s ease;
+        }
+
+        .molecule.reactant {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .molecule.product {
+            background: #51cf66;
+            color: white;
+        }
+
+        .arrow {
+            font-size: 2em;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary {
+            background: var(--secondary);
+        }
+
+        .btn-danger {
+            background: var(--accent);
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+        }
+
+        .quiz-section {
+            margin-top: 30px;
+        }
+
+        .question {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 2px solid #dee2e6;
+        }
+
+        .question.correct {
+            border-color: var(--success);
+            background: #d4edda;
+        }
+
+        .question.incorrect {
+            border-color: var(--accent);
+            background: #f8d7da;
+        }
+
+        .options {
+            display: grid;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .option {
+            padding: 12px;
+            background: white;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option:hover {
+            background: #e9ecef;
+            border-color: var(--secondary);
+        }
+
+        .option.selected {
+            background: #cce5ff;
+            border-color: var(--secondary);
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .progress-bar {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 20px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: var(--success);
+            height: 100%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8em;
+        }
+
+        .le-chatelier-demo {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .equilibrium-constant {
+            font-size: 1.5em;
+            margin: 15px 0;
+            color: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .reaction-visual {
+                flex-direction: column;
+            }
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .warning-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚗️ Cheminė Pusiausvyra</h1>
+            <p>Interaktyvus pasiruošimas VBE egzaminui</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Teorijos sekcija -->
+            <div class="card">
+                <h2>📚 Teorija</h2>
+                
+                <div class="theory-section">
+                    <h3>Kas yra cheminė pusiausvyra?</h3>
+                    <p>Cheminė pusiausvyra – būsena, kai tiesioginės ir atvirkštinės reakcijų greičiai tampa lygūs, o reagentų ir produktų koncentracijos nebekinta laike.</p>
+                </div>
+
+                <div class="formula">
+                    aA + bB ⇌ cC + dD
+                </div>
+
+                <div class="theory-section">
+                    <h3>Pusiausvyros konstanta (K)</h3>
+                    <div class="formula">
+                        K = [C]ᶜ × [D]ᵈ / [A]ᵃ × [B]ᵇ
+                    </div>
+                    <p>K > 1: pusiausvyra pasislinkusi į produktų pusę<br>
+                    K < 1: pusiausvyra pasislinkusi į reagentų pusę</p>
+                </div>
+
+                <div class="info-box">
+                    <strong>📌 Svarbu:</strong> Pusiausvyros konstanta priklauso TIK nuo temperatūros!
+                </div>
+
+                <div class="theory-section">
+                    <h3>Le Šateljė principas</h3>
+                    <p>Jei pusiausvyros sistemą veikia išorinis poveikis, pusiausvyra pasislenka ta kryptimi, kuri sumažina tą poveikį.</p>
+                </div>
+
+                <div class="warning-box">
+                    <strong>⚠️ Veiksniai, keičiantys pusiausvyrą:</strong>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Koncentracijos keitimas</li>
+                        <li>Temperatūros keitimas</li>
+                        <li>Slėgio keitimas (dujoms)</li>
+                        <li>Katalizatorius NEkeičia pusiausvyros padėties!</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Interaktyvi simuliacija -->
+            <div class="card">
+                <h2>🔬 Interaktyvi simuliacija</h2>
+                
+                <div class="interactive-simulation">
+                    <h3>Reakcija: N₂ + 3H₂ ⇌ 2NH₃</h3>
+                    <p style="text-align: center; margin: 10px 0;">ΔH = -92 kJ/mol (egzoterminė)</p>
+                    
+                    <div class="reaction-visual">
+                        <div class="molecule reactant" id="n2">N₂</div>
+                        <div class="molecule reactant" id="h2">3H₂</div>
+                        <div class="arrow">⇌</div>
+                        <div class="molecule product" id="nh3">2NH₃</div>
+                    </div>
+
+                    <div class="equilibrium-constant" id="eqConstant">
+                        K = [NH₃]² / [N₂][H₂]³
+                    </div>
+
+                    <div class="controls">
+                        <button class="btn btn-primary" onclick="addReactant()">➕ Pridėti N₂</button>
+                        <button class="btn btn-danger" onclick="removeProduct()">➖ Pašalinti NH₃</button>
+                        <button class="btn btn-success" onclick="increaseTemp()">🔥 Kelti temperatūrą</button>
+                        <button class="btn btn-warning" onclick="decreaseTemp()">❄️ Mažinti temperatūrą</button>
+                    </div>
+
+                    <div id="simulationFeedback" style="margin-top: 15px; text-align: center; font-weight: bold;"></div>
+                </div>
+
+                <div class="le-chatelier-demo" id="leChatelierDemo">
+                    <h3>Le Šateljė principo demonstracija</h3>
+                    <p id="demoText">Pasirinkite veiksmą viršuje, kad pamatytumėte pusiausvyros poslinkį</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Testas -->
+        <div class="card quiz-section">
+            <h2>📝 Savitikros testas</h2>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%;">0%</div>
+            </div>
+
+            <div id="quizContainer">
+                <!-- Klausimai bus sugeneruoti JavaScript -->
+            </div>
+
+            <div id="quizResult" style="text-align: center; margin-top: 20px;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Simuliacijos funkcijos
+        let equilibriumShift = 0; // teigiamas = į dešinę, neigiamas = į kairę
+
+        function updateSimulation(message) {
+            const n2 = document.getElementById('n2');
+            const h2 = document.getElementById('h2');
+            const nh3 = document.getElementById('nh3');
+            const feedback = document.getElementById('simulationFeedback');
+            const demoText = document.getElementById('demoText');
+
+            if (equilibriumShift > 0) {
+                n2.style.transform = 'scale(0.8)';
+                h2.style.transform = 'scale(0.8)';
+                nh3.style.transform = 'scale(1.2)';
+                nh3.style.boxShadow = '0 0 20px #51cf66';
+            } else if (equilibriumShift < 0) {
+                n2.style.transform = 'scale(1.2)';
+                h2.style.transform = 'scale(1.2)';
+                nh3.style.transform = 'scale(0.8)';
+                n2.style.boxShadow = '0 0 20px #ff6b6b';
+                h2.style.boxShadow = '0 0 20px #ff6b6b';
+            } else {
+                n2.style.transform = 'scale(1)';
+                h2.style.transform = 'scale(1)';
+                nh3.style.transform = 'scale(1)';
+                n2.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
+                h2.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
+                nh3.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
+            }
+
+            feedback.textContent = message;
+            demoText.textContent = message;
+            feedback.style.color = '#2c3e50';
+        }
+
+        function addReactant() {
+            equilibriumShift = 1;
+            updateSimulation('✅ Pridėjus reagento (N₂), pusiausvyra pasislenka į produktų pusę (į dešinę) pagal Le Šateljė principą!');
+        }
+
+        function removeProduct() {
+            equilibriumShift = 1;
+            updateSimulation('✅ Pašalinus produktą (NH₃), pusiausvyra pasislenka į dešinę, kad kompensuotų produkto trūkumą!');
+        }
+
+        function increaseTemp() {
+            equilibriumShift = -1;
+            updateSimulation('❄️ Egzoterminėje reakcijoje, kylant temperatūrai, pusiausvyra pasislenka į kairę (reagentų pusę)!');
+        }
+
+        function decreaseTemp() {
+            equilibriumShift = 1;
+            updateSimulation('🔥 Egzoterminėje reakcijoje, mažėjant temperatūrai, pusiausvyra pasislenka į dešinę (produktų pusę)!');
+        }
+
+        // Testo klausimai
+        const questions = [
+            {
+                question: "Kas atsitinka su pusiausvyros konstanta (K), kai keičiama reagentų koncentracija?",
+                options: [
+                    "K padidėja",
+                    "K sumažėja",
+                    "K nesikeičia",
+                    "K tampa lygi nuliui"
+                ],
+                correct: 2,
+                explanation: "Pusiausvyros konstanta priklauso TIK nuo temperatūros. Koncentracijos keitimas pakeičia pusiausvyros padėtį, bet ne konstantą."
+            },
+            {
+                question: "Reakcija: 2SO₂(g) + O₂(g) ⇌ 2SO₃(g). Kaip padidinti SO₃ išeigą?",
+                options: [
+                    "Sumažinti slėgį",
+                    "Padidinti slėgį",
+                    "Pridėti katalizatorių",
+                    "Pašalinti SO₂"
+                ],
+                correct: 1,
+                explanation: "Didinant slėgį, pusiausvyra pasislenka į mažiau dujų molių turinčią pusę. Kairėje pusėje yra 3 moliai dujų, dešinėje - 2 moliai."
+            },
+            {
+                question: "Kas yra cheminė pusiausvyra?",
+                options: [
+                    "Reakcija vyksta tik į vieną pusę",
+                    "Tiesioginės ir atvirkštinės reakcijų greičiai lygūs",
+                    "Visos reakcijos sustojo",
+                    "Produktų koncentracija lygi nuliui"
+                ],
+                correct: 1,
+                explanation: "Cheminė pusiausvyra yra dinaminė būsena, kai tiesioginės ir atvirkštinės reakcijų greičiai yra lygūs."
+            },
+            {
+                question: "Reakcija: N₂(g) + 3H₂(g) ⇌ 2NH₃(g), ΔH = -92 kJ. Kaip padidinti amoniako gamybą?",
+                options: [
+                    "Kelti temperatūrą",
+                    "Mažinti slėgį",
+                    "Mažinti temperatūrą",
+                    "Pridėti daugiau NH₃"
+                ],
+                correct: 2,
+                explanation: "Egzoterminėje reakcijoje žemesnė temperatūra skatina produktų susidarymą pagal Le Šateljė principą."
+            },
+            {
+                question: "Koks katalizatoriaus poveikis cheminei pusiausvyrai?",
+                options: [
+                    "Pasislenka į dešinę",
+                    "Pasislenka į kairę",
+                    "Neturi įtakos pusiausvyros padėčiai",
+                    "Padvigubina pusiausvyros konstantą"
+                ],
+                correct: 2,
+                explanation: "Katalizatorius pagreitina tiek tiesioginę, tiek atvirkštinę reakcijas vienodai, todėl nekeičia pusiausvyros padėties."
+            },
+            {
+                question: "Ką reiškia, kai K >> 1?",
+                options: [
+                    "Pusiausvyra pasislinkusi į reagentų pusę",
+                    "Pusiausvyra pasislinkusi į produktų pusę",
+                    "Reakcija nevyksta",
+                    "Pusiausvyra neegzistuoja"
+                ],
+                correct: 1,
+                explanation: "Kai K >> 1, produktų koncentracija pusiausvyroje yra daug didesnė nei reagentų."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answers = [];
+
+        function loadQuiz() {
+            const container = document.getElementById('quizContainer');
+            container.innerHTML = '';
+
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.id = `question-${index}`;
+                
+                let html = `<h3>${index + 1}. ${q.question}</h3>`;
+                html += '<div class="options">';
+                
+                q.options.forEach((option, optIndex) => {
+                    html += `<div class="option" onclick="selectAnswer(${index}, ${optIndex})" id="option-${index}-${optIndex}">
+                        ${String.fromCharCode(65 + optIndex)}) ${option}
+                    </div>`;
+                });
+                
+                html += '</div>';
+                html += `<div class="feedback" id="feedback-${index}" style="display: none;"></div>`;
+                
+                questionDiv.innerHTML = html;
+                container.appendChild(questionDiv);
+            });
+        }
+
+        function selectAnswer(questionIndex, optionIndex) {
+            if (answers[questionIndex] !== undefined) return; // jau atsakyta
+            
+            answers[questionIndex] = optionIndex;
+            
+            // Pažymėti pasirinktą atsakymą
+            const options = document.querySelectorAll(`#question-${questionIndex} .option`);
+            options.forEach((opt, idx) => {
+                if (idx === optionIndex) {
+                    opt.classList.add('selected');
+                }
+                opt.style.pointerEvents = 'none';
+            });
+            
+            // Parodyti feedback
+            const feedback = document.getElementById(`feedback-${questionIndex}`);
+            const questionDiv = document.getElementById(`question-${questionIndex}`);
+            
+            if (optionIndex === questions[questionIndex].correct) {
+                feedback.className = 'feedback correct';
+                feedback.textContent = `✅ Teisingai! ${questions[questionIndex].explanation}`;
+                feedback.style.display = 'block';
+                questionDiv.classList.add('correct');
+                score++;
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = `❌ Neteisingai. Teisingas atsakymas: ${String.fromCharCode(65 + questions[questionIndex].correct)}. ${questions[questionIndex].explanation}`;
+                feedback.style.display = 'block';
+                questionDiv.classList.add('incorrect');
+                
+                // Pažymėti teisingą atsakymą
+                const correctOption = document.getElementById(`option-${questionIndex}-${questions[questionIndex].correct}`);
+                correctOption.style.background = '#d4edda';
+                correctOption.style.borderColor = '#27ae60';
+            }
+            
+            updateProgress();
+            checkAllAnswered();
+        }
+
+        function updateProgress() {
+            const answered = answers.filter(a => a !== undefined).length;
+            const percentage = (answered / questions.length) * 100;
+            const progressFill = document.getElementById('progressFill');
+            progressFill.style.width = percentage + '%';
+            progressFill.textContent = Math.round(percentage) + '%';
+        }
+
+        function checkAllAnswered() {
+            const allAnswered = answers.length === questions.length && answers.every(a => a !== undefined);
+            
+            if (allAnswered) {
+                const resultDiv = document.getElementById('quizResult');
+                const percentage = (score / questions.length) * 100;
+                
+                let message = '';
+                let color = '';
+                
+                if (percentage === 100) {
+                    message = '🏆 Puiku! Tobulas rezultatas!';
+                    color = '#27ae60';
+                } else if (percentage >= 80) {
+                    message = '🌟 Labai gerai! Beveik viską žinote!';
+                    color = '#27ae60';
+                } else if (percentage >= 60) {
+                    message = '👍 Gerai, bet dar verta pasikartoti teoriją.';
+                    color = '#f39c12';
+                } else {
+                    message = '📚 Reikėtų daugiau pasimokyti. Peržiūrėkite teoriją ir bandykite dar kartą!';
+                    color = '#e74c3c';
+                }
+                
+                resultDiv.innerHTML = `
+                    <h3 style="color: ${color};">${message}</h3>
+                    <p style="font-size: 1.2em; margin: 10px 0;">Rezultatas: ${score} iš ${questions.length} (${percentage}%)</p>
+                    <button class="btn btn-primary" onclick="resetQuiz()">🔄 Bandyti dar kartą</button>
+                `;
+            }
+        }
+
+        function resetQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            answers = [];
+            
+            const container = document.getElementById('quizContainer');
+            container.innerHTML = '';
+            
+            const resultDiv = document.getElementById('quizResult');
+            resultDiv.innerHTML = '';
+            
+            const progressFill = document.getElementById('progressFill');
+            progressFill.style.width = '0%';
+            progressFill.textContent = '0%';
+            
+            loadQuiz();
+        }
+
+        // Inicializuoti
+        loadQuiz();
+    </script>
+</body>
+</html>

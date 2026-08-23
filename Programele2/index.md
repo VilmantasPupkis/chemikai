@@ -17,6 +17,7 @@ Skirtingų dirbtinio intelekto priemonių jau sukurti **pavyzdžiai** skirtingom
 - [https://vilmantaspupkis.github.io/chemikai/Programele2/Claude_atomo-sandara.html] (Claude - Atomo sandara)
 - [https://vilmantaspupkis.github.io/chemikai/Programele2/ChatGPT_atomo%20sandara.html] (ChatGPT - Atomo sandara)
 - [https://vilmantaspupkis.github.io/chemikai/Programele2/ChatGPT_atomo%20sandara2.html] (ChatGPT - Atomo sandara 2)
+- [https://vilmantaspupkis.github.io/chemikai/Programele2/ChatGPT_baltymai.html] (ChatGPT - Baltymai)
 - [https://vilmantaspupkis.github.io/chemikai/Programele2/ChatGPT_pH.html.html] (ChatGPT - pH)
 - [https://vilmantaspupkis.github.io/chemikai/Programele2/DeepSeek%20aplinkos%20tarsa.html] (DeepSeek - Aplinkos tarša)
 - [https://vilmantaspupkis.github.io/chemikai/Programele2/DeepSeek_baltymai%20ir%20AR.html] (DeepSeek - Baltymai ir aminorūgštys)
