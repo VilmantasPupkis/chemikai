@@ -8,4 +8,4 @@ Sukurkite sudėtingesnę programėlę, skirtą moksleiviams pasiruošti chemijos
 
 Skirtingų dirbtinio intelekto priemonių jau sukurti pavyzdžiai skirtingoms temoms (visada naudota ta pati užklausa, pakeista tik prašoma tema):
 
-- [https://vilmantaspupkis.github.io/chemikai/Programele2/Gemini_chemija%20ir%20aplinka.html](Gemini - Chemija ir aplinka)
+- [https://vilmantaspupkis.github.io/chemikai/Programele2/Gemini_chemija%20ir%20aplinka.html] (Gemini - Chemija ir aplinka)
