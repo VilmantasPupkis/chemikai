@@ -1,0 +1,1957 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>Atomo sandara — VBE chemijos pasiruošimas</title>
+<style>
+/* ============================================================
+   DIZAINO ŽETONAI
+   ============================================================ */
+:root{
+  --ink:#1B2430;
+  --ink-soft:#4A5568;
+  --ink-faint:#8791A0;
+  --paper:#EEF3F1;
+  --paper-raised:#FFFFFF;
+  --paper-deep:#E3EBE8;
+  --grid-line:rgba(27,36,48,0.08);
+  --line:rgba(27,36,48,0.15);
+  --line-soft:rgba(27,36,48,0.09);
+
+  --proton:#F2A93B;
+  --proton-deep:#C97F1E;
+  --proton-tint:#FDF0DA;
+  --neutron:#8792A2;
+  --neutron-deep:#5B6472;
+  --neutron-tint:#E9ECEF;
+  --electron:#8B6FD1;
+  --electron-deep:#6B4FB0;
+  --electron-tint:#EEE9FA;
+  --good:#3FA66E;
+  --good-deep:#276B48;
+  --good-tint:#E1F3E9;
+  --bad:#D14B3D;
+  --bad-deep:#A02F24;
+  --bad-tint:#FBE7E4;
+  --warn:#C98A16;
+  --warn-tint:#FBF0DA;
+
+  --font-display:'Avenir Next','Century Gothic','Segoe UI Semibold',-apple-system,'Segoe UI',sans-serif;
+  --font-body:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --font-mono:'SF Mono','Cascadia Code','Consolas','Roboto Mono',monospace;
+
+  --radius-s:8px;
+  --radius:14px;
+  --radius-l:22px;
+  --shadow-s:0 1px 2px rgba(27,36,48,.07);
+  --shadow:0 1px 2px rgba(27,36,48,.06), 0 10px 28px rgba(27,36,48,.09);
+  --shadow-l:0 4px 10px rgba(27,36,48,.08), 0 20px 46px rgba(27,36,48,.13);
+}
+
+*{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  margin:0;
+  background:
+    linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0/28px 28px,
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0/28px 28px,
+    var(--paper);
+  color:var(--ink);
+  font-family:var(--font-body);
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:var(--font-display);margin:0 0 .4em 0;letter-spacing:.01em;}
+p{margin:0 0 .8em 0;}
+button{font-family:inherit;}
+::selection{background:var(--electron-tint);color:var(--electron-deep);}
+
+.app{max-width:1180px;margin:0 auto;padding:0 18px 64px;}
+
+/* ============================================================
+   ANTRAŠTĖ
+   ============================================================ */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 2px 14px;
+  gap:12px;flex-wrap:wrap;
+}
+.brand{display:flex;align-items:center;gap:12px;}
+.brand-mark{width:46px;height:46px;flex:none;}
+.brand-title{font-family:var(--font-display);font-weight:700;font-size:1.32rem;letter-spacing:.01em;line-height:1.1;}
+.brand-sub{font-size:.82rem;color:var(--ink-soft);letter-spacing:.02em;}
+.xp-pill{
+  display:flex;align-items:center;gap:9px;
+  background:var(--paper-raised);border:1px solid var(--line-soft);
+  border-radius:999px;padding:6px 14px 6px 8px;box-shadow:var(--shadow-s);
+  font-family:var(--font-mono);font-size:.86rem;color:var(--ink-soft);
+}
+.xp-pill svg{width:26px;height:26px;flex:none;}
+.xp-pill b{color:var(--ink);font-weight:700;}
+
+/* ============================================================
+   SKIRTUKAI (TABS)
+   ============================================================ */
+.tabs{
+  display:flex;gap:6px;overflow-x:auto;padding:4px;
+  background:var(--paper-deep);border-radius:var(--radius);
+  border:1px solid var(--line-soft);
+  -webkit-overflow-scrolling:touch;
+}
+.tab-btn{
+  flex:1 1 0;min-width:132px;
+  display:flex;flex-direction:column;align-items:flex-start;gap:2px;
+  padding:11px 14px;border:none;border-radius:var(--radius-s);
+  background:transparent;cursor:pointer;text-align:left;
+  color:var(--ink-soft);transition:background .15s ease, color .15s ease;
+}
+.tab-btn .tnum{font-family:var(--font-mono);font-size:.72rem;opacity:.75;}
+.tab-btn .tname{font-family:var(--font-display);font-weight:700;font-size:.94rem;}
+.tab-btn:hover{background:rgba(255,255,255,.6);}
+.tab-btn.active{background:var(--paper-raised);color:var(--ink);box-shadow:var(--shadow-s);}
+.tab-btn.active .tnum{color:var(--electron-deep);}
+
+main{margin-top:18px;}
+.panel{display:none;}
+.panel.active{display:block;animation:fadeIn .25s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+/* ============================================================
+   BENDRI KOMPONENTAI
+   ============================================================ */
+.card{
+  background:var(--paper-raised);border:1px solid var(--line-soft);
+  border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow-s);
+}
+.eyebrow{
+  font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.11em;
+  font-size:.72rem;color:var(--electron-deep);font-weight:700;margin-bottom:6px;
+}
+.section-title{font-size:1.5rem;margin-bottom:4px;}
+.section-lead{color:var(--ink-soft);font-size:.98rem;max-width:60ch;}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  font-family:var(--font-display);font-weight:700;font-size:.92rem;
+  padding:11px 20px;border-radius:999px;border:1px solid transparent;
+  cursor:pointer;transition:transform .12s ease, box-shadow .12s ease, background .15s ease;
+  white-space:nowrap;
+}
+.btn:active{transform:scale(.97);}
+.btn-primary{background:var(--ink);color:#fff;}
+.btn-primary:hover{background:#000;}
+.btn-primary:disabled{background:var(--neutron-tint);color:var(--ink-faint);cursor:not-allowed;}
+.btn-accent{background:var(--electron);color:#fff;}
+.btn-accent:hover{background:var(--electron-deep);}
+.btn-ghost{background:transparent;color:var(--ink);border-color:var(--line);}
+.btn-ghost:hover{background:var(--paper-deep);}
+.btn-sm{padding:7px 14px;font-size:.82rem;}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+
+.pill{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 11px;border-radius:999px;font-size:.78rem;font-weight:700;
+  font-family:var(--font-mono);
+}
+.pill-good{background:var(--good-tint);color:var(--good-deep);}
+.pill-bad{background:var(--bad-tint);color:var(--bad-deep);}
+.pill-warn{background:var(--warn-tint);color:var(--warn);}
+.pill-neutral{background:var(--paper-deep);color:var(--ink-soft);}
+
+input[type="text"],input[type="number"]{
+  font-family:var(--font-mono);font-size:.98rem;
+  padding:9px 12px;border-radius:var(--radius-s);border:1.5px solid var(--line);
+  background:var(--paper-raised);color:var(--ink);width:100%;max-width:220px;
+}
+input[type="text"]:focus,input[type="number"]:focus{
+  outline:none;border-color:var(--electron);box-shadow:0 0 0 3px var(--electron-tint);
+}
+input.input-error{border-color:var(--bad);box-shadow:0 0 0 3px var(--bad-tint);}
+
+.feedback-box{
+  border-radius:var(--radius-s);padding:13px 16px;margin-top:12px;
+  font-size:.92rem;line-height:1.55;border:1.5px solid transparent;
+}
+.feedback-good{background:var(--good-tint);color:var(--good-deep);border-color:rgba(63,166,110,.35);}
+.feedback-bad{background:var(--bad-tint);color:var(--bad-deep);border-color:rgba(209,75,61,.35);}
+.feedback-info{background:var(--electron-tint);color:var(--electron-deep);border-color:rgba(139,111,209,.3);}
+.feedback-box strong{display:block;font-family:var(--font-display);font-size:.98rem;margin-bottom:3px;}
+
+/* fokusas klaviatūra */
+button:focus-visible, .clickable:focus-visible, input:focus-visible{
+  outline:3px solid var(--electron-deep);outline-offset:2px;
+}
+
+/* ============================================================
+   ATOMO DIAGRAMA (SVG)
+   ============================================================ */
+.atom-stage{
+  display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 50% 42%, #FBFCFC 0%, var(--paper-deep) 100%);
+  border-radius:var(--radius-l);border:1px solid var(--line-soft);
+  padding:10px;
+}
+.atom-svg{width:100%;height:auto;max-width:340px;display:block;}
+.shell-ring{fill:none;stroke:var(--line);stroke-width:1.4;stroke-dasharray:2.5 5;}
+.orbit-group{transform-origin:center;animation:spin 40s linear infinite;}
+.orbit-group.rev{animation-direction:reverse;}
+@media (prefers-reduced-motion: reduce){.orbit-group{animation:none;}}
+@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+.e-dot{fill:var(--electron);}
+.p-dot{fill:var(--proton);}
+.n-dot{fill:var(--neutron);}
+.nucleus-label{font-family:var(--font-mono);font-weight:700;}
+
+/* ============================================================
+   IZOTOPO ŽYMĖJIMAS
+   ============================================================ */
+.iso{display:inline-flex;align-items:baseline;font-family:var(--font-mono);font-weight:700;}
+.iso-idx{display:inline-flex;flex-direction:column;font-size:.56em;line-height:1.05;margin-right:2px;font-weight:700;}
+.iso-a{color:var(--proton-deep);}
+.iso-z{color:var(--electron-deep);}
+.iso-sym{font-size:1.05em;}
+
+/* ============================================================
+   TEORIJOS SKILTIS
+   ============================================================ */
+.theory-hero{
+  display:grid;grid-template-columns:1.1fr 1fr;gap:26px;align-items:center;
+  padding:24px;margin-bottom:22px;
+}
+.chip-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
+.el-chip{
+  font-family:var(--font-mono);font-weight:700;font-size:.86rem;
+  padding:8px 13px;border-radius:10px;border:1.5px solid var(--line);
+  background:var(--paper-raised);cursor:pointer;transition:.15s ease;
+}
+.el-chip:hover{border-color:var(--electron);}
+.el-chip.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+.readout{
+  font-family:var(--font-mono);font-size:.92rem;color:var(--ink-soft);
+  display:grid;grid-template-columns:repeat(2,1fr);gap:6px 18px;margin-top:14px;
+}
+.readout b{color:var(--ink);}
+
+.concept-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px;}
+.concept-card{padding:18px 20px;}
+.concept-card h3{font-size:1.02rem;display:flex;align-items:center;gap:8px;}
+.concept-card .kbadge{
+  font-family:var(--font-mono);font-size:.68rem;font-weight:700;
+  background:var(--paper-deep);color:var(--ink-soft);border-radius:6px;padding:2px 7px;
+}
+.concept-card p{font-size:.89rem;color:var(--ink-soft);margin-bottom:.5em;}
+.formula-line{
+  font-family:var(--font-mono);background:var(--paper-deep);border-radius:8px;
+  padding:6px 10px;display:inline-block;font-size:.88rem;margin:3px 4px 3px 0;
+}
+
+/* mini periodinė lentelė */
+.ptable-wrap{overflow-x:auto;padding-bottom:6px;}
+.ptable{display:grid;grid-template-columns:repeat(18,minmax(30px,1fr));gap:3px;min-width:640px;}
+.pcell{
+  aspect-ratio:1/1;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-family:var(--font-mono);font-size:.62rem;line-height:1.05;cursor:pointer;
+  border:1px solid var(--line-soft);background:var(--paper-raised);transition:.12s ease;position:relative;
+}
+.pcell b{font-size:.98em;}
+.pcell:hover{transform:translateY(-2px);box-shadow:var(--shadow-s);z-index:2;}
+.pcell.dim{opacity:.42;cursor:default;}
+.pcell.dim:hover{transform:none;box-shadow:none;}
+.pcell.sel{outline:2.5px solid var(--ink);outline-offset:1px;}
+.pcell.cat-alkali{background:var(--proton-tint);}
+.pcell.cat-alkaline-earth{background:#FDEBD0;}
+.pcell.cat-nonmetal{background:var(--good-tint);}
+.pcell.cat-metalloid{background:#EAF2E9;}
+.pcell.cat-metal{background:#EFEFE9;}
+.pcell.cat-halogen{background:var(--bad-tint);}
+.pcell.cat-noble{background:var(--electron-tint);}
+.pcell.cat-transition{background:var(--neutron-tint);}
+.pcell.cat-other{background:var(--paper-deep);}
+.ptable-legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:12px;font-size:.78rem;color:var(--ink-soft);}
+.ptable-legend span{display:inline-flex;align-items:center;gap:5px;}
+.ptable-legend i{width:11px;height:11px;border-radius:3px;display:inline-block;}
+
+/* ============================================================
+   LABORATORIJA
+   ============================================================ */
+.level-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+.level-btn{
+  padding:10px 15px;border-radius:12px;border:1.5px solid var(--line);
+  background:var(--paper-raised);cursor:pointer;text-align:left;min-width:150px;flex:1 1 150px;
+  transition:.15s ease;
+}
+.level-btn:hover{border-color:var(--electron);}
+.level-btn.active{border-color:var(--ink);background:var(--ink);color:#fff;}
+.level-btn .lname{font-family:var(--font-display);font-weight:700;font-size:.9rem;}
+.level-btn .ldesc{font-size:.74rem;opacity:.75;display:block;margin-top:1px;}
+
+.lab-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:20px;align-items:start;}
+@media (max-width:860px){.lab-grid{grid-template-columns:1fr;} .theory-hero{grid-template-columns:1fr;}}
+
+.task-steps{display:flex;gap:5px;margin-bottom:12px;}
+.step-dot{width:22px;height:22px;border-radius:50%;background:var(--paper-deep);color:var(--ink-faint);
+  font-family:var(--font-mono);font-size:.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.step-dot.done{background:var(--good);color:#fff;}
+.step-dot.now{background:var(--ink);color:#fff;}
+
+.shell-row{
+  display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px dashed var(--line-soft);
+}
+.shell-row:last-child{border-bottom:none;}
+.shell-tag{
+  font-family:var(--font-mono);font-weight:700;width:30px;height:30px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;background:var(--electron-tint);color:var(--electron-deep);
+  flex:none;font-size:.85rem;
+}
+.shell-ctl{display:flex;align-items:center;gap:8px;flex:1;}
+.ctl-btn{
+  width:30px;height:30px;border-radius:8px;border:1.5px solid var(--line);background:var(--paper-raised);
+  cursor:pointer;font-size:1rem;font-weight:700;display:flex;align-items:center;justify-content:center;color:var(--ink);
+}
+.ctl-btn:hover{border-color:var(--electron);}
+.ctl-btn:disabled{opacity:.35;cursor:not-allowed;}
+.shell-count{font-family:var(--font-mono);font-weight:700;min-width:64px;text-align:center;font-size:.92rem;}
+.shell-cap{font-size:.72rem;color:var(--ink-faint);font-family:var(--font-mono);}
+.shell-dots{display:flex;gap:3px;flex-wrap:wrap;max-width:120px;}
+.shell-dots i{width:7px;height:7px;border-radius:50%;background:var(--electron);display:inline-block;}
+
+.fact-fixed{
+  display:flex;justify-content:space-between;align-items:center;background:var(--proton-tint);
+  border-radius:10px;padding:9px 13px;margin-bottom:10px;font-family:var(--font-mono);font-size:.86rem;
+}
+
+.mistake-badge{
+  display:inline-block;background:var(--bad-tint);color:var(--bad-deep);border-radius:8px;
+  padding:2px 9px;font-size:.72rem;font-family:var(--font-mono);margin-top:6px;
+}
+
+/* ============================================================
+   TESTAS (KVIZAS)
+   ============================================================ */
+.diff-row{display:flex;gap:9px;flex-wrap:wrap;}
+.diff-btn{
+  flex:1 1 140px;padding:14px 16px;border-radius:14px;border:1.5px solid var(--line);
+  background:var(--paper-raised);cursor:pointer;text-align:left;
+}
+.diff-btn:hover{border-color:var(--electron);}
+.diff-btn b{display:block;font-family:var(--font-display);font-size:.98rem;}
+.diff-btn span{font-size:.78rem;color:var(--ink-soft);}
+
+.qhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
+.qcount{font-family:var(--font-mono);font-size:.82rem;color:var(--ink-soft);}
+.qtype-badge{font-family:var(--font-mono);font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;
+  background:var(--paper-deep);padding:3px 9px;border-radius:6px;color:var(--ink-soft);}
+.qprompt{font-size:1.06rem;margin:10px 0 16px;line-height:1.5;}
+.qprompt .iso{font-size:1.15em;}
+.option-list{display:flex;flex-direction:column;gap:9px;}
+.option-btn{
+  text-align:left;padding:12px 15px;border-radius:12px;border:1.5px solid var(--line);
+  background:var(--paper-raised);cursor:pointer;font-size:.94rem;transition:.12s ease;
+}
+.option-btn:hover{border-color:var(--electron);background:var(--electron-tint);}
+.option-btn.correct{border-color:var(--good);background:var(--good-tint);}
+.option-btn.incorrect{border-color:var(--bad);background:var(--bad-tint);}
+.option-btn:disabled{cursor:default;}
+.option-letter{font-family:var(--font-mono);font-weight:700;margin-right:8px;color:var(--ink-faint);}
+
+.score-strip{display:flex;gap:6px;margin:14px 0;}
+.score-dot{width:16px;height:16px;border-radius:50%;background:var(--paper-deep);flex:none;}
+.score-dot.ok{background:var(--good);}
+.score-dot.no{background:var(--bad);}
+
+/* ============================================================
+   APIBENDRINIMAS
+   ============================================================ */
+.diag-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin:16px 0;}
+.ring-card{display:flex;align-items:center;gap:14px;padding:16px;}
+.ring-card svg{flex:none;}
+.ring-name{font-family:var(--font-display);font-weight:700;font-size:.92rem;}
+.ring-detail{font-size:.78rem;color:var(--ink-soft);font-family:var(--font-mono);}
+
+.badge-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;}
+.badge{
+  display:flex;align-items:center;gap:9px;padding:9px 14px;border-radius:12px;
+  background:var(--paper-deep);border:1.5px solid var(--line-soft);font-size:.84rem;min-width:200px;
+}
+.badge.earned{background:var(--good-tint);border-color:rgba(63,166,110,.35);}
+.badge .bicon{width:26px;height:26px;border-radius:50%;background:var(--neutron-tint);flex:none;
+  display:flex;align-items:center;justify-content:center;font-size:.85rem;}
+.badge.earned .bicon{background:var(--good);color:#fff;}
+.badge .btxt b{display:block;font-family:var(--font-display);font-size:.83rem;}
+.badge .btxt span{font-size:.72rem;color:var(--ink-soft);}
+
+.mistake-list{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:8px;}
+.mistake-list li{
+  display:flex;justify-content:space-between;gap:10px;align-items:center;
+  background:var(--bad-tint);border-radius:10px;padding:9px 13px;font-size:.85rem;color:var(--bad-deep);
+}
+.mistake-list .mcount{font-family:var(--font-mono);font-weight:700;background:#fff;border-radius:999px;
+  padding:1px 9px;font-size:.76rem;flex:none;}
+
+.empty-state{
+  text-align:center;padding:40px 20px;color:var(--ink-soft);
+}
+.empty-state svg{width:64px;height:64px;opacity:.5;margin-bottom:10px;}
+
+.reco-item{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:12px 14px;border-radius:10px;background:var(--paper-deep);margin-top:8px;
+}
+
+footer.app-footer{
+  margin-top:40px;padding-top:18px;border-top:1px solid var(--line-soft);
+  font-size:.78rem;color:var(--ink-faint);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;
+}
+
+@media print{
+  .tabs,.topbar,.btn-row,footer.app-footer,#panel-theory,#panel-lab,#panel-quiz{display:none !important;}
+  body{background:#fff;}
+}
+
+@media (max-width:640px){
+  .theory-hero{padding:16px;}
+  .lab-grid{gap:14px;}
+  .card{padding:16px;}
+  .brand-title{font-size:1.12rem;}
+  .section-title{font-size:1.25rem;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="topbar">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 48 48" fill="none">
+        <circle cx="24" cy="24" r="17" class="shell-ring" stroke="var(--line)"/>
+        <ellipse cx="24" cy="24" rx="17" ry="7" class="shell-ring" stroke="var(--electron-deep)" transform="rotate(35 24 24)"/>
+        <ellipse cx="24" cy="24" rx="17" ry="7" class="shell-ring" stroke="var(--proton-deep)" transform="rotate(-35 24 24)"/>
+        <circle cx="24" cy="24" r="4.5" fill="var(--proton)"/>
+        <circle cx="24" cy="24" r="4.5" fill="var(--neutron)" opacity="0.55"/>
+        <circle cx="37.5" cy="30.5" r="2.6" fill="var(--electron)"/>
+        <circle cx="10.5" cy="17.5" r="2.6" fill="var(--electron)"/>
+      </svg>
+      <div>
+        <div class="brand-title">Atomo sandara</div>
+        <div class="brand-sub">VBE chemijos pasiruošimas</div>
+      </div>
+    </div>
+    <div class="xp-pill">
+      <svg viewBox="0 0 36 36">
+        <circle cx="18" cy="18" r="15" fill="none" stroke="var(--paper-deep)" stroke-width="4"/>
+        <circle id="xpRing" cx="18" cy="18" r="15" fill="none" stroke="var(--electron)" stroke-width="4"
+          stroke-dasharray="94.2" stroke-dashoffset="94.2" stroke-linecap="round" transform="rotate(-90 18 18)"/>
+      </svg>
+      <span><b id="xpLabel">0</b> XP</span>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab-btn active" data-tab="theory" role="tab" aria-selected="true">
+      <span class="tnum">01</span><span class="tname">Teorija</span>
+    </button>
+    <button class="tab-btn" data-tab="lab" role="tab" aria-selected="false">
+      <span class="tnum">02</span><span class="tname">Laboratorija</span>
+    </button>
+    <button class="tab-btn" data-tab="quiz" role="tab" aria-selected="false">
+      <span class="tnum">03</span><span class="tname">Patikrinimas</span>
+    </button>
+    <button class="tab-btn" data-tab="diagnostics" role="tab" aria-selected="false">
+      <span class="tnum">04</span><span class="tname">Apibendrinimas</span>
+    </button>
+  </nav>
+
+  <main>
+    <section id="panel-theory" class="panel active"></section>
+    <section id="panel-lab" class="panel"></section>
+    <section id="panel-quiz" class="panel"></section>
+    <section id="panel-diagnostics" class="panel"></section>
+  </main>
+
+  <footer class="app-footer">
+    <span>Sudaryta pagal Chemijos brandos egzamino programos reikalavimus (2.1–2.2 sritis: Atominė teorija. Cheminis periodiškumas).</span>
+    <span>Pažanga saugoma tik šios sesijos metu.</span>
+  </footer>
+</div>
+
+<script>
+'use strict';
+/* ================================================================
+   1. DUOMENYS: CHEMIJOS ELEMENTAI, IZOTOPAI, JONAI
+   Ribos pagrįstos Chemijos brandos egzamino programos 1 priedu
+   (2.1 Atomo sandara; 2.2 Periodinis dėsnis, periodinė elementų lentelė).
+   Elektronų sluoksnių modelis (K,L,M,N su elektronų skaičiais) atitinka
+   mokykloje dėstomą supaprastintą modelį, NE pilną s/p/d orbitalių žymėjimą,
+   nes VBE reikalavimuose nurodoma tik "elektronų skaičius kiekviename sluoksnyje".
+   ================================================================ */
+
+// Elementai Z=1..20: pilnai interaktyvūs (tiksliai patikrinta sluoksnių sandara).
+// Elementai Z=21..36: rodomi periodinėje lentelėje tik kontekstui (pilkai), nes
+// pereinamųjų metalų elektronų pasiskirstymas peržengia šios temos ribas.
+const ELEMENTS = [
+  {z:1,  sym:'H',  name:'Vandenilis',  period:1, group:'1 (IA)',    cat:'other',          mass:1,    shells:[1]},
+  {z:2,  sym:'He', name:'Helis',       period:1, group:'18 (VIIIA)',cat:'noble',          mass:4,    shells:[2]},
+  {z:3,  sym:'Li', name:'Litis',       period:2, group:'1 (IA)',    cat:'alkali',         mass:7,    shells:[2,1]},
+  {z:4,  sym:'Be', name:'Berilis',     period:2, group:'2 (IIA)',   cat:'alkaline-earth', mass:9,    shells:[2,2]},
+  {z:5,  sym:'B',  name:'Boras',       period:2, group:'13 (IIIA)', cat:'metalloid',      mass:11,   shells:[2,3]},
+  {z:6,  sym:'C',  name:'Anglis',      period:2, group:'14 (IVA)',  cat:'nonmetal',       mass:12,   shells:[2,4]},
+  {z:7,  sym:'N',  name:'Azotas',      period:2, group:'15 (VA)',   cat:'nonmetal',       mass:14,   shells:[2,5]},
+  {z:8,  sym:'O',  name:'Deguonis',    period:2, group:'16 (VIA)',  cat:'nonmetal',       mass:16,   shells:[2,6]},
+  {z:9,  sym:'F',  name:'Fluoras',     period:2, group:'17 (VIIA)', cat:'halogen',        mass:19,   shells:[2,7]},
+  {z:10, sym:'Ne', name:'Neonas',      period:2, group:'18 (VIIIA)',cat:'noble',          mass:20,   shells:[2,8]},
+  {z:11, sym:'Na', name:'Natris',      period:3, group:'1 (IA)',    cat:'alkali',         mass:23,   shells:[2,8,1]},
+  {z:12, sym:'Mg', name:'Magnis',      period:3, group:'2 (IIA)',   cat:'alkaline-earth', mass:24,   shells:[2,8,2]},
+  {z:13, sym:'Al', name:'Aliuminis',   period:3, group:'13 (IIIA)', cat:'metal',          mass:27,   shells:[2,8,3]},
+  {z:14, sym:'Si', name:'Silicis',     period:3, group:'14 (IVA)',  cat:'metalloid',      mass:28,   shells:[2,8,4]},
+  {z:15, sym:'P',  name:'Fosforas',    period:3, group:'15 (VA)',   cat:'nonmetal',       mass:31,   shells:[2,8,5]},
+  {z:16, sym:'S',  name:'Siera',       period:3, group:'16 (VIA)',  cat:'nonmetal',       mass:32,   shells:[2,8,6]},
+  {z:17, sym:'Cl', name:'Chloras',     period:3, group:'17 (VIIA)', cat:'halogen',        mass:35.5, shells:[2,8,7]},
+  {z:18, sym:'Ar', name:'Argonas',     period:3, group:'18 (VIIIA)',cat:'noble',          mass:40,   shells:[2,8,8]},
+  {z:19, sym:'K',  name:'Kalis',       period:4, group:'1 (IA)',    cat:'alkali',         mass:39,   shells:[2,8,8,1]},
+  {z:20, sym:'Ca', name:'Kalcis',      period:4, group:'2 (IIA)',   cat:'alkaline-earth', mass:40,   shells:[2,8,8,2]},
+  // kontekstui periodinėje lentelėje (neinteraktyvūs, be shells)
+  {z:21,sym:'Sc',name:'Skandis',period:4,group:'3 (IIIB)',cat:'transition',mass:45,shells:null},
+  {z:22,sym:'Ti',name:'Titanas',period:4,group:'4 (IVB)',cat:'transition',mass:48,shells:null},
+  {z:23,sym:'V', name:'Vanadis',period:4,group:'5 (VB)', cat:'transition',mass:51,shells:null},
+  {z:24,sym:'Cr',name:'Chromas',period:4,group:'6 (VIB)',cat:'transition',mass:52,shells:null},
+  {z:25,sym:'Mn',name:'Manganas',period:4,group:'7 (VIIB)',cat:'transition',mass:55,shells:null},
+  {z:26,sym:'Fe',name:'Geležis',period:4,group:'8 (VIIIB)',cat:'transition',mass:56,shells:null},
+  {z:27,sym:'Co',name:'Kobaltas',period:4,group:'9 (VIIIB)',cat:'transition',mass:59,shells:null},
+  {z:28,sym:'Ni',name:'Nikelis',period:4,group:'10 (VIIIB)',cat:'transition',mass:59,shells:null},
+  {z:29,sym:'Cu',name:'Varis',period:4,group:'11 (IB)',cat:'transition',mass:63.5,shells:null},
+  {z:30,sym:'Zn',name:'Cinkas',period:4,group:'12 (IIB)',cat:'transition',mass:65,shells:null},
+  {z:31,sym:'Ga',name:'Galis',period:4,group:'13 (IIIA)',cat:'metal',mass:70,shells:null},
+  {z:32,sym:'Ge',name:'Germanis',period:4,group:'14 (IVA)',cat:'metalloid',mass:73,shells:null},
+  {z:33,sym:'As',name:'Arsenas',period:4,group:'15 (VA)',cat:'metalloid',mass:75,shells:null},
+  {z:34,sym:'Se',name:'Selenas',period:4,group:'16 (VIA)',cat:'nonmetal',mass:79,shells:null},
+  {z:35,sym:'Br',name:'Bromas',period:4,group:'17 (VIIA)',cat:'halogen',mass:80,shells:null},
+  {z:36,sym:'Kr',name:'Kriptonas',period:4,group:'18 (VIIIA)',cat:'noble',mass:84,shells:null},
+];
+const byZ = z => ELEMENTS.find(e=>e.z===z);
+const bySym = s => ELEMENTS.find(e=>e.sym===s);
+const INTERACTIVE = ELEMENTS.filter(e=>e.shells);       // Z 1..20
+const P1_3 = INTERACTIVE.filter(e=>e.period<=3);         // Z 1..18 (bendrasis kursas)
+
+// Izotopų duomenys apytiksliai suapvalinti (mokomajam naudojimui), masės ~ masės skaičius.
+// Šaltinis: standartinės gamtinio paplitimo vertės, suapvalintos iki dešimtųjų / sveikų %.
+const ISOTOPE_ELEMENTS = [
+  {sym:'Li', z:3,  name:'Litis',  isotopes:[{a:6,ab:7.6},{a:7,ab:92.4}]},
+  {sym:'B',  z:5,  name:'Boras',  isotopes:[{a:10,ab:19.9},{a:11,ab:80.1}]},
+  {sym:'Cl', z:17, name:'Chloras',isotopes:[{a:35,ab:75.8},{a:37,ab:24.2}]},
+  {sym:'K',  z:19, name:'Kalis',  isotopes:[{a:39,ab:93.3},{a:41,ab:6.7}]},
+  {sym:'Cu', z:29, name:'Varis',  isotopes:[{a:63,ab:69.2},{a:65,ab:30.8}]},
+  {sym:'Br', z:35, name:'Bromas', isotopes:[{a:79,ab:50.7},{a:81,ab:49.3}]},
+];
+
+// Dažniausi paprasti jonai (pagrindinių grupių elementai, pasiekiantys inertinių
+// dujų elektroninę sandarą) — tikslinė sandara nurodyta tiesiogiai (patikrinta).
+const IONS = [
+  {sym:'Na',z:11,charge:1, targetShells:[2,8]},
+  {sym:'Mg',z:12,charge:2, targetShells:[2,8]},
+  {sym:'Al',z:13,charge:3, targetShells:[2,8]},
+  {sym:'N', z:7, charge:-3,targetShells:[2,8]},
+  {sym:'O', z:8, charge:-2,targetShells:[2,8]},
+  {sym:'F', z:9, charge:-1,targetShells:[2,8]},
+  {sym:'K', z:19,charge:1, targetShells:[2,8,8]},
+  {sym:'Ca',z:20,charge:2, targetShells:[2,8,8]},
+  {sym:'Cl',z:17,charge:-1,targetShells:[2,8,8]},
+  {sym:'S', z:16,charge:-2,targetShells:[2,8,8]},
+];
+
+const SHELL_LETTERS = ['K','L','M','N'];
+const SHELL_CAP = [2,8,8,8]; // praktinė riba šios programėlės apimtyje (Z<=20)
+
+/* ================================================================
+   2. PAGALBINĖS FUNKCIJOS
+   ================================================================ */
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function pickWeighted(arr){ return pick(arr); }
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+function sameArr(a,b){
+  if(!a||!b||a.length!==b.length) return false;
+  return a.every((v,i)=>v===b[i]);
+}
+function sumArr(a){ return a.reduce((s,v)=>s+v,0); }
+function fmtConfig(arr){ return arr.join(','); }
+function parseConfigInput(str){
+  // priima "2,8,7" arba "2 8 7" formatus
+  const parts = String(str).trim().split(/[,;\s]+/).filter(Boolean);
+  if(!parts.length) return null;
+  const nums = parts.map(p=>Number(p.replace(',', '.')));
+  if(nums.some(n=>!Number.isFinite(n) || n<0 || !Number.isInteger(n))) return null;
+  return nums;
+}
+function parseNumberInput(str){
+  if(str===null||str===undefined) return null;
+  const s = String(str).trim().replace(',', '.');
+  if(s==='' ) return null;
+  const n = Number(s);
+  return Number.isFinite(n) ? n : null;
+}
+function isoHTML(a, z, sym){
+  return `<span class="iso"><span class="iso-idx"><span class="iso-a">${a}</span><span class="iso-z">${z}</span></span><span class="iso-sym">${sym}</span></span>`;
+}
+function weightedAtomicMass(isotopes){
+  const total = sumArr(isotopes.map(i=>i.ab));
+  const sum = isotopes.reduce((s,i)=>s+i.a*i.ab,0);
+  return sum/total;
+}
+function round1(n){ return Math.round(n*10)/10; }
+
+/* ================================================================
+   3. ATOMO DIAGRAMOS (SVG) GENERATORIUS
+   Naudojamas Teorijoje, Laboratorijoje ir Teste. Kai dalelių branduolyje
+   nedaug (<=12), rodomi atskiri taškai; kitaip — skaitinis žymėjimas,
+   kad diagrama liktų aiški ir tiksli.
+   ================================================================ */
+let __svgUid = 0;
+function atomSVG(protons, neutrons, shellCounts, opts){
+  opts = opts||{};
+  if(opts.nucleusOnly){
+    const size = opts.size||280;
+    const cx=size/2, cy=size/2, r=size*0.34;
+    return `<svg class="atom-svg" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Branduolio schema">
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="var(--paper-raised)" stroke="var(--line)" stroke-width="1.5"></circle>
+      <text x="${cx}" y="${cy-10}" text-anchor="middle" class="nucleus-label" font-size="${size*0.065}" fill="var(--proton-deep)">p⁺ = ${protons}</text>
+      <text x="${cx}" y="${cy+size*0.05}" text-anchor="middle" class="nucleus-label" font-size="${size*0.065}" fill="var(--neutron-deep)">n = ${neutrons}</text>
+      <text x="${cx}" y="${cy+size*0.15}" text-anchor="middle" class="nucleus-label" font-size="${size*0.042}" fill="var(--ink-faint)">A = ${protons+neutrons}</text>
+    </svg>`;
+  }
+  const size = opts.size||320;
+  const cx = size/2, cy = size/2;
+  const maxShells = Math.max(shellCounts.length,1);
+  const ringGap = opts.ringGap|| (size*0.145);
+  const baseR = opts.baseR || (size*0.135);
+  __svgUid++;
+  const uid = 'sv'+__svgUid;
+
+  let rings='', dots='', labels='';
+  for(let s=0; s<maxShells; s++){
+    const r = baseR + s*ringGap;
+    rings += `<circle class="shell-ring" cx="${cx}" cy="${cy}" r="${r}"></circle>`;
+    const count = shellCounts[s]||0;
+    let eDots='';
+    for(let i=0;i<count;i++){
+      const ang = (Math.PI*2*i/Math.max(count,1)) - Math.PI/2;
+      const ex = cx + r*Math.cos(ang), ey = cy + r*Math.sin(ang);
+      eDots += `<circle class="e-dot" cx="${ex}" cy="${ey}" r="${Math.max(size*0.017,3)}"></circle>`;
+    }
+    const spinClass = s%2===0 ? 'orbit-group' : 'orbit-group rev';
+    const dur = 26 + s*9;
+    dots += `<g class="${spinClass}" style="animation-duration:${dur}s;transform-origin:${cx}px ${cy}px;">${eDots}</g>`;
+    labels += `<text x="${cx - r - 3}" y="${cy - r}" class="nucleus-label" font-size="${size*0.032}" fill="var(--ink-faint)" text-anchor="end">${SHELL_LETTERS[s]||''}</text>`;
+  }
+
+  // branduolys
+  const nucleusR = size*0.115;
+  let nucleus='';
+  const total = protons+neutrons;
+  if(total>0 && total<=12){
+    const pts = packCircles(total, nucleusR*0.62);
+    for(let i=0;i<total;i++){
+      const isP = i<protons;
+      const [px,py] = pts[i];
+      nucleus += `<circle class="${isP?'p-dot':'n-dot'}" cx="${cx+px}" cy="${cy+py}" r="${size*0.024}"></circle>`;
+    }
+  } else if(total>0){
+    nucleus += `<circle cx="${cx}" cy="${cy}" r="${nucleusR}" fill="var(--paper-raised)" stroke="var(--line)" stroke-width="1.5"></circle>`;
+    nucleus += `<text x="${cx}" y="${cy-3}" text-anchor="middle" class="nucleus-label" font-size="${size*0.05}" fill="var(--proton-deep)">p⁺${protons}</text>`;
+    nucleus += `<text x="${cx}" y="${cy+size*0.05}" text-anchor="middle" class="nucleus-label" font-size="${size*0.05}" fill="var(--neutron-deep)">n ${neutrons}</text>`;
+  }
+
+  return `<svg class="atom-svg" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Atomo modelis">
+    ${rings}${dots}${nucleus}${opts.showShellLabels===false?'':labels}
+  </svg>`;
+}
+// paprastas apskritimų pakavimas branduoliui (deterministinis, ne atsitiktinis)
+function packCircles(n, radius){
+  if(n<=1) return [[0,0]];
+  const pts=[[0,0]];
+  let ring=1, placed=1;
+  while(placed<n){
+    const remaining = n-placed;
+    const thisRing = Math.min(remaining, ring*6);
+    const r = radius*(ring/2.1)+radius*0.28;
+    for(let i=0;i<thisRing;i++){
+      const ang = Math.PI*2*i/thisRing + ring*0.4;
+      pts.push([r*Math.cos(ang), r*Math.sin(ang)]);
+    }
+    placed += thisRing; ring++;
+  }
+  return pts.slice(0,n);
+}
+
+/* ================================================================
+   4. BENDRA PAŽANGOS BŪSENA (tik šios sesijos atmintyje)
+   ================================================================ */
+const SUBTOPICS = {
+  branduolys: 'Branduolio sandara (p⁺, n, Z, A)',
+  sluoksniai: 'Elektronų sluoksniai',
+  izotopai:   'Izotopai ir santykinė at. masė',
+  jonai:      'Jonų sandara',
+  periodine:  'Ryšys su periodine lentele',
+};
+const STATE = {
+  xp: 0,
+  subtopic: {}, // {key:{correct,total}}
+  mistakes: {}, // {text: count}
+  badges: {},   // {id: true}
+  labStreak: {A:0,B:0,C:0,D:0},
+  labCorrect: {A:0,B:0,C:0,D:0},
+  quizHistory: [], // {difficulty, score, total, date}
+  kcaSolved: false,
+  sessionEvents: 0,
+};
+for(const k in SUBTOPICS) STATE.subtopic[k] = {correct:0,total:0};
+
+function recordResult(subtopicKey, correct, xpValue, mistakeText){
+  STATE.sessionEvents++;
+  if(STATE.subtopic[subtopicKey]){
+    STATE.subtopic[subtopicKey].total++;
+    if(correct) STATE.subtopic[subtopicKey].correct++;
+  }
+  if(correct){
+    STATE.xp += xpValue||10;
+  } else if(mistakeText){
+    STATE.mistakes[mistakeText] = (STATE.mistakes[mistakeText]||0)+1;
+  }
+  updateXPDisplay();
+  checkBadges();
+}
+function awardBadge(id){
+  if(!STATE.badges[id]){ STATE.badges[id]=true; STATE.xp += 25; updateXPDisplay(); }
+}
+const BADGES = [
+  {id:'nucleus',   name:'Branduolio pradmenys',   desc:'3 teisingi A lygio uždaviniai iš eilės', icon:'●'},
+  {id:'isotopes',  name:'Izotopų iššifruotojas',   desc:'3 teisingi izotopų / masės skaičiavimai', icon:'◐'},
+  {id:'ions',      name:'Jonų architektas',        desc:'5 teisingai sukonstruoti jonai',          icon:'⊕'},
+  {id:'kca',       name:'K/Ca spąstai įveikti',    desc:'Teisingai paaiškinta sluoksnių išimtis',   icon:'✓'},
+  {id:'periodic',  name:'Periodinės sistemos ryšys',desc:'4 teisingi D lygio uždaviniai',           icon:'▦'},
+  {id:'examready', name:'VBE lygio žinios',        desc:'≥70% teste (vidutinis/sunkus, ≥8 kl.)',   icon:'★'},
+];
+function checkBadges(){
+  if(STATE.labCorrect.A>=3) awardBadge('nucleus');
+  if(STATE.labCorrect.B>=3) awardBadge('isotopes');
+  if(STATE.labCorrect.C>=5) awardBadge('ions');
+  if(STATE.kcaSolved) awardBadge('kca');
+  if(STATE.labCorrect.D>=4) awardBadge('periodic');
+  renderBadgesIfVisible();
+}
+function updateXPDisplay(){
+  const label = document.getElementById('xpLabel');
+  if(label) label.textContent = STATE.xp;
+  const ring = document.getElementById('xpRing');
+  if(ring){
+    const pct = Math.min(STATE.xp/300,1);
+    const circumference = 94.2;
+    ring.setAttribute('stroke-dashoffset', String(circumference*(1-pct)));
+  }
+}
+function renderBadgesIfVisible(){
+  if(document.getElementById('panel-diagnostics').classList.contains('active')) renderDiagnostics();
+}
+
+/* ================================================================
+   5. BENDRAS KOMPONENTAS: MINI PERIODINĖ LENTELĖ
+   ================================================================ */
+function groupNum(el){ return parseInt(el.group,10); }
+function renderPeriodicTable(container, opts){
+  opts = opts || {};
+  const selectedZ = opts.selectedZ;
+  const onSelect = opts.onSelect || function(){};
+  let html = '<div class="ptable-wrap"><div class="ptable">';
+  for(let row=1; row<=4; row++){
+    for(let col=1; col<=18; col++){
+      const el = ELEMENTS.find(e=>e.period===row && groupNum(e)===col);
+      if(!el){ html += `<div></div>`; continue; }
+      const interactive = !!el.shells;
+      const cls = ['pcell','cat-'+el.cat];
+      if(!interactive) cls.push('dim');
+      if(el.z===selectedZ) cls.push('sel');
+      html += `<div class="${cls.join(' ')}" data-z="${el.z}" title="${el.name}${interactive?'':' — už šios temos ribų'}">
+        <span>${el.z}</span><b>${el.sym}</b>
+      </div>`;
+    }
+  }
+  html += '</div></div>';
+  html += `<div class="ptable-legend">
+    <span><i style="background:var(--proton-tint)"></i>Šarminiai metalai (IA)</span>
+    <span><i style="background:#FDEBD0"></i>Šarminių žemių metalai (IIA)</span>
+    <span><i style="background:var(--good-tint)"></i>Nemetalai</span>
+    <span><i style="background:#EAF2E9"></i>Pusmetaliai</span>
+    <span><i style="background:var(--bad-tint)"></i>Halogenai (VIIA)</span>
+    <span><i style="background:var(--electron-tint)"></i>Inertinės dujos (VIIIA)</span>
+    <span><i style="background:var(--neutron-tint)"></i>Pereinamieji (nenagrinėjama)</span>
+  </div>`;
+  container.innerHTML = html;
+  container.querySelectorAll('.pcell:not(.dim)').forEach(cell=>{
+    cell.addEventListener('click', ()=> onSelect(Number(cell.dataset.z)));
+  });
+}
+
+/* ================================================================
+   6. SKILTIS „TEORIJA“
+   ================================================================ */
+const THEORY_CHIPS = [1,6,8,11,17,19,20,12].map(byZ); // H,C,O,Na,Cl,K,Ca,Mg
+let theorySelectedZ = 11; // Natris pagal nutylėjimą — geras 3-jų sluoksnių pavyzdys
+
+function renderTheory(){
+  const el = document.getElementById('panel-theory');
+  el.innerHTML = `
+    <div class="card theory-hero">
+      <div>
+        <div class="eyebrow">01 · Teorijos priminimas</div>
+        <h2 class="section-title">Kas iš tikrųjų sudaro atomą?</h2>
+        <p class="section-lead">Pasirink elementą ir stebėk, kaip keičiasi jo branduolys bei elektronų sluoksniai. Tai pagrindas visoms tolesnėms užduotims.</p>
+        <div class="chip-row" id="theoryChips"></div>
+        <div class="readout" id="theoryReadout"></div>
+      </div>
+      <div class="atom-stage" id="theoryAtomStage"></div>
+    </div>
+
+    <div class="concept-grid" id="conceptGrid"></div>
+
+    <div class="card" style="margin-top:16px;">
+      <div class="eyebrow">Periodinė lentelė ir atomo sandara</div>
+      <h3 style="margin-bottom:6px;">Periodas = sluoksnių skaičius. A grupė = valentinių elektronų skaičius.</h3>
+      <p class="section-lead" style="margin-bottom:14px;">Spausk bet kurį langelį — viršuje esanti diagrama iš karto atsinaujins. Pilki langeliai (pereinamieji metalai) į šią temą neįeina.</p>
+      <div id="theoryPTable"></div>
+    </div>
+  `;
+
+  // element chips
+  const chipsWrap = document.getElementById('theoryChips');
+  chipsWrap.innerHTML = THEORY_CHIPS.map(e=>
+    `<button class="el-chip" data-z="${e.z}">${e.sym}</button>`
+  ).join('');
+  chipsWrap.querySelectorAll('.el-chip').forEach(btn=>{
+    btn.addEventListener('click', ()=> setTheoryElement(Number(btn.dataset.z)));
+  });
+
+  renderPeriodicTable(document.getElementById('theoryPTable'), {
+    selectedZ: theorySelectedZ,
+    onSelect: setTheoryElement
+  });
+
+  renderConceptCards();
+  updateTheoryHero();
+}
+
+function setTheoryElement(z){
+  theorySelectedZ = z;
+  updateTheoryHero();
+  renderPeriodicTable(document.getElementById('theoryPTable'), {selectedZ:z, onSelect:setTheoryElement});
+}
+
+function updateTheoryHero(){
+  const e = byZ(theorySelectedZ);
+  document.getElementById('theoryChips').querySelectorAll('.el-chip').forEach(b=>{
+    b.classList.toggle('active', Number(b.dataset.z)===theorySelectedZ);
+  });
+  const stage = document.getElementById('theoryAtomStage');
+  const neutrons = Math.round(e.mass) - e.z;
+  stage.innerHTML = atomSVG(e.z, neutrons, e.shells, {size:300});
+  const valence = e.shells[e.shells.length-1];
+  document.getElementById('theoryReadout').innerHTML = `
+    <div>Elementas: <b>${e.name} (${e.sym})</b></div>
+    <div>Periodas / grupė: <b>${e.period} / ${e.group}</b></div>
+    <div>Atominis skaičius Z: <b>${e.z}</b> (protonų = elektronų)</div>
+    <div>Apytikslis A: <b>${Math.round(e.mass)}</b> → neutronų ≈ <b>${neutrons}</b></div>
+    <div>Sluoksniai (K,L,M,N): <b>${fmtConfig(e.shells)}</b></div>
+    <div>Valentiniai elektronai: <b>${valence}</b></div>
+  `;
+}
+
+function renderConceptCards(){
+  const cards = [
+    {
+      k:'2.1', title:'Branduolys ir apvalkalas',
+      body:`Atomo <b>branduolyje</b> yra protonai (krūvis +1) ir neutronai (be krūvio). Aplink branduolį, sluoksniais išsidėstę, skrieja elektronai (krūvis −1). Neutralaus atomo protonų skaičius visada lygus elektronų skaičiui.`,
+      formula:'protonų skaičius = elektronų skaičius (neutraliam atomui)'
+    },
+    {
+      k:'2.1.3', title:'Z ir A — atomo „asmens kodas“',
+      body:`<b>Atominis skaičius (Z)</b> = protonų skaičius branduolyje — jis nusako, koks tai elementas. <b>Masės skaičius (A)</b> = protonų ir neutronų suma.`,
+      formula:'n = A − Z'
+    },
+    {
+      k:'2.1.2', title:'Izotopai',
+      body:`To paties elemento atomai, turintys <b>tą patį Z</b>, bet <b>skirtingą neutronų skaičių</b> (taigi ir skirtingą A), vadinami izotopais. Jų cheminės savybės beveik identiškos, o fizikinės (pvz., masė) — skiriasi.`,
+      formula:'pvz.: ³⁵Cl ir ³⁷Cl'
+    },
+    {
+      k:'2.1.1', title:'Elektronų sluoksniai (K, L, M, N)',
+      body:`Elektronai užima sluoksnius nuo artimiausio branduoliui: K talpina iki 2 e⁻, L — iki 8, M — iki 8 (šioje temoje). Paskutinio (išorinio) sluoksnio elektronai vadinami <b>valentiniais</b> — jie lemia chemines savybes.`,
+      formula:'K ≤ 2 · L ≤ 8 · M ≤ 8'
+    },
+    {
+      k:'2.1.4', title:'Atomas → jonas',
+      body:`Kai atomas <b>praranda</b> elektronus, susidaro teigiamas jonas (<b>katijonas</b>). Kai <b>priima</b> elektronus — neigiamas jonas (<b>anijonas</b>). Protonų skaičius nesikeičia — tai vis dar tas pats elementas!`,
+      formula:'Na → Na⁺ + e⁻ · Cl + e⁻ → Cl⁻'
+    },
+    {
+      k:'2.2', title:'Ryšys su periodine lentele',
+      body:`<b>Periodo numeris</b> = elektronų sluoksnių skaičius. <b>A grupės numeris</b> = valentinių elektronų skaičius (išskyrus He — jame tik 2, nors grupė VIIIA). Tai leidžia nuspėti sandarą net nežinant lentelės atmintinai.`,
+      formula:'periodas → sluoksniai · A grupė → valentiniai e⁻'
+    },
+  ];
+  document.getElementById('conceptGrid').innerHTML = cards.map(c=>`
+    <div class="card concept-card">
+      <h3><span class="kbadge">${c.k}</span> ${c.title}</h3>
+      <p>${c.body}</p>
+      <div class="formula-line">${c.formula}</div>
+    </div>
+  `).join('');
+}
+
+/* ================================================================
+   7. LABORATORIJOS PAGALBINIAI ĮRANKIAI
+   ================================================================ */
+function fbBox(type, html){
+  return `<div class="feedback-box feedback-${type}">${html}</div>`;
+}
+function updateLabAtom(z, neutrons, shellCounts, opts){
+  const stage = document.getElementById('labAtomStage');
+  if(!stage) return;
+  const sc = (shellCounts && shellCounts.length) ? shellCounts : [0];
+  stage.innerHTML = atomSVG(z, neutrons, sc, Object.assign({size:300}, opts||{}));
+}
+// Sluoksnių +/- valdiklis: counts — masyvas (keičiamas vietoje), caps — didžiausios talpos.
+function makeShellController(container, counts, caps, onUpdate){
+  function draw(){
+    container.innerHTML = counts.map((c,i)=>`
+      <div class="shell-row">
+        <div class="shell-tag">${SHELL_LETTERS[i]}</div>
+        <div class="shell-ctl">
+          <button class="ctl-btn" data-act="dec" data-i="${i}" ${c<=0?'disabled':''} aria-label="Mažinti ${SHELL_LETTERS[i]} sluoksnio elektronus">−</button>
+          <div class="shell-count">${c} / ${caps[i]}</div>
+          <button class="ctl-btn" data-act="inc" data-i="${i}" ${c>=caps[i]?'disabled':''} aria-label="Didinti ${SHELL_LETTERS[i]} sluoksnio elektronus">+</button>
+        </div>
+        <div class="shell-dots">${Array.from({length:c}).map(()=>'<i></i>').join('')}</div>
+      </div>
+    `).join('');
+    container.querySelectorAll('.ctl-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const i = Number(btn.dataset.i);
+        if(btn.dataset.act==='inc' && counts[i]<caps[i]) counts[i]++;
+        else if(btn.dataset.act==='dec' && counts[i]>0) counts[i]--;
+        draw();
+        onUpdate(counts);
+      });
+    });
+  }
+  draw();
+  onUpdate(counts);
+  return {redraw:draw, getCounts:()=>counts.slice()};
+}
+// Universalus pasirenkamojo atsakymo (MCQ) atvaizdavimas — naudojamas D lygyje ir Teste.
+function renderMCQ(container, opts){
+  const letters=['A','B','C','D','E'];
+  container.innerHTML = `
+    <div class="qprompt">${opts.prompt}</div>
+    <div class="option-list">
+      ${opts.options.map((o,i)=>`<button class="option-btn" data-i="${i}"><span class="option-letter">${letters[i]}</span>${o}</button>`).join('')}
+    </div>
+    <div id="mcqFeedback"></div>
+  `;
+  const btns = container.querySelectorAll('.option-btn');
+  btns.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const i = Number(btn.dataset.i);
+      const correct = i===opts.correctIndex;
+      btns.forEach((b,bi)=>{
+        b.disabled=true;
+        if(bi===opts.correctIndex) b.classList.add('correct');
+        else if(bi===i && !correct) b.classList.add('incorrect');
+      });
+      const fbEl = container.querySelector('#mcqFeedback');
+      if(fbEl) fbEl.innerHTML = fbBox(correct?'good':'bad', opts.explanation);
+      if(opts.onResult) opts.onResult(correct, i);
+    }, {once:true});
+  });
+}
+
+/* ================================================================
+   8. SKILTIS „LABORATORIJA“ — pagrindinis įrankis
+   ================================================================ */
+const labState = { level:'A', task:null };
+
+function renderLab(){
+  const el = document.getElementById('panel-lab');
+  el.innerHTML = `
+    <div class="eyebrow">02 · Interaktyvi laboratorija</div>
+    <h2 class="section-title">Atomo konstruktorius</h2>
+    <p class="section-lead">Rink lygį ir statyk atomus pats — kiekviena klaida iškart paaiškinama, o prieš pildydamas visada pirmiau prognozuok.</p>
+    <div class="level-row" id="levelRow"></div>
+    <div id="labBody"></div>
+  `;
+  const levels = [
+    {id:'A', name:'A · Sandaros pagrindai', desc:'protonai, neutronai, sluoksniai'},
+    {id:'B', name:'B · Izotopai', desc:'neutronai, santykinė at. masė'},
+    {id:'C', name:'C · Jonai', desc:'elektronų netekimas / priėmimas'},
+    {id:'D', name:'D · Periodinė lentelė', desc:'ryšiai, K/Ca išimtis'},
+  ];
+  const row = document.getElementById('levelRow');
+  row.innerHTML = levels.map(l=>`<button class="level-btn ${l.id===labState.level?'active':''}" data-lv="${l.id}">
+    <span class="lname">${l.name}</span><span class="ldesc">${l.desc}</span>
+  </button>`).join('');
+  row.querySelectorAll('.level-btn').forEach(b=>{
+    b.addEventListener('click', ()=>{ labState.level=b.dataset.lv; labState.task=null; renderLab(); });
+  });
+  if(labState.level==='A') renderLevelA();
+  if(labState.level==='B') renderLevelB();
+  if(labState.level==='C') renderLevelC();
+  if(labState.level==='D') renderLevelD();
+}
+
+/* ---------- LYGIS A: sandaros pagrindai ---------- */
+function newTaskA(){
+  const useAdvanced = Math.random()<0.22;
+  const e = useAdvanced ? pick(INTERACTIVE.filter(x=>x.period===4)) : pick(P1_3.filter(x=>x.z>1));
+  return {
+    kind:'A', element:e, A: Math.round(e.mass),
+    userShells: e.shells.map(()=>0),
+    predicted:null, neutronCorrect:null, shellsCorrect:null,
+  };
+}
+function renderLevelA(){
+  if(!labState.task || labState.task.kind!=='A') labState.task = newTaskA();
+  drawLevelA();
+}
+function drawLevelA(){
+  const t = labState.task, e = t.element, correctN = t.A - e.z;
+  const caps = SHELL_CAP.slice(0, e.shells.length);
+  const body = document.getElementById('labBody');
+  body.innerHTML = `
+    <div class="lab-grid">
+      <div class="card">
+        <div class="fact-fixed"><span>Elementas</span><b>${e.name} (${e.sym})</b></div>
+        <div class="fact-fixed"><span>Atominis skaičius Z (protonų)</span><b>${e.z}</b></div>
+        <div class="fact-fixed"><span>Apytikslis masės skaičius A</span><b>${t.A}</b></div>
+
+        <div style="margin-top:16px;">
+          <label style="font-size:.86rem;color:var(--ink-soft);"><b>1 žingsnis.</b> Kiek neutronų yra branduolyje? (n = A − Z)</label>
+          <div class="btn-row" style="margin-top:6px;">
+            <input type="text" id="neutronInput" inputmode="numeric" placeholder="pvz. 18">
+            <button class="btn btn-ghost btn-sm" id="checkNeutron">Tikrinti</button>
+          </div>
+          <div id="neutronFeedback"></div>
+        </div>
+
+        <div style="margin-top:18px;">
+          <label style="font-size:.86rem;color:var(--ink-soft);"><b>2 žingsnis.</b> Prieš pildydamas — prognozuok, kiek elektronų <u>sluoksnių</u> turės šis atomas.</label>
+          <div class="btn-row" style="margin-top:6px;" id="predictRow">
+            ${[1,2,3,4].map(n=>`<button class="btn btn-ghost btn-sm predict-btn" data-n="${n}">${n}</button>`).join('')}
+          </div>
+          <div id="predictFeedback"></div>
+        </div>
+
+        <div id="shellSection" style="margin-top:18px;display:none;">
+          <label style="font-size:.86rem;color:var(--ink-soft);"><b>3 žingsnis.</b> Paskirstyk visus ${e.z} elektronus po sluoksnius.</label>
+          <div style="margin:8px 0 4px;font-family:var(--font-mono);font-size:.84rem;color:var(--ink-soft);" id="totalCounter">Paskirstyta: 0 / ${e.z}</div>
+          <div id="shellCtl"></div>
+          <div class="btn-row" style="margin-top:12px;">
+            <button class="btn btn-primary" id="checkShells" disabled>Tikrinti sluoksnius</button>
+          </div>
+          <div id="shellFeedback"></div>
+        </div>
+
+        <div class="btn-row" style="margin-top:18px;">
+          <button class="btn btn-ghost" id="nextTaskA">Kitas pavyzdys →</button>
+        </div>
+      </div>
+      <div class="atom-stage" id="labAtomStage"></div>
+    </div>
+  `;
+  updateLabAtom(e.z, 0, []);
+
+  document.getElementById('checkNeutron').addEventListener('click', ()=>{
+    const inputEl = document.getElementById('neutronInput');
+    const val = parseNumberInput(inputEl.value);
+    const fb = document.getElementById('neutronFeedback');
+    if(val===null){ inputEl.classList.add('input-error'); fb.innerHTML = fbBox('bad','Įvesk skaičių.'); return; }
+    inputEl.classList.remove('input-error');
+    const correct = val===correctN;
+    t.neutronCorrect = correct;
+    if(correct){
+      fb.innerHTML = fbBox('good', `Teisingai! n = A − Z = ${t.A} − ${e.z} = ${correctN}.`);
+      recordResult('branduolys', true, 8);
+    } else {
+      let msg = `Neteisingai. n = A − Z = ${t.A} − ${e.z} = <b>${correctN}</b>.`;
+      let mistake = 'Neteisingai apskaičiuotas neutronų skaičius (n = A − Z)';
+      if(val===t.A){ msg += ' Panašu, kad įrašei masės skaičių A, o ne neutronų skaičių.'; mistake='Painiojamas neutronų skaičius su masės skaičiumi A'; }
+      else if(val===e.z){ msg += ' Panašu, kad įrašei atominį skaičių Z, o ne neutronų skaičių.'; mistake='Painiojamas neutronų skaičius su atominiu skaičiumi Z'; }
+      fb.innerHTML = fbBox('bad', msg);
+      recordResult('branduolys', false, 0, mistake);
+    }
+    updateLabAtom(e.z, correctN, t.shellsCorrect===true?e.shells:[]);
+  });
+
+  document.querySelectorAll('.predict-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      if(t.predicted!==null) return;
+      t.predicted = Number(btn.dataset.n);
+      document.querySelectorAll('.predict-btn').forEach(b=>{ b.disabled=true; });
+      btn.classList.add('btn-accent');
+      const correct = t.predicted===e.shells.length;
+      document.getElementById('predictFeedback').innerHTML = correct
+        ? fbBox('good', `Taip! ${e.name} atomas turi ${e.shells.length} sluoksnį(-ius) (${e.period}-as periodas = ${e.shells.length} sluoksniai). Dabar juos užpildyk.`)
+        : fbBox('info', `Iš tikrųjų — ${e.shells.length} (nes tai ${e.period}-as periodas). Dabar užpildyk sluoksnius ir įsitikink.`);
+      document.getElementById('shellSection').style.display='block';
+      makeShellController(document.getElementById('shellCtl'), t.userShells, caps, (counts)=>{
+        const total = sumArr(counts);
+        document.getElementById('totalCounter').textContent = `Paskirstyta: ${total} / ${e.z} elektronų`;
+        document.getElementById('checkShells').disabled = total!==e.z;
+        updateLabAtom(e.z, t.neutronCorrect!==null?correctN:0, counts);
+      });
+    });
+  });
+
+  document.getElementById('checkShells').addEventListener('click', ()=>{
+    const fb2 = document.getElementById('shellFeedback');
+    const correctShells = sameArr(t.userShells, e.shells);
+    t.shellsCorrect = correctShells;
+    if(correctShells){
+      const valence = e.shells[e.shells.length-1];
+      fb2.innerHTML = fbBox('good', `Puiku! ${e.sym} sandara: <b>${fmtConfig(e.shells)}</b>. Valentinių elektronų (${SHELL_LETTERS[e.shells.length-1]} sluoksnyje): ${valence}.`);
+      recordResult('sluoksniai', true, 12);
+      STATE.labCorrect.A++;
+    } else {
+      let diffIdx=-1;
+      for(let i=0;i<Math.max(t.userShells.length,e.shells.length);i++){
+        if((t.userShells[i]||0)!==(e.shells[i]||0)){ diffIdx=i; break; }
+      }
+      const shellName = SHELL_LETTERS[diffIdx]||'?';
+      const got = t.userShells[diffIdx]||0, want = e.shells[diffIdx]||0;
+      let mistake = 'Neteisingai paskirstyti elektronai sluoksniuose';
+      let msg = `Patikrink ${shellName} sluoksnį: įdėjai ${got}, o turėtų būti ${want}. Teisinga sandara: ${fmtConfig(e.shells)}.`;
+      if(e.shells.length>=4 && diffIdx===2 && got>want){
+        msg += ' Atmink K/Ca tipo išimtį: pasiekus 8 e⁻ (stabilų oktetą), likę elektronai pradeda NAUJĄ sluoksnį, o ne pildo šį toliau iki 18.';
+        mistake='Nežinoma sluoksnių pildymo išimtis (M sluoksnis stabdomas ties 8)';
+      }
+      fb2.innerHTML = fbBox('bad', msg);
+      recordResult('sluoksniai', false, 0, mistake);
+    }
+    updateLabAtom(e.z, t.A-e.z, e.shells);
+  });
+
+  document.getElementById('nextTaskA').addEventListener('click', ()=>{
+    labState.task = newTaskA();
+    drawLevelA();
+  });
+}
+
+/* ---------- LYGIS B: izotopai ir santykinė atominė masė (žingsniai) ---------- */
+function newTaskB(){
+  return { kind:'B', el: pick(ISOTOPE_ELEMENTS), step:1 };
+}
+function renderLevelB(){
+  if(!labState.task || labState.task.kind!=='B') labState.task = newTaskB();
+  drawLevelB();
+}
+function drawLevelB(){
+  const t = labState.task, el = t.el, iso = el.isotopes;
+  const body = document.getElementById('labBody');
+  body.innerHTML = `
+    <div class="lab-grid">
+      <div class="card">
+        <div class="task-steps">
+          ${[1,2,3].map(n=>`<div class="step-dot ${t.step>n?'done':t.step===n?'now':''}">${n}</div>`).join('')}
+        </div>
+        <div class="eyebrow">${el.name} (${el.sym}), Z = ${el.z}</div>
+        <h3 style="margin-bottom:10px;">Gamtoje šis elementas sudarytas iš dviejų izotopų:</h3>
+        <div class="btn-row" style="margin-bottom:14px;">
+          <span class="pill pill-neutral">${isoHTML(iso[0].a, el.z, el.sym)} — paplitimas ${iso[0].ab}%</span>
+          <span class="pill pill-neutral">${isoHTML(iso[1].a, el.z, el.sym)} — paplitimas ${iso[1].ab}%</span>
+        </div>
+        <div id="stepArea"></div>
+      </div>
+      <div class="atom-stage" id="labAtomStage"></div>
+    </div>
+  `;
+  updateLabAtom(el.z, iso[0].a-el.z, [], {nucleusOnly:true});
+  drawStepB();
+}
+function drawStepB(){
+  const t = labState.task, el = t.el, iso = el.isotopes;
+  const area = document.getElementById('stepArea');
+  if(t.step===1){
+    area.innerHTML = `
+      <p style="font-size:.9rem;color:var(--ink-soft);">Apskaičiuok kiekvieno izotopo neutronų skaičių (n = A − Z).</p>
+      <div class="btn-row" style="margin-bottom:10px;flex-wrap:wrap;">
+        <span>${isoHTML(iso[0].a, el.z, el.sym)}: n = <input type="text" id="n0" style="max-width:80px;display:inline-block;" inputmode="numeric"></span>
+        <span>${isoHTML(iso[1].a, el.z, el.sym)}: n = <input type="text" id="n1" style="max-width:80px;display:inline-block;" inputmode="numeric"></span>
+      </div>
+      <button class="btn btn-primary btn-sm" id="checkStep1">Tikrinti</button>
+      <div id="fbStep1"></div>
+    `;
+    document.getElementById('checkStep1').addEventListener('click', ()=>{
+      const v0=parseNumberInput(document.getElementById('n0').value);
+      const v1=parseNumberInput(document.getElementById('n1').value);
+      const c0=iso[0].a-el.z, c1=iso[1].a-el.z;
+      const ok = v0===c0 && v1===c1;
+      const fb=document.getElementById('fbStep1');
+      if(ok){
+        fb.innerHTML=fbBox('good', `Teisingai. ${el.sym}-${iso[0].a}: n = ${c0}; ${el.sym}-${iso[1].a}: n = ${c1}.`);
+        recordResult('izotopai', true, 8);
+      } else {
+        fb.innerHTML=fbBox('bad', `Teisingi atsakymai: ${el.sym}-${iso[0].a} → n = ${c0}; ${el.sym}-${iso[1].a} → n = ${c1}. (n = A − Z, o Z abiem izotopams tas pats.)`);
+        recordResult('izotopai', false, 0, 'Neteisingai apskaičiuotas izotopo neutronų skaičius');
+      }
+      fb.innerHTML += `<button class="btn btn-ghost btn-sm" id="toStep2" style="margin-top:8px;">Toliau →</button>`;
+      document.getElementById('toStep2').addEventListener('click', ()=>{ t.step=2; drawStepB(); });
+    });
+  } else if(t.step===2){
+    const moreIdx = iso[0].ab>=iso[1].ab?0:1;
+    area.innerHTML = `
+      <p style="font-size:.9rem;color:var(--ink-soft);"><b>Prognozė.</b> ${el.sym}-${iso[0].a} paplitęs ${iso[0].ab}%, o ${el.sym}-${iso[1].a} — ${iso[1].ab}%. Kurio izotopo masei bus ARČIAU santykinė atominė masė?</p>
+      <div class="btn-row">
+        <button class="btn btn-ghost predictB" data-i="0">Arčiau ${iso[0].a}</button>
+        <button class="btn btn-ghost predictB" data-i="1">Arčiau ${iso[1].a}</button>
+      </div>
+      <div id="fbStep2"></div>
+    `;
+    document.querySelectorAll('.predictB').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const picked=Number(btn.dataset.i);
+        const correct = picked===moreIdx;
+        const fb=document.getElementById('fbStep2');
+        fb.innerHTML = correct
+          ? fbBox('good', `Taip! ${el.sym}-${iso[moreIdx].a} labiau paplitęs (${iso[moreIdx].ab}%), todėl svertinis vidurkis bus arčiau jo masės.`)
+          : fbBox('info', `Iš tikrųjų arčiau bus ${iso[moreIdx].a} — jis labiau paplitęs (${iso[moreIdx].ab}%). Santykinė atominė masė yra SVERTINIS, o ne paprastas vidurkis.`);
+        fb.innerHTML += `<button class="btn btn-ghost btn-sm" id="toStep3" style="margin-top:8px;">Toliau →</button>`;
+        document.getElementById('toStep3').addEventListener('click', ()=>{ t.step=3; drawStepB(); });
+      }, {once:true});
+    });
+  } else if(t.step===3){
+    const avg = round1(weightedAtomicMass(iso));
+    area.innerHTML = `
+      <p style="font-size:.9rem;color:var(--ink-soft);"><b>Skaičiavimas.</b> Santykinė atominė masė = svertinis vidurkis:</p>
+      <div class="formula-line">Ar = (M₁·k₁ + M₂·k₂) / 100</div>
+      <div class="formula-line">Ar = (${iso[0].a}×${iso[0].ab} + ${iso[1].a}×${iso[1].ab}) / 100</div>
+      <div class="btn-row" style="margin-top:10px;">
+        <input type="text" id="massAns" placeholder="pvz. 35,5" inputmode="decimal">
+        <button class="btn btn-primary btn-sm" id="checkStep3">Tikrinti</button>
+      </div>
+      <div id="fbStep3"></div>
+      <div class="btn-row" style="margin-top:16px;">
+        <button class="btn btn-ghost" id="nextTaskB">Kitas pavyzdys →</button>
+      </div>
+    `;
+    document.getElementById('checkStep3').addEventListener('click', ()=>{
+      const v = parseNumberInput(document.getElementById('massAns').value);
+      const fb=document.getElementById('fbStep3');
+      if(v===null){ fb.innerHTML=fbBox('bad','Įvesk skaičių.'); return; }
+      const ok = Math.abs(v-avg)<=0.25;
+      if(ok){
+        fb.innerHTML=fbBox('good', `Taip, Ar(${el.sym}) ≈ ${avg}. (Periodinės lentelės vertė gali šiek tiek skirtis dėl suapvalinimo.)`);
+        recordResult('izotopai', true, 15);
+        STATE.labCorrect.B++;
+      } else {
+        fb.innerHTML=fbBox('bad', `Teisingas atsakymas ≈ ${avg}. Ar = (${iso[0].a}×${iso[0].ab}+${iso[1].a}×${iso[1].ab})/100 = ${avg}.`);
+        recordResult('izotopai', false, 0, 'Neteisingai pritaikyta svertinio vidurkio formulė santykinei atominei masei');
+      }
+    });
+    document.getElementById('nextTaskB').addEventListener('click', ()=>{
+      labState.task = newTaskB();
+      drawLevelB();
+    });
+  }
+}
+
+/* ---------- LYGIS C: jonai ---------- */
+function newTaskC(){
+  const ion = pick(IONS), el = byZ(ion.z);
+  return { kind:'C', ion, el, userShells: el.shells.slice() };
+}
+function renderLevelC(){
+  if(!labState.task || labState.task.kind!=='C') labState.task = newTaskC();
+  drawLevelC();
+}
+function drawLevelC(){
+  const t = labState.task, ion=t.ion, el=t.el;
+  const chargeLabel = ion.charge>0
+    ? `${ion.sym}${ion.charge===1?'':ion.charge}⁺`
+    : `${ion.sym}${Math.abs(ion.charge)===1?'':Math.abs(ion.charge)}⁻`;
+  const targetTotal = sumArr(ion.targetShells);
+  const caps = SHELL_CAP.slice(0, el.shells.length);
+  const body=document.getElementById('labBody');
+  body.innerHTML = `
+    <div class="lab-grid">
+      <div class="card">
+        <div class="fact-fixed"><span>Neutralus atomas</span><b>${el.name} (${el.sym}) — ${fmtConfig(el.shells)}</b></div>
+        <div class="fact-fixed"><span>Užduotis</span><b>Sudaryk joną ${chargeLabel}</b></div>
+        <p style="font-size:.86rem;color:var(--ink-soft);margin-top:10px;">
+          ${ion.charge>0 ? 'Katijonas susidaro atomui <b>PRARADUS</b> elektronus.' : 'Anijonas susidaro atomui <b>PRIĖMUS</b> elektronus.'}
+          Koreguok elektronus žemiau (pradedi nuo neutralios sandaros).
+        </p>
+        <div id="ionCtl" style="margin-top:10px;"></div>
+        <div style="margin:8px 0;font-family:var(--font-mono);font-size:.84rem;color:var(--ink-soft);" id="ionCounter"></div>
+        <div class="btn-row" style="margin-top:10px;">
+          <button class="btn btn-primary" id="checkIon">Tikrinti joną</button>
+          <button class="btn btn-ghost" id="nextTaskC">Kitas pavyzdys →</button>
+        </div>
+        <div id="ionFeedback"></div>
+      </div>
+      <div class="atom-stage" id="labAtomStage"></div>
+    </div>
+  `;
+  updateLabAtom(el.z, Math.round(el.mass)-el.z, t.userShells);
+  makeShellController(document.getElementById('ionCtl'), t.userShells, caps, (counts)=>{
+    const total = sumArr(counts);
+    const chargeNow = el.z - total;
+    document.getElementById('ionCounter').textContent = `Elektronų: ${total} · Dabartinis krūvis: ${chargeNow>0?'+'+chargeNow:chargeNow}`;
+    updateLabAtom(el.z, Math.round(el.mass)-el.z, counts);
+  });
+  document.getElementById('checkIon').addEventListener('click', ()=>{
+    const fb=document.getElementById('ionFeedback');
+    const ok = sameArr(t.userShells, ion.targetShells);
+    if(ok){
+      fb.innerHTML=fbBox('good', `Teisingai! ${chargeLabel} sandara: ${fmtConfig(ion.targetShells)} — tai sutampa su artimiausių inertinių dujų sandara, todėl jonas stabilus.`);
+      recordResult('jonai', true, 12);
+      STATE.labCorrect.C++;
+    } else {
+      const totalNow = sumArr(t.userShells);
+      let msg, mistake;
+      if((ion.charge>0 && totalNow>targetTotal) || (ion.charge<0 && totalNow<targetTotal)){
+        msg = `Krūvio kryptis sumaišyta: ${ion.charge>0?'katijonui reikia PRARASTI':'anijonui reikia PRIIMTI'} elektronus. Dabar jų ${totalNow}, turėtų būti ${targetTotal}.`;
+        mistake='Sumaišyta jono krūvio kryptis (elektronų netekimas/priėmimas)';
+      } else if(totalNow===targetTotal){
+        msg = `Elektronų skaičius (${totalNow}) teisingas, bet jie ne tame sluoksnyje. Elektronai pirmiausia pridedami/atimami iš IŠORINIO sluoksnio. Turėtų būti: ${fmtConfig(ion.targetShells)}.`;
+        mistake='Elektronų netekimas/priėmimas ne iš išorinio sluoksnio';
+      } else {
+        msg = `Elektronų iš viso turėtų būti ${targetTotal}, o dabar yra ${totalNow}. Teisinga sandara: ${fmtConfig(ion.targetShells)}.`;
+        mistake='Neteisingas bendras jono elektronų skaičius';
+      }
+      fb.innerHTML=fbBox('bad', msg);
+      recordResult('jonai', false, 0, mistake);
+    }
+  });
+  document.getElementById('nextTaskC').addEventListener('click', ()=>{
+    labState.task = newTaskC();
+    drawLevelC();
+  });
+}
+
+/* ---------- LYGIS D: periodinė lentelė ir sandaros ryšys ---------- */
+function buildPoolD(){
+  const list = [];
+  for(let i=0;i<3;i++) list.push({type:'config', el: pick(INTERACTIVE.filter(e=>e.z>1))});
+  list.push({type:'kfixed'});
+  list.push({type:'cafixed'});
+  for(let i=0;i<2;i++) list.push({type:'valence', el: pick(INTERACTIVE.filter(e=>e.z>1))});
+  list.push({type:'hefixed'});
+  for(let i=0;i<2;i++) list.push({type:'identify', el: pick(INTERACTIVE.filter(e=>e.z>2))});
+  return list;
+}
+function newTaskD(){ return { kind:'D', pool: shuffle(buildPoolD()), idx:0 }; }
+function renderLevelD(){
+  if(!labState.task || labState.task.kind!=='D') labState.task = newTaskD();
+  drawLevelD();
+}
+function drawLevelD(){
+  const t = labState.task;
+  if(t.idx>=t.pool.length){ t.pool = shuffle(buildPoolD()); t.idx=0; }
+  const item = t.pool[t.idx];
+  const body=document.getElementById('labBody');
+  body.innerHTML = `
+    <div class="lab-grid">
+      <div class="card" id="dCard"><div id="dTaskArea"></div>
+        <div class="btn-row" style="margin-top:16px;">
+          <button class="btn btn-ghost" id="nextTaskD">Kitas pavyzdys →</button>
+        </div>
+      </div>
+      <div class="atom-stage" id="labAtomStage"></div>
+    </div>
+  `;
+  const area = document.getElementById('dTaskArea');
+  document.getElementById('nextTaskD').addEventListener('click', ()=>{ t.idx++; drawLevelD(); });
+
+  if(item.type==='config'){
+    const el = item.el;
+    updateLabAtom(el.z, Math.round(el.mass)-el.z, []);
+    area.innerHTML = `
+      <div class="eyebrow">Periodas ↔ sandara</div>
+      <p class="qprompt">Elementas yra <b>${el.period}-ame periode</b>, <b>${el.group}</b> grupėje. Koks jo elektronų pasiskirstymas sluoksniais?</p>
+      <div class="btn-row"><input type="text" id="dConfigInput" placeholder="pvz. 2,8,7"><button class="btn btn-primary btn-sm" id="dCheck">Tikrinti</button></div>
+      <div id="dFeedback"></div>`;
+    document.getElementById('dCheck').addEventListener('click', ()=>{
+      const arr = parseConfigInput(document.getElementById('dConfigInput').value);
+      const fb=document.getElementById('dFeedback');
+      const ok = arr && sameArr(arr, el.shells);
+      if(ok){ fb.innerHTML=fbBox('good', `Taip! ${el.name} (${el.sym}): ${fmtConfig(el.shells)}.`); recordResult('periodine', true, 12); STATE.labCorrect.D++; }
+      else { fb.innerHTML=fbBox('bad', `Teisingas atsakymas: ${fmtConfig(el.shells)} (tai ${el.name}, ${el.sym}). Periodas rodo sluoksnių skaičių, A grupė — paskutinio sluoksnio elektronų skaičių.`); recordResult('periodine', false, 0, 'Nepavyko susieti periodo/grupės su sluoksnių sandara'); }
+      updateLabAtom(el.z, Math.round(el.mass)-el.z, el.shells);
+    });
+  } else if(item.type==='kfixed'){
+    updateLabAtom(19, 20, [2,8,8,1]);
+    renderMCQ(area, {
+      prompt:`<b>Klasikinis spąstas.</b> Kalio (K, Z = 19) M sluoksnyje teoriškai (pagal 2n²) telpa iki 18 elektronų. Kiek elektronų iš tikrųjų yra M sluoksnyje kalio atome?`,
+      options:['8','9','18','1'],
+      correctIndex:0,
+      explanation:`Teisingas atsakymas — 8. Kai išorinis sluoksnis pasiekia stabilų oktetą (8 e⁻), kitas elektronas pradeda pildyti NAUJĄ (N) sluoksnį, o negrįžta papildyti M sluoksnio iki 18. Todėl K sandara yra 2,8,8,1, o ne 2,8,9.`,
+      onResult:(ok)=>{ recordResult('sluoksniai', ok, 15, ok?null:'Nežinoma K/Ca sluoksnių pildymo išimtis (2,8,8,1 vietoj 2,8,9)'); if(ok){ STATE.kcaSolved=true; checkBadges(); } }
+    });
+  } else if(item.type==='cafixed'){
+    updateLabAtom(20, 20, [2,8,8,2]);
+    renderMCQ(area, {
+      prompt:`Kalcio (Ca, Z = 20) elektronų pasiskirstymas sluoksniais yra <b>2,8,8,2</b>, o ne 2,8,10. Kodėl likę 2 elektronai neina papildyti M sluoksnio?`,
+      options:[
+        'Nes M sluoksnis pasiekė stabilų oktetą (8 e⁻), todėl kiti elektronai pradeda pildyti naują N sluoksnį',
+        'Nes kalcis yra metalas, o metalai visada turi tik 8 elektronus išoriniame sluoksnyje',
+        'Nes M sluoksnis apskritai negali turėti daugiau nei 8 elektronų jokiam elementui',
+        'Nes kalcio atome elektronų yra mažiau nei protonų'
+      ],
+      correctIndex:0,
+      explanation:`Taisyklė: kai sluoksnis pasiekia 8 valentinius elektronus (stabilų oktetą), kitas elektronas pradeda naują sluoksnį — net jei teorinė talpa (2n²) leistų daugiau. Ši pati priežastis paaiškina, kodėl K ir Ca „peršoka“ prie N sluoksnio.`,
+      onResult:(ok)=>{ recordResult('sluoksniai', ok, 12, ok?null:'Nežinoma sluoksnių pildymo išimtis (M stabdomas ties 8)'); if(ok){ STATE.kcaSolved=true; checkBadges(); } }
+    });
+  } else if(item.type==='valence'){
+    const el = item.el;
+    const valence = el.shells[el.shells.length-1];
+    const distractSet = new Set([sumArr(el.shells), el.z, valence>=8?valence-2:valence+2, valence>=4?valence-1:valence+3]);
+    distractSet.delete(valence);
+    const opts = shuffle([valence, ...Array.from(distractSet)].slice(0,4));
+    updateLabAtom(el.z, Math.round(el.mass)-el.z, el.shells);
+    renderMCQ(area, {
+      prompt:`Kiek valentinių elektronų (išoriniame sluoksnyje) turi ${el.name.toLowerCase()} (${el.sym}) atomas?`,
+      options: opts.map(String),
+      correctIndex: opts.indexOf(valence),
+      explanation:`${el.sym} sandara: ${fmtConfig(el.shells)}. Išoriniame (${SHELL_LETTERS[el.shells.length-1]}) sluoksnyje yra ${valence} elektronai — tiek pat, kiek rodo A grupės numeris (${el.group}).`,
+      onResult:(ok)=>recordResult('periodine', ok, 10, ok?null:'Supainiotas valentinių elektronų skaičius su bendru elektronų skaičiumi')
+    });
+  } else if(item.type==='hefixed'){
+    updateLabAtom(2,2,[2]);
+    renderMCQ(area, {
+      prompt:`Helis (He) priklauso 18 (VIIIA) grupei — tai inertinių dujų grupė. Kiek valentinių elektronų turi helio atomas?`,
+      options:['8','2','18','4'],
+      correctIndex:1,
+      explanation:`Helis — išimtis: jo vienintelis (K) sluoksnis pilnas turėdamas tik 2 elektronus (ne 8), nes K sluoksnio talpa yra 2. Nepaisant to, helis stabilus lygiai taip pat, kaip ir kitos inertinės dujos.`,
+      onResult:(ok)=>recordResult('periodine', ok, 10, ok?null:'Pamiršta helio (K sluoksnio) išimtis tarp inertinių dujų')
+    });
+  } else if(item.type==='identify'){
+    const el = item.el;
+    let distractors = shuffle(INTERACTIVE.filter(e=>e.z!==el.z && e.shells.length===el.shells.length)).slice(0,3);
+    if(distractors.length<3) distractors = shuffle(INTERACTIVE.filter(e=>e.z!==el.z)).slice(0,3);
+    const finalOpts = shuffle([el, ...distractors]);
+    updateLabAtom(el.z, Math.round(el.mass)-el.z, el.shells);
+    renderMCQ(area, {
+      prompt:`Atomo elektronų pasiskirstymas sluoksniais: <b>${fmtConfig(el.shells)}</b>. Kuris tai elementas?`,
+      options: finalOpts.map(e=>`${e.name} (${e.sym})`),
+      correctIndex: finalOpts.indexOf(el),
+      explanation:`Teisingas atsakymas: ${el.name} (${el.sym}), Z = ${el.z}. Elektronų suma (${sumArr(el.shells)}) turi atitikti protonų skaičių.`,
+      onResult:(ok)=>recordResult('sluoksniai', ok, 10, ok?null:'Nepavyko atpažinti elemento pagal elektronų sluoksnius')
+    });
+  }
+}
+function enterTriggers(inputId, btnId){
+  const inp = document.getElementById(inputId), btn = document.getElementById(btnId);
+  if(inp && btn) inp.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); btn.click(); } });
+}
+
+/* ================================================================
+   9. SKILTIS „ŽINIŲ PATIKRINIMAS“ (KVIZAS)
+   Klausimai generuojami dinamiškai iš šablonų — kiekvieną kartą kitokie
+   skaičiai / elementai / atsakymų variantai.
+   ================================================================ */
+function diffLabel(d){ return {easy:'Lengvas',medium:'Vidutinis',hard:'Sunkus',adaptive:'Mišrus (adaptyvus)'}[d]||d; }
+function typeLabel(t){ return {mcq:'Pasirenkamasis',short:'Trumpas atsakymas',shortNum:'Skaičiavimas',shortConfig:'Konstravimas',structured:'Kelių žingsnių (VBE tipo)'}[t]||t; }
+
+/* --- klausimų generatoriai --- */
+function genProtons(pool){
+  const e = pick(pool);
+  const distract = shuffle([Math.round(e.mass), e.z+1, e.z>1?e.z-1:e.z+2]);
+  const opts = shuffle([e.z, ...distract.filter(v=>v!==e.z && v>0)].slice(0,3).concat(e.z)).filter((v,i,a)=>a.indexOf(v)===i);
+  while(opts.length<4) opts.push(opts[opts.length-1]+1);
+  return {
+    subtopic:'branduolys', type:'mcq',
+    prompt:`Kiek protonų yra ${e.name.toLowerCase()} (${e.sym}) atomo branduolyje?`,
+    options: opts.slice(0,4).map(String), correctIndex: opts.slice(0,4).indexOf(e.z),
+    explanation:`Protonų skaičius = atominis skaičius Z = ${e.z}.`,
+    mistakeIfWrong:'Painiojamas protonų (Z) skaičius su kitu dydžiu'
+  };
+}
+function genIdentifyByZ(pool){
+  const e = pick(pool);
+  const distract = shuffle(pool.filter(x=>x.z!==e.z)).slice(0,3);
+  const opts = shuffle([e, ...distract]);
+  return {
+    subtopic:'branduolys', type:'mcq',
+    prompt:`Kurio elemento atomo branduolyje yra ${e.z} protonai?`,
+    options: opts.map(o=>`${o.name} (${o.sym})`), correctIndex: opts.indexOf(e),
+    explanation:`Z = ${e.z} atitinka ${e.name.toLowerCase()} (${e.sym}).`,
+    mistakeIfWrong:'Neteisingai susietas atominis skaičius su elementu'
+  };
+}
+function genNeutronCalc(pool){
+  const e = pick(pool); const A = Math.round(e.mass); const n = A-e.z;
+  return {
+    subtopic:'branduolys', type:'shortNum',
+    prompt:`Atomo masės skaičius A = ${A}, atominis skaičius Z = ${e.z}. Kiek neutronų turi branduolys?`,
+    correctValue:n, tolerance:0,
+    explanation:`n = A − Z = ${A} − ${e.z} = ${n}.`,
+    mistakeIfWrong:'Neteisingai apskaičiuotas neutronų skaičius (n = A − Z)'
+  };
+}
+function genConfigShort(pool){
+  const e = pick(pool.filter(x=>x.z>1));
+  return {
+    subtopic:'sluoksniai', type:'shortConfig',
+    prompt:`Užrašyk ${e.name.toLowerCase()} (${e.sym}) atomo elektronų pasiskirstymą sluoksniais (pvz., 2,8,7).`,
+    correctConfig: e.shells,
+    explanation:`${e.sym}: ${fmtConfig(e.shells)}.`,
+    mistakeIfWrong:'Neteisingas elektronų pasiskirstymas sluoksniais'
+  };
+}
+function genIsotopeConcept(){
+  const variants = [
+    {stmt:'Izotopai turi tą patį protonų, bet skirtingą neutronų skaičių.', correct:true},
+    {stmt:'Izotopai yra skirtingi cheminiai elementai.', correct:false},
+    {stmt:'Izotopai turi skirtingą elektronų skaičių neutraliame atome.', correct:false},
+    {stmt:'Izotopai turi skirtingą protonų skaičių, bet tą patį neutronų skaičių.', correct:false},
+  ];
+  const correctStmt = variants.find(v=>v.correct);
+  const opts = shuffle(variants);
+  return {
+    subtopic:'izotopai', type:'mcq',
+    prompt:`Kuris teiginys apie izotopus TEISINGAS?`,
+    options: opts.map(o=>o.stmt), correctIndex: opts.indexOf(correctStmt),
+    explanation:`Izotopai — to paties elemento (tas pats Z) atomų atmainos, besiskiriančios neutronų (taigi ir masės) skaičiumi; cheminės savybės (elektronų skaičius) išlieka tos pačios.`,
+    mistakeIfWrong:'Klaidinga izotopo sąvokos samprata'
+  };
+}
+function genMassCalc(){
+  const el = pick(ISOTOPE_ELEMENTS); const avg = round1(weightedAtomicMass(el.isotopes));
+  return {
+    subtopic:'izotopai', type:'shortNum',
+    prompt:`${el.name} (${el.sym}) gamtoje sudarytas iš izotopų: ${el.sym}-${el.isotopes[0].a} (${el.isotopes[0].ab}%) ir ${el.sym}-${el.isotopes[1].a} (${el.isotopes[1].ab}%). Apskaičiuok santykinę atominę masę.`,
+    correctValue: avg, tolerance:0.25,
+    explanation:`Ar = (${el.isotopes[0].a}×${el.isotopes[0].ab} + ${el.isotopes[1].a}×${el.isotopes[1].ab}) / 100 ≈ ${avg}.`,
+    mistakeIfWrong:'Neteisingai pritaikyta svertinio vidurkio formulė santykinei atominei masei'
+  };
+}
+function genErrorFinding(pool){
+  const e = pick(pool.filter(x=>x.shells.length>=2));
+  const wrongIdx = Math.floor(Math.random()*e.shells.length);
+  const wrongShells = e.shells.slice();
+  wrongShells[wrongIdx] = Math.max(1, wrongShells[wrongIdx] + (Math.random()<0.5?1:-1));
+  const opts = e.shells.map((_,i)=>`${SHELL_LETTERS[i]} sluoksnis`);
+  return {
+    subtopic:'sluoksniai', type:'mcq',
+    prompt:`Mokinys užrašė ${e.name.toLowerCase()} (${e.sym}) sandarą taip: <b>${fmtConfig(wrongShells)}</b>. Kuriame sluoksnyje yra klaida?`,
+    options: opts, correctIndex: wrongIdx,
+    explanation:`Teisinga sandara: ${fmtConfig(e.shells)}. ${SHELL_LETTERS[wrongIdx]} sluoksnyje turėtų būti ${e.shells[wrongIdx]}, o ne ${wrongShells[wrongIdx]}.`,
+    mistakeIfWrong:'Nepastebėta klaida elektronų pasiskirstyme'
+  };
+}
+function genIonConfig(){
+  const ion = pick(IONS);
+  const chargeLabel = ion.charge>0 ? `${ion.sym}${ion.charge===1?'':ion.charge}⁺` : `${ion.sym}${Math.abs(ion.charge)===1?'':Math.abs(ion.charge)}⁻`;
+  return {
+    subtopic:'jonai', type:'shortConfig',
+    prompt:`Užrašyk ${chargeLabel} jono elektronų pasiskirstymą sluoksniais.`,
+    correctConfig: ion.targetShells,
+    explanation:`${chargeLabel}: ${fmtConfig(ion.targetShells)}.`,
+    mistakeIfWrong:'Neteisingai apskaičiuota jono elektronų sandara'
+  };
+}
+function genValence(pool){
+  const e = pick(pool.filter(x=>x.z>1));
+  const valence = e.shells[e.shells.length-1];
+  const distractSet = new Set([sumArr(e.shells), e.z, valence>=8?valence-2:valence+2, valence>=3?valence-1:valence+3]);
+  distractSet.delete(valence);
+  const opts = shuffle([valence, ...Array.from(distractSet)].slice(0,4));
+  return {
+    subtopic:'periodine', type:'mcq',
+    prompt:`Kiek valentinių elektronų turi ${e.name.toLowerCase()} (${e.sym}) atomas?`,
+    options: opts.map(String), correctIndex: opts.indexOf(valence),
+    explanation:`${e.sym} sandara ${fmtConfig(e.shells)} → valentinių (išorinio sluoksnio) elektronų: ${valence}. Tai sutampa su A grupės numeriu (${e.group}).`,
+    mistakeIfWrong:'Supainiotas valentinių elektronų skaičius su bendru elektronų skaičiumi'
+  };
+}
+function genPeriodGroupConfig(pool){
+  const e = pick(pool.filter(x=>x.z>1));
+  return {
+    subtopic:'periodine', type:'shortConfig',
+    prompt:`Elementas yra ${e.period}-ame periode ir ${e.group} grupėje. Koks jo elektronų pasiskirstymas sluoksniais?`,
+    correctConfig: e.shells,
+    explanation:`${e.name} (${e.sym}): ${fmtConfig(e.shells)}.`,
+    mistakeIfWrong:'Nepavyko susieti periodo/grupės su sluoksnių sandara'
+  };
+}
+function genKCaTrap(){
+  return {
+    subtopic:'sluoksniai', type:'mcq',
+    prompt:`Kalio atomo (K, Z = 19) M sluoksnyje yra...`,
+    options:['8 elektronai','9 elektronai','18 elektronų','1 elektronas'],
+    correctIndex:0,
+    explanation:`M sluoksnis sustoja ties 8 elektronais (stabilus oktetas), o likęs elektronas pradeda naują N sluoksnį: 2,8,8,1 (o ne 2,8,9).`,
+    mistakeIfWrong:'Nežinoma K/Ca sluoksnių pildymo išimtis',
+    onCorrectExtra:()=>{ STATE.kcaSolved=true; checkBadges(); }
+  };
+}
+function genStructured(){
+  const ionEntry = pick(IONS.filter(io=>io.z<=18));
+  const e = byZ(ionEntry.z);
+  const n0 = Math.round(e.mass) - e.z;
+  const p1 = {p:e.z, n:n0, e:e.z};
+  const p2 = {p:e.z, n:n0+2, e:e.z};
+  const p3 = {p:e.z, n:n0, e:e.z-ionEntry.charge};
+  const particles = shuffle([p1,p2,p3]);
+  return { subtopic:'branduolys', type:'structured', element:e, ionEntry, particles };
+}
+function buildGeneratorPool(difficulty){
+  const pool = difficulty==='hard' ? INTERACTIVE : P1_3;
+  const gens = [ ()=>genProtons(pool), ()=>genIdentifyByZ(pool), ()=>genNeutronCalc(pool), ()=>genValence(pool), ()=>genIsotopeConcept() ];
+  if(difficulty!=='easy'){
+    gens.push(()=>genConfigShort(pool), ()=>genMassCalc(), ()=>genIonConfig(), ()=>genPeriodGroupConfig(pool));
+  }
+  if(difficulty==='hard'){
+    gens.push(()=>genErrorFinding(pool), ()=>genKCaTrap(), ()=>genStructured());
+  }
+  return gens;
+}
+
+/* --- kvizo būsena ir valdymas --- */
+const quizState = { difficulty:null, currentDiffLevel:'medium', streak:0, index:0, total:10, correctCount:0, results:[], current:null };
+
+function renderQuiz(){
+  const panel = document.getElementById('panel-quiz');
+  panel.innerHTML = `
+    <div class="eyebrow">03 · Žinių patikrinimas</div>
+    <h2 class="section-title">Pasirink sudėtingumo lygį</h2>
+    <p class="section-lead">Kiekvieną kartą užduotys generuojamos iš naujo — skaičiai, elementai ir atsakymų variantai bus skirtingi.</p>
+    <div class="diff-row">
+      <button class="diff-btn" data-d="easy"><b>Lengvas</b><span>Z, A, protonai — pagrindai (1–18 el.)</span></button>
+      <button class="diff-btn" data-d="medium"><b>Vidutinis</b><span>+ sluoksniai, izotopai, jonai</span></button>
+      <button class="diff-btn" data-d="hard"><b>Sunkus</b><span>+ K/Ca išimtis, klaidų radimas, VBE tipo užduotys</span></button>
+      <button class="diff-btn" data-d="adaptive"><b>Mišrus (adaptyvus)</b><span>Sudėtingumas prisitaiko pagal tavo atsakymus</span></button>
+    </div>
+  `;
+  panel.querySelectorAll('.diff-btn').forEach(b=> b.addEventListener('click', ()=> startQuiz(b.dataset.d)));
+}
+function startQuiz(diff){
+  quizState.difficulty = diff; quizState.currentDiffLevel = 'medium'; quizState.streak = 0;
+  quizState.index = 0; quizState.correctCount = 0; quizState.results = [];
+  renderQuizStep();
+}
+function generateQuizQuestion(){
+  const diff = quizState.difficulty==='adaptive' ? quizState.currentDiffLevel : quizState.difficulty;
+  return pick(buildGeneratorPool(diff))();
+}
+function renderScoreStrip(){
+  const strip = document.getElementById('scoreStrip');
+  if(!strip) return;
+  strip.innerHTML = Array.from({length:quizState.total}).map((_,i)=>
+    i<quizState.results.length ? `<div class="score-dot ${quizState.results[i]?'ok':'no'}"></div>` : `<div class="score-dot"></div>`
+  ).join('');
+}
+function advanceQuiz(ok, explanationHtml, containerId){
+  quizState.results.push(ok);
+  if(ok) quizState.correctCount++;
+  if(quizState.difficulty==='adaptive'){
+    quizState.streak = ok ? Math.max(1,quizState.streak+1) : Math.min(-1,quizState.streak-1);
+    const order=['easy','medium','hard'];
+    let idx = order.indexOf(quizState.currentDiffLevel);
+    if(quizState.streak>=2){ idx=Math.min(idx+1,2); quizState.streak=0; }
+    if(quizState.streak<=-2){ idx=Math.max(idx-1,0); quizState.streak=0; }
+    quizState.currentDiffLevel = order[idx];
+  }
+  const fb = document.getElementById(containerId);
+  fb.innerHTML = fbBox(ok?'good':'bad', explanationHtml) + `<button class="btn btn-ghost btn-sm" id="nextQBtn" style="margin-top:10px;">Kitas klausimas →</button>`;
+  document.getElementById('nextQBtn').addEventListener('click', ()=>{ quizState.index++; renderQuizStep(); });
+  renderScoreStrip();
+}
+function renderQuizMCQ(container, q){
+  const letters=['A','B','C','D','E'];
+  container.innerHTML = `
+    <div class="qprompt">${q.prompt}</div>
+    <div class="option-list">${q.options.map((o,i)=>`<button class="option-btn" data-i="${i}"><span class="option-letter">${letters[i]}</span>${o}</button>`).join('')}</div>
+    <div id="qFeedback"></div>
+  `;
+  const btns = container.querySelectorAll('.option-btn');
+  btns.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const i = Number(btn.dataset.i); const ok = i===q.correctIndex;
+      btns.forEach((b,bi)=>{ b.disabled=true; if(bi===q.correctIndex) b.classList.add('correct'); else if(bi===i&&!ok) b.classList.add('incorrect'); });
+      recordResult(q.subtopic, ok, ok?10:0, ok?null:q.mistakeIfWrong);
+      if(ok && q.onCorrectExtra) q.onCorrectExtra();
+      advanceQuiz(ok, q.explanation, 'qFeedback');
+    }, {once:true});
+  });
+}
+function renderQuizShort(container, q){
+  container.innerHTML = `
+    <div class="qprompt">${q.prompt}</div>
+    <div class="btn-row"><input type="text" id="qAnsNum" inputmode="decimal" placeholder="atsakymas"><button class="btn btn-primary btn-sm" id="qCheckNum">Tikrinti</button></div>
+    <div id="qFeedback"></div>
+  `;
+  document.getElementById('qCheckNum').addEventListener('click', function(){
+    const inputEl = document.getElementById('qAnsNum');
+    const v = parseNumberInput(inputEl.value);
+    if(v===null){ inputEl.classList.add('input-error'); document.getElementById('qFeedback').innerHTML = fbBox('bad','Įvesk skaičių.'); return; }
+    inputEl.classList.remove('input-error'); inputEl.disabled=true; this.disabled=true;
+    const ok = Math.abs(v-q.correctValue) <= (q.tolerance||0);
+    recordResult(q.subtopic, ok, ok?10:0, ok?null:q.mistakeIfWrong);
+    advanceQuiz(ok, q.explanation, 'qFeedback');
+  });
+  enterTriggers('qAnsNum','qCheckNum');
+}
+function renderQuizShortConfig(container, q){
+  container.innerHTML = `
+    <div class="qprompt">${q.prompt}</div>
+    <div class="btn-row"><input type="text" id="qAnsCfg" placeholder="pvz. 2,8,7"><button class="btn btn-primary btn-sm" id="qCheckCfg">Tikrinti</button></div>
+    <div id="qFeedback"></div>
+  `;
+  document.getElementById('qCheckCfg').addEventListener('click', function(){
+    const inputEl = document.getElementById('qAnsCfg');
+    const arr = parseConfigInput(inputEl.value);
+    if(!arr){ inputEl.classList.add('input-error'); document.getElementById('qFeedback').innerHTML = fbBox('bad','Formatas: skaičiai atskirti kableliais, pvz. 2,8,7.'); return; }
+    inputEl.classList.remove('input-error'); inputEl.disabled=true; this.disabled=true;
+    const ok = sameArr(arr, q.correctConfig);
+    recordResult(q.subtopic, ok, ok?12:0, ok?null:q.mistakeIfWrong);
+    advanceQuiz(ok, q.explanation, 'qFeedback');
+  });
+  enterTriggers('qAnsCfg','qCheckCfg');
+}
+function renderQuizStructured(container, q){
+  const parts = q.particles;
+  container.innerHTML = `
+    <div class="qprompt">Trys dalelės apibūdinamos lentelėje:</div>
+    <table style="width:100%;border-collapse:collapse;font-family:var(--font-mono);font-size:.86rem;margin-bottom:14px;">
+      <tr style="text-align:left;color:var(--ink-soft);"><th>Dalelė</th><th>protonų</th><th>neutronų</th><th>elektronų</th></tr>
+      ${parts.map((pt,i)=>`<tr style="border-top:1px solid var(--line-soft);"><td style="padding:5px 0;">${i+1} dalelė</td><td>${pt.p}</td><td>${pt.n}</td><td>${pt.e}</td></tr>`).join('')}
+    </table>
+    <div style="margin-bottom:12px;">
+      <label style="font-size:.86rem;color:var(--ink-soft);">a) Kuri dalelė YRA JONAS (elektronų skaičius ≠ protonų skaičiui)?</label>
+      <div class="btn-row" id="qIonPick" style="margin-top:5px;">${parts.map((pt,i)=>`<button class="btn btn-ghost btn-sm pickIon" data-i="${i}">${i+1} dalelė</button>`).join('')}</div>
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="font-size:.86rem;color:var(--ink-soft);">b) Kurios DVI dalelės yra to paties elemento izotopai (abi neutralios, skiriasi tik neutronų skaičiumi)?</label>
+      <div class="btn-row" id="qIsoPick" style="margin-top:5px;">${parts.map((pt,i)=>`<button class="btn btn-ghost btn-sm pickIso" data-i="${i}">${i+1} dalelė</button>`).join('')}</div>
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="font-size:.86rem;color:var(--ink-soft);">c) Koks 1 dalelės masės skaičius A? (A = p + n)</label>
+      <div class="btn-row" style="margin-top:5px;"><input type="text" id="qAMass" inputmode="numeric" style="max-width:110px;"></div>
+    </div>
+    <button class="btn btn-primary btn-sm" id="qCheckStruct">Tikrinti visus atsakymus</button>
+    <div id="qFeedback"></div>
+  `;
+  let ionPick=null; const isoPick=new Set();
+  container.querySelectorAll('.pickIon').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      ionPick = Number(btn.dataset.i);
+      container.querySelectorAll('.pickIon').forEach(b=>b.classList.remove('btn-accent'));
+      btn.classList.add('btn-accent');
+    });
+  });
+  container.querySelectorAll('.pickIso').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const i = Number(btn.dataset.i);
+      if(isoPick.has(i)){ isoPick.delete(i); btn.classList.remove('btn-accent'); }
+      else {
+        if(isoPick.size>=2){
+          const first=[...isoPick][0]; isoPick.delete(first);
+          const firstBtn = container.querySelector(`.pickIso[data-i="${first}"]`);
+          if(firstBtn) firstBtn.classList.remove('btn-accent');
+        }
+        isoPick.add(i); btn.classList.add('btn-accent');
+      }
+    });
+  });
+  document.getElementById('qCheckStruct').addEventListener('click', function(){
+    const massVal = parseNumberInput(document.getElementById('qAMass').value);
+    const ionIdx = parts.findIndex(pt=>pt.p!==pt.e);
+    const neutralIdxs = parts.map((pt,i)=>i).filter(i=>parts[i].p===parts[i].e);
+    const correctA = parts[0].p + parts[0].n;
+    const ionOk = ionPick===ionIdx;
+    const isoOk = isoPick.size===2 && [...isoPick].every(i=>neutralIdxs.includes(i));
+    const massOk = massVal===correctA;
+    const allOk = ionOk && isoOk && massOk;
+    this.disabled=true;
+    recordResult('jonai', ionOk, ionOk?6:0, ionOk?null:'Nepastebėta, kuri dalelė yra jonas (elektronų≠protonų)');
+    recordResult('izotopai', isoOk, isoOk?6:0, isoOk?null:'Nepavyko atpažinti izotopų poros tarp dalelių');
+    recordResult('branduolys', massOk, massOk?6:0, massOk?null:'Neteisingai apskaičiuotas masės skaičius A = p + n');
+    const detail = `<div style="margin-top:6px;font-size:.85rem;line-height:1.7;">
+      a) Jonas: <b>${ionIdx+1} dalelė</b> ${ionOk?'✓':'✗'}<br>
+      b) Izotopai: <b>${neutralIdxs.map(i=>i+1).join(' ir ')} dalelės</b> ${isoOk?'✓':'✗'}<br>
+      c) A(1 dalelė) = <b>${correctA}</b> ${massOk?'✓':'✗'}
+    </div>`;
+    advanceQuiz(allOk, `Teisingų dalių: ${[ionOk,isoOk,massOk].filter(Boolean).length}/3.` + detail, 'qFeedback');
+  });
+  enterTriggers('qAMass','qCheckStruct');
+}
+function renderQuizStep(){
+  const panel = document.getElementById('panel-quiz');
+  if(quizState.index>=quizState.total){ renderQuizSummary(); return; }
+  const q = generateQuizQuestion();
+  quizState.current = q;
+  panel.innerHTML = `
+    <div class="eyebrow">03 · Žinių patikrinimas · ${diffLabel(quizState.difficulty)}</div>
+    <h2 class="section-title">Klausimas ${quizState.index+1} iš ${quizState.total}</h2>
+    <div class="card">
+      <div class="qhead"><span class="qcount">Taškai: ${quizState.correctCount}</span><span class="qtype-badge">${typeLabel(q.type)}</span></div>
+      <div class="score-strip" id="scoreStrip"></div>
+      <div id="qArea"></div>
+    </div>
+  `;
+  renderScoreStrip();
+  const area = document.getElementById('qArea');
+  if(q.type==='mcq') renderQuizMCQ(area, q);
+  else if(q.type==='shortNum') renderQuizShort(area, q);
+  else if(q.type==='shortConfig') renderQuizShortConfig(area, q);
+  else if(q.type==='structured') renderQuizStructured(area, q);
+}
+function renderQuizSummary(){
+  const panel = document.getElementById('panel-quiz');
+  const pct = Math.round(100*quizState.correctCount/quizState.total);
+  STATE.quizHistory.push({difficulty:quizState.difficulty, score:quizState.correctCount, total:quizState.total, pct});
+  if(pct>=70 && quizState.total>=8 && quizState.difficulty!=='easy') awardBadge('examready');
+  panel.innerHTML = `
+    <div class="eyebrow">03 · Žinių patikrinimas</div>
+    <h2 class="section-title">Rezultatas: ${quizState.correctCount} / ${quizState.total} (${pct}%)</h2>
+    <div class="card">
+      <div class="score-strip" style="margin-bottom:14px;">${quizState.results.map(r=>`<div class="score-dot ${r?'ok':'no'}"></div>`).join('')}</div>
+      <p class="section-lead">${pct>=80?'Puikus rezultatas — šia tema pasiruošęs(-usi) gerai.':pct>=50?'Neblogai, bet dar verta pasikartoti kai kurias dalis.':'Verta grįžti į teoriją ir laboratoriją prieš bandant vėl.'}</p>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="retryQuiz">Bandyti dar kartą</button>
+        <button class="btn btn-ghost" id="goDiag">Žiūrėti apibendrinimą →</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('retryQuiz').addEventListener('click', renderQuiz);
+  document.getElementById('goDiag').addEventListener('click', ()=> switchTab('diagnostics'));
+}
+
+/* ================================================================
+   10. SKILTIS „APIBENDRINIMAS IR DIAGNOSTIKA“
+   ================================================================ */
+function computeLevel(){
+  const totalCorrect = Object.values(STATE.subtopic).reduce((s,o)=>s+o.correct,0);
+  const totalAttempts = Object.values(STATE.subtopic).reduce((s,o)=>s+o.total,0);
+  const pct = totalAttempts? totalCorrect/totalAttempts : 0;
+  if(totalAttempts<5) return 'Pradedantysis';
+  if(pct<0.5) return 'Mokosi pagrindų';
+  if(pct<0.75) return 'Pagrindinis lygis';
+  if(pct<0.9) return 'Pažengęs';
+  return 'Egzaminui pasiruošęs';
+}
+function ringCardHTML(name, s, pct){
+  const r=26, c=Math.round(2*Math.PI*r*100)/100;
+  const color = pct===null ? 'var(--ink-faint)' : pct>=80?'var(--good)':pct>=50?'var(--warn)':'var(--bad)';
+  const offset = pct===null ? c : c*(1-pct/100);
+  return `
+    <div class="card ring-card">
+      <svg width="64" height="64" viewBox="0 0 64 64">
+        <circle cx="32" cy="32" r="${r}" fill="none" stroke="var(--paper-deep)" stroke-width="6"/>
+        <circle cx="32" cy="32" r="${r}" fill="none" stroke="${color}" stroke-width="6" stroke-linecap="round"
+          stroke-dasharray="${c}" stroke-dashoffset="${offset}" transform="rotate(-90 32 32)"/>
+        <text x="32" y="37" text-anchor="middle" font-family="ui-monospace,monospace" font-size="13" fill="var(--ink)">${pct===null?'–':pct+'%'}</text>
+      </svg>
+      <div>
+        <div class="ring-name">${name}</div>
+        <div class="ring-detail">${s.total? `${s.correct} / ${s.total} teisingai` : 'dar netikrinta'}</div>
+      </div>
+    </div>`;
+}
+function renderDiagnostics(){
+  const panel = document.getElementById('panel-diagnostics');
+  if(STATE.sessionEvents===0){
+    panel.innerHTML = `
+      <div class="eyebrow">04 · Apibendrinimas ir diagnostika</div>
+      <h2 class="section-title">Kol kas duomenų nėra</h2>
+      <div class="empty-state card">
+        <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="16" stroke="var(--ink-faint)" stroke-width="2"/><path d="M24 16v10l7 4" stroke="var(--ink-faint)" stroke-width="2" stroke-linecap="round"/></svg>
+        <p>Atlik keletą užduočių Laboratorijoje arba Teste — čia pamatysi, ką jau moki gerai, o ką reikėtų pakartoti.</p>
+        <div class="btn-row" style="justify-content:center;">
+          <button class="btn btn-primary" id="goLab">Į laboratoriją</button>
+          <button class="btn btn-ghost" id="goQuiz">Į testą</button>
+        </div>
+      </div>`;
+    document.getElementById('goLab').addEventListener('click', ()=>switchTab('lab'));
+    document.getElementById('goQuiz').addEventListener('click', ()=>switchTab('quiz'));
+    return;
+  }
+  const ringsHTML = Object.keys(SUBTOPICS).map(key=>{
+    const s = STATE.subtopic[key];
+    const pct = s.total? Math.round(100*s.correct/s.total) : null;
+    return ringCardHTML(SUBTOPICS[key], s, pct);
+  }).join('');
+  const mistakeEntries = Object.entries(STATE.mistakes).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const levelLabel = computeLevel();
+  const weakest = Object.keys(SUBTOPICS).map(k=>({k, s:STATE.subtopic[k]}))
+    .filter(o=>o.s.total>0).sort((a,b)=>(a.s.correct/a.s.total)-(b.s.correct/b.s.total))[0];
+
+  panel.innerHTML = `
+    <div class="eyebrow">04 · Apibendrinimas ir diagnostika</div>
+    <h2 class="section-title">Tavo pažanga</h2>
+    <p class="section-lead">Pasiektas lygis: <b>${levelLabel}</b> · Atlikta užduočių: ${STATE.sessionEvents} · Surinkta: ${STATE.xp} XP</p>
+    <div class="diag-grid">${ringsHTML}</div>
+    <div class="card" style="margin-top:6px;">
+      <h3 style="margin-bottom:8px;">Dažniausios klaidos</h3>
+      ${mistakeEntries.length ? `<ul class="mistake-list">${mistakeEntries.map(([txt,cnt])=>`<li><span>${txt}</span><span class="mcount">${cnt}×</span></li>`).join('')}</ul>` : `<p class="section-lead">Kol kas pasikartojančių klaidų nepastebėta — puiku!</p>`}
+    </div>
+    <div class="card" style="margin-top:16px;">
+      <h3 style="margin-bottom:6px;">Ką rekomenduojame pakartoti</h3>
+      ${weakest ? `<div class="reco-item"><span>${SUBTOPICS[weakest.k]} — teisingai ${weakest.s.correct}/${weakest.s.total}</span><button class="btn btn-ghost btn-sm" id="recoBtn">Kartoti →</button></div>` : `<p class="section-lead">Kol kas viskas atrodo tvirtai — pabandyk sunkesnį testo lygį!</p>`}
+    </div>
+    <div class="card" style="margin-top:16px;">
+      <h3 style="margin-bottom:8px;">Ženkleliai</h3>
+      <div class="badge-grid">${BADGES.map(b=>`
+        <div class="badge ${STATE.badges[b.id]?'earned':''}">
+          <div class="bicon">${b.icon}</div>
+          <div class="btxt"><b>${b.name}</b><span>${b.desc}</span></div>
+        </div>`).join('')}</div>
+    </div>
+    <div class="btn-row" style="margin-top:18px;">
+      <button class="btn btn-ghost" id="printSummary">Atsispausdinti apibendrinimą</button>
+    </div>`;
+
+  if(document.getElementById('recoBtn')){
+    document.getElementById('recoBtn').addEventListener('click', ()=>{
+      const map = {izotopai:'B', jonai:'C', periodine:'D'};
+      labState.level = map[weakest.k]||'A';
+      labState.task = null;
+      switchTab('lab');
+    });
+  }
+  document.getElementById('printSummary').addEventListener('click', ()=>window.print());
+}
+
+/* ================================================================
+   11. NAVIGACIJA IR PALEIDIMAS
+   ================================================================ */
+function switchTab(tab){
+  document.querySelectorAll('.tab-btn').forEach(b=>{
+    const active = b.dataset.tab===tab;
+    b.classList.toggle('active', active);
+    b.setAttribute('aria-selected', active?'true':'false');
+  });
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+tab).classList.add('active');
+  if(tab==='theory') renderTheory();
+  else if(tab==='lab') renderLab();
+  else if(tab==='quiz'){
+    if(quizState.difficulty && quizState.index<quizState.total) renderQuizStep();
+    else renderQuiz();
+  }
+  else if(tab==='diagnostics') renderDiagnostics();
+}
+(function init(){
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=> switchTab(btn.dataset.tab));
+  });
+  renderTheory();
+  updateXPDisplay();
+})();
+</script>
+</body>
+</html>
