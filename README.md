@@ -1,5 +1,4 @@
 # Dirbtinis intelektas chemijos pamokose
-Dirbtinis intelektas chemijos pamokose - medžiaga
 
 Čia rasite skaidres, 2026 m. chemijos VBE užduotis ir instrukcijas keturioms praktinėms veikloms.
 
